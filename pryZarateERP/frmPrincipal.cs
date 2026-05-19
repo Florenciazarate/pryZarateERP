@@ -32,7 +32,7 @@ namespace pryZarateERP
             else
             {
                 lblEstado.Text = "Conectado exitosamente al ERP. Inicie sesión.";
-                lblEstado.ForeColor = Color.SteelBlue;
+                lblEstado.ForeColor = Color.ForestGreen;
             }
         }
     }
