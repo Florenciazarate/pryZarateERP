@@ -19,7 +19,7 @@ namespace pryZarateERP
             public string RutaArchivo => _rutaArchivo; // Devuelve la ruta del archivo conectado.
             public bool EstaConectado => !string.IsNullOrEmpty(_connectionString); // True si hay una conexión configurada.
 
-            // Conecta a un archivo de Access usando el provider ACE OLEDB 12.0.
+            // Conecta a un archivo de Access usando el provider ACE OLEDB (intenta varias versiones).
             public bool Conectar(string rutaArchivo, out string errorMessage)
             {
                 errorMessage = null;
@@ -30,10 +30,41 @@ namespace pryZarateERP
                     return false;
                 }
 
-                // Armo la cadena de conexión con el provider ACE OLEDB 12.0 y la ruta del archivo.
-                _connectionString = $"Provider=Microsoft.ACE.OLEDB.12.0;Data Source={rutaArchivo};Persist Security Info=False;";
-                _rutaArchivo = rutaArchivo;
-                return true;
+                // Proveedores a intentar en orden.
+                var providers = new[] { "Microsoft.ACE.OLEDB.12.0", "Microsoft.ACE.OLEDB.16.0" };
+                Exception lastEx = null;
+
+                foreach (var provider in providers)
+                {
+                    var connString = $"Provider={provider};Data Source={rutaArchivo};Persist Security Info=False;";
+                    try
+                    {
+                        using (var conn = new OleDbConnection(connString))
+                        {
+                            conn.Open(); // Intento abrir para validar proveedor.
+                            // Si abre correctamente, guardo la cadena y la ruta.
+                            _connectionString = connString;
+                            _rutaArchivo = rutaArchivo;
+                            return true;
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        lastEx = ex; // guardo para el mensaje final y pruebo siguiente proveedor
+                    }
+                }
+
+                // Si llegamos acá, ninguno de los proveedores funcionó.
+                if (lastEx != null)
+                {
+                    errorMessage = lastEx.Message + " Asegúrese de tener instalado Microsoft Access Database Engine (ACE) apropiado para su plataforma (12.0 o 16.0).";
+                }
+                else
+                {
+                    errorMessage = "No se pudo conectar por un error desconocido.";
+                }
+
+                return false;
             }
 
             // Devuelve los nombres de todas las tablas de usuario en la base (sin las del sistema MSys*).

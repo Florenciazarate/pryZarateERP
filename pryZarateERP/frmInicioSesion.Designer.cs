@@ -55,11 +55,12 @@
             this.pnlContenedor.Controls.Add(this.lblMail);
             this.pnlContenedor.Controls.Add(this.lblSubtitulo);
             this.pnlContenedor.Controls.Add(this.lblTitulo);
-            this.pnlContenedor.Location = new System.Drawing.Point(6, 6);
+            this.pnlContenedor.Location = new System.Drawing.Point(12, 12);
             this.pnlContenedor.Name = "pnlContenedor";
             this.pnlContenedor.Padding = new System.Windows.Forms.Padding(30);
             this.pnlContenedor.Size = new System.Drawing.Size(400, 440);
             this.pnlContenedor.TabIndex = 1;
+            this.pnlContenedor.Paint += new System.Windows.Forms.PaintEventHandler(this.pnlContenedor_Paint);
             // 
             // lblError
             // 
@@ -102,7 +103,7 @@
             this.txtContraseña.Name = "txtContraseña";
             this.txtContraseña.PasswordChar = '●';
             this.txtContraseña.PlaceholderForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(116)))), ((int)(((byte)(139)))));
-            this.txtContraseña.PlaceholderText = "";
+            this.txtContraseña.PlaceholderText = "Ingresa tu contraseña";
             this.txtContraseña.SelectedText = "";
             this.txtContraseña.Size = new System.Drawing.Size(336, 36);
             this.txtContraseña.TabIndex = 2;
@@ -133,7 +134,7 @@
             this.txtMail.Location = new System.Drawing.Point(32, 135);
             this.txtMail.Name = "txtMail";
             this.txtMail.PlaceholderForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(116)))), ((int)(((byte)(139)))));
-            this.txtMail.PlaceholderText = "tu@email.com";
+            this.txtMail.PlaceholderText = "Ingresa tu mail";
             this.txtMail.SelectedText = "";
             this.txtMail.Size = new System.Drawing.Size(336, 36);
             this.txtMail.TabIndex = 1;
@@ -165,7 +166,7 @@
             this.lblTitulo.AutoSize = true;
             this.lblTitulo.Font = new System.Drawing.Font("Segoe UI Semibold", 20F, System.Drawing.FontStyle.Bold);
             this.lblTitulo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(167)))), ((int)(((byte)(139)))), ((int)(((byte)(250)))));
-            this.lblTitulo.Location = new System.Drawing.Point(30, 30);
+            this.lblTitulo.Location = new System.Drawing.Point(28, 30);
             this.lblTitulo.Name = "lblTitulo";
             this.lblTitulo.Size = new System.Drawing.Size(179, 37);
             this.lblTitulo.TabIndex = 0;
@@ -176,13 +177,14 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(15)))), ((int)(((byte)(23)))), ((int)(((byte)(42)))));
-            this.ClientSize = new System.Drawing.Size(411, 450);
+            this.ClientSize = new System.Drawing.Size(427, 465);
             this.Controls.Add(this.pnlContenedor);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "frmInicioSesion";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "frmInicioSesion";
+            this.Text = "Inicio Sesión";
+            this.Load += new System.EventHandler(this.frmInicioSesion_Load);
             this.pnlContenedor.ResumeLayout(false);
             this.pnlContenedor.PerformLayout();
             this.ResumeLayout(false);

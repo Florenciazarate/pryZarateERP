@@ -36,7 +36,7 @@
             this.dgvJugadores = new Guna.UI2.WinForms.Guna2DataGridView();
             this.lblListado = new System.Windows.Forms.Label();
             this.pnlEstado = new Guna.UI2.WinForms.Guna2Panel();
-            this.lblEstadoConexion = new System.Windows.Forms.Label();
+            this.lblEstado = new System.Windows.Forms.Label();
             this.pnlHeader = new Guna.UI2.WinForms.Guna2Panel();
             this.lblSubtitulo = new System.Windows.Forms.Label();
             this.lblTitulo = new System.Windows.Forms.Label();
@@ -131,9 +131,9 @@
             this.lblListado.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(226)))), ((int)(((byte)(232)))), ((int)(((byte)(240)))));
             this.lblListado.Location = new System.Drawing.Point(18, 15);
             this.lblListado.Name = "lblListado";
-            this.lblListado.Size = new System.Drawing.Size(72, 19);
+            this.lblListado.Size = new System.Drawing.Size(58, 19);
             this.lblListado.TabIndex = 0;
-            this.lblListado.Text = "Jugadores";
+            this.lblListado.Text = "Persona";
             // 
             // pnlEstado
             // 
@@ -141,23 +141,23 @@
             this.pnlEstado.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(116)))), ((int)(((byte)(139)))));
             this.pnlEstado.BorderRadius = 8;
             this.pnlEstado.BorderThickness = 1;
-            this.pnlEstado.Controls.Add(this.lblEstadoConexion);
+            this.pnlEstado.Controls.Add(this.lblEstado);
             this.pnlEstado.Location = new System.Drawing.Point(24, 132);
             this.pnlEstado.Name = "pnlEstado";
             this.pnlEstado.Padding = new System.Windows.Forms.Padding(15);
             this.pnlEstado.Size = new System.Drawing.Size(752, 50);
             this.pnlEstado.TabIndex = 4;
             // 
-            // lblEstadoConexion
+            // lblEstado
             // 
-            this.lblEstadoConexion.AutoSize = true;
-            this.lblEstadoConexion.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
-            this.lblEstadoConexion.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(226)))), ((int)(((byte)(232)))), ((int)(((byte)(240)))));
-            this.lblEstadoConexion.Location = new System.Drawing.Point(18, 17);
-            this.lblEstadoConexion.Name = "lblEstadoConexion";
-            this.lblEstadoConexion.Size = new System.Drawing.Size(123, 15);
-            this.lblEstadoConexion.TabIndex = 0;
-            this.lblEstadoConexion.Text = "Estado: conectando...";
+            this.lblEstado.AutoSize = true;
+            this.lblEstado.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
+            this.lblEstado.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(226)))), ((int)(((byte)(232)))), ((int)(((byte)(240)))));
+            this.lblEstado.Location = new System.Drawing.Point(18, 17);
+            this.lblEstado.Name = "lblEstado";
+            this.lblEstado.Size = new System.Drawing.Size(123, 15);
+            this.lblEstado.TabIndex = 0;
+            this.lblEstado.Text = "Estado: conectando...";
             // 
             // pnlHeader
             // 
@@ -177,9 +177,9 @@
             this.lblSubtitulo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(148)))), ((int)(((byte)(163)))), ((int)(((byte)(184)))));
             this.lblSubtitulo.Location = new System.Drawing.Point(24, 50);
             this.lblSubtitulo.Name = "lblSubtitulo";
-            this.lblSubtitulo.Size = new System.Drawing.Size(218, 15);
+            this.lblSubtitulo.Size = new System.Drawing.Size(137, 15);
             this.lblSubtitulo.TabIndex = 1;
-            this.lblSubtitulo.Text = "Lista de jugadores registrados en la base";
+            this.lblSubtitulo.Text = "Gracias por iniciar sesión";
             // 
             // lblTitulo
             // 
@@ -188,9 +188,9 @@
             this.lblTitulo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(167)))), ((int)(((byte)(139)))), ((int)(((byte)(250)))));
             this.lblTitulo.Location = new System.Drawing.Point(22, 14);
             this.lblTitulo.Name = "lblTitulo";
-            this.lblTitulo.Size = new System.Drawing.Size(178, 32);
+            this.lblTitulo.Size = new System.Drawing.Size(231, 32);
             this.lblTitulo.TabIndex = 0;
-            this.lblTitulo.Text = "Jugadores RPG";
+            this.lblTitulo.Text = "Bienvenido, Usuario";
             // 
             // frmPrincipal
             // 
@@ -224,7 +224,7 @@
         private Guna.UI2.WinForms.Guna2DataGridView dgvJugadores;
         private System.Windows.Forms.Label lblListado;
         private Guna.UI2.WinForms.Guna2Panel pnlEstado;
-        private System.Windows.Forms.Label lblEstadoConexion;
+        private System.Windows.Forms.Label lblEstado;
         private Guna.UI2.WinForms.Guna2Panel pnlHeader;
         private System.Windows.Forms.Label lblSubtitulo;
         private System.Windows.Forms.Label lblTitulo;
