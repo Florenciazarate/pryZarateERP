@@ -1,0 +1,79 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Data.OleDb;
+using System.Linq;
+using System.Text;
+using System.IO; 
+using System.Threading.Tasks;
+
+namespace pryZarateERP
+{
+    internal class clsBaseDatos
+    {
+    public class BaseDatosAccess
+        {
+            private string _connectionString; // La cadena de conexión que se arma al abrir un archivo.
+            private string _rutaArchivo;       // Ruta del archivo de Access actualmente conectado.
+
+            public string RutaArchivo => _rutaArchivo; // Devuelve la ruta del archivo conectado.
+            public bool EstaConectado => !string.IsNullOrEmpty(_connectionString); // True si hay una conexión configurada.
+
+            // Conecta a un archivo de Access usando el provider ACE OLEDB 12.0.
+            public bool Conectar(string rutaArchivo, out string errorMessage)
+            {
+                errorMessage = null;
+
+                if (!File.Exists(rutaArchivo)) // Si el archivo no existe, error.
+                {
+                    errorMessage = "El archivo no existe.";
+                    return false;
+                }
+
+                // Armo la cadena de conexión con el provider ACE OLEDB 12.0 y la ruta del archivo.
+                _connectionString = $"Provider=Microsoft.ACE.OLEDB.12.0;Data Source={rutaArchivo};Persist Security Info=False;";
+                _rutaArchivo = rutaArchivo;
+                return true;
+            }
+
+            // Devuelve los nombres de todas las tablas de usuario en la base (sin las del sistema MSys*).
+            public DataTable ObtenerTablas()
+            {
+                var tablas = new DataTable();
+                tablas.Columns.Add("TABLE_NAME");
+
+                using (var conn = new OleDbConnection(_connectionString))
+                {
+                    conn.Open();
+                    var schema = conn.GetSchema("Tables"); // Pido a la conexión el esquema de tablas.
+
+                    foreach (DataRow row in schema.Rows)
+                    {
+                        var nombre = row["TABLE_NAME"]?.ToString();
+                        var tipo = row["TABLE_TYPE"]?.ToString();
+
+                        if (string.IsNullOrWhiteSpace(nombre)) continue;
+                        if (nombre.StartsWith("MSys", StringComparison.OrdinalIgnoreCase)) continue; // Las MSys son del sistema, las salto.
+                        if (tipo != null && tipo.ToUpperInvariant() != "TABLE") continue; // Solo tablas (no vistas ni internas).
+
+                        tablas.Rows.Add(nombre);
+                    }
+                }
+
+                return tablas;
+            }
+
+            // Devuelve todos los datos de una tabla.
+            public DataTable ObtenerDatosDeTabla(string nombreTabla)
+            {
+                var datos = new DataTable();
+                using (var conn = new OleDbConnection(_connectionString))
+                using (var da = new OleDbDataAdapter($"SELECT * FROM [{nombreTabla}]", conn)) // Uso corchetes por si el nombre tiene espacios.
+                {
+                    da.Fill(datos);
+                }
+                return datos;
+            }
+        }
+    }
+}
