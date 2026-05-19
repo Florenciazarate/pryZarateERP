@@ -77,17 +77,17 @@ namespace pryZarateERP
 
                 // Comprobar que exista tabla de usuarios
                 var tablas = _bd.ObtenerTablas();
-                bool tieneUsuarios = tablas.AsEnumerable().Any(r => string.Equals(r.Field<string>("TABLE_NAME"), "Usuarios", StringComparison.OrdinalIgnoreCase));
-                if (!tieneUsuarios)
+                bool tieneUsuario = tablas.AsEnumerable().Any(r => string.Equals(r.Field<string>("TABLE_NAME"), "Usuario", StringComparison.OrdinalIgnoreCase));
+                if (!tieneUsuario)
                 {
-                    error = "No se encontró la tabla 'Usuarios' en la base de datos.";
+                    error = "No se encontró la tabla 'Usuario' en la base de datos.";
                     return false;
                 }
 
-                var dt = _bd.ObtenerDatosDeTabla("Usuarios");
+                var dt = _bd.ObtenerDatosDeTabla("Usuario");
                 if (dt == null || dt.Rows.Count == 0)
                 {
-                    error = "No hay registros en la tabla 'Usuarios'.";
+                    error = "No hay registros en la tabla 'Usuario'.";
                     return false;
                 }
 

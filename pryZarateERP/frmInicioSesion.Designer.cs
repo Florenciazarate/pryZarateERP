@@ -60,7 +60,6 @@
             this.pnlContenedor.Padding = new System.Windows.Forms.Padding(30);
             this.pnlContenedor.Size = new System.Drawing.Size(400, 440);
             this.pnlContenedor.TabIndex = 1;
-            this.pnlContenedor.Paint += new System.Windows.Forms.PaintEventHandler(this.pnlContenedor_Paint);
             // 
             // lblError
             // 
