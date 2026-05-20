@@ -1,27 +1,30 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
+using System;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace pryZarateERP
 {
     public partial class frmInicioSesion : Form
     {
-
-        private readonly clsBaseDatos.BaseDatosAccess _bd = new clsBaseDatos.BaseDatosAccess();
-        private string _rutaBaseDatos = @"C:\Users\Alumno\source\repos\pryZarateERP\pryZarateERP\BaseDatos\Zarate.accdb";
+        private int intentosFallidos = 0;
+        private const int MaxIntentos = 3;
 
         public frmInicioSesion()
         {
             InitializeComponent();
             lblError.Text = string.Empty;
-            // wire event in case designer didn't
-            btnAceptar.Click += btnAceptar_Click;
+            btnAceptar.Enabled = false;
+        }
+
+        private void ValidarCampos(object sender, EventArgs e)
+        {
+            if (intentosFallidos >= MaxIntentos) return;
+            btnAceptar.Enabled = txtMail.Text.Trim().Length > 0 && txtContraseña.Text.Length > 0;
+        }
+
+        private void frmInicioSesion_Load(object sender, EventArgs e)
+        {
+            clsBaseDatos.CrearTablaAuditoriaSiNoExiste();
         }
 
         private void btnAceptar_Click(object sender, EventArgs e)
@@ -29,29 +32,15 @@ namespace pryZarateERP
             string mail = txtMail.Text.Trim();
             string password = txtContraseña.Text;
 
-            if (string.IsNullOrEmpty(mail) || string.IsNullOrEmpty(password))
-            {
-                lblError.ForeColor = Color.IndianRed;
-                lblError.Text = "Debe completar mail y contraseña.";
-                return;
-            }
-            string error;
-            bool connected = _bd.Conectar(_rutaBaseDatos, out error);
-            if (!connected)
-            {
-                lblError.ForeColor = Color.IndianRed;
-                lblError.Text = "Error al conectar a la base de datos: " + error;
-                return;
-            }
+            string nombreUsuario, rol;
+            bool ok = clsBaseDatos.ValidarUsuario(mail, password, out nombreUsuario, out rol);
 
-            bool ok = ValidarUsuario(mail, password, out error);
+            clsBaseDatos.RegistrarAuditoria(mail, ok);
 
             if (ok)
             {
-                lblError.ForeColor = Color.LimeGreen;
-                lblError.Text = "Ingreso correcto. Bienvenido.";
                 this.Hide();
-                using (var principal = new frmPrincipal())
+                using (var principal = new frmPrincipal(nombreUsuario, rol, DateTime.Now))
                 {
                     principal.ShowDialog();
                 }
@@ -59,67 +48,13 @@ namespace pryZarateERP
             }
             else
             {
+                intentosFallidos++;
                 lblError.ForeColor = Color.IndianRed;
-                lblError.Text = error ?? "Usuario o contraseña incorrectos.";
+                lblError.Text = intentosFallidos >= MaxIntentos
+                    ? "Cuenta bloqueada tras 3 intentos fallidos."
+                    : "Mail o contraseña incorrecta.";
+                btnAceptar.Enabled = intentosFallidos < MaxIntentos;
             }
-        }
-
-        private bool ValidarUsuario(string mail, string password, out string error)
-        {
-            error = null;
-            try
-            {
-                if (!_bd.EstaConectado)
-                {
-                    error = "No hay conexión a la base de datos.";
-                    return false;
-                }
-
-                // Comprobar que exista tabla de usuarios
-                var tablas = _bd.ObtenerTablas();
-                bool tieneUsuario = tablas.AsEnumerable().Any(r => string.Equals(r.Field<string>("TABLE_NAME"), "Usuario", StringComparison.OrdinalIgnoreCase));
-                if (!tieneUsuario)
-                {
-                    error = "No se encontró la tabla 'Usuario' en la base de datos.";
-                    return false;
-                }
-
-                var dt = _bd.ObtenerDatosDeTabla("Usuario");
-                if (dt == null || dt.Rows.Count == 0)
-                {
-                    error = "No hay registros en la tabla 'Usuario'.";
-                    return false;
-                }
-
-                // Intentar detectar columnas comunes para mail y contraseña
-                var mailCandidates = new[] { "Mail", "Email", "Usuario", "usuario", "mail", "email" };
-                var passCandidates = new[] { "Password", "Contraseña", "Contrasena", "Clave", "clave", "password" };
-
-                string mailCol = dt.Columns.Cast<DataColumn>().Select(c => c.ColumnName).FirstOrDefault(cn => mailCandidates.Contains(cn));
-                string passCol = dt.Columns.Cast<DataColumn>().Select(c => c.ColumnName).FirstOrDefault(cn => passCandidates.Contains(cn));
-
-                if (mailCol == null || passCol == null)
-                {
-                    error = "No se encontraron las columnas de mail/contraseña en la tabla 'Usuarios'.";
-                    return false;
-                }
-
-                var match = dt.AsEnumerable().FirstOrDefault(r => string.Equals((r[mailCol] ?? string.Empty).ToString().Trim(), mail, StringComparison.OrdinalIgnoreCase)
-                    && string.Equals((r[passCol] ?? string.Empty).ToString(), password));
-
-                return match != null;
-            }
-            catch (Exception ex)
-            {
-                error = ex.Message;
-                return false;
-            }
-        }
-
-        private void frmInicioSesion_Load(object sender, EventArgs e)
-        {
-
         }
     }
 }
-

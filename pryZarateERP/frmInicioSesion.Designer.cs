@@ -86,6 +86,7 @@
             this.btnAceptar.Size = new System.Drawing.Size(336, 42);
             this.btnAceptar.TabIndex = 3;
             this.btnAceptar.Text = "Ingresar";
+            this.btnAceptar.Click += new System.EventHandler(this.btnAceptar_Click);
             // 
             // txtContraseña
             // 
@@ -107,6 +108,7 @@
             this.txtContraseña.Size = new System.Drawing.Size(336, 36);
             this.txtContraseña.TabIndex = 2;
             this.txtContraseña.UseSystemPasswordChar = true;
+            this.txtContraseña.TextChanged += new System.EventHandler(this.ValidarCampos);
             // 
             // lblContraseña
             // 
@@ -137,6 +139,7 @@
             this.txtMail.SelectedText = "";
             this.txtMail.Size = new System.Drawing.Size(336, 36);
             this.txtMail.TabIndex = 1;
+            this.txtMail.TextChanged += new System.EventHandler(this.ValidarCampos);
             // 
             // lblMail
             // 

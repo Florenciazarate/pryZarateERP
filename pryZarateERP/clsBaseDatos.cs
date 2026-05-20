@@ -1,110 +1,116 @@
-﻿using System;
-using System.Collections.Generic;
+using System;
 using System.Data;
 using System.Data.OleDb;
-using System.Linq;
-using System.Text;
-using System.IO; 
-using System.Threading.Tasks;
+using System.IO;
+using System.Windows.Forms;
 
 namespace pryZarateERP
 {
     internal class clsBaseDatos
     {
-    public class BaseDatosAccess
+        private static string _connectionString;
+
+        private static string ObtenerConnectionString()
         {
-            private string _connectionString; // La cadena de conexión que se arma al abrir un archivo.
-            private string _rutaArchivo;       // Ruta del archivo de Access actualmente conectado.
+            if (_connectionString != null) return _connectionString;
 
-            public string RutaArchivo => _rutaArchivo; // Devuelve la ruta del archivo conectado.
-            public bool EstaConectado => !string.IsNullOrEmpty(_connectionString); // True si hay una conexión configurada.
+            string ruta = Path.Combine(Application.StartupPath, "BaseDatos", "Zarate.accdb");
+            string[] providers = { "Microsoft.ACE.OLEDB.12.0", "Microsoft.ACE.OLEDB.16.0" };
 
-            // Conecta a un archivo de Access usando el provider ACE OLEDB (intenta varias versiones).
-            public bool Conectar(string rutaArchivo, out string errorMessage)
+            foreach (var prov in providers)
             {
-                errorMessage = null;
-
-                if (!File.Exists(rutaArchivo)) // Si el archivo no existe, error.
+                var cs = $"Provider={prov};Data Source={ruta};Persist Security Info=False;";
+                try
                 {
-                    errorMessage = "El archivo no existe.";
-                    return false;
+                    using (var conn = new OleDbConnection(cs))
+                        conn.Open();
+                    _connectionString = cs;
+                    return _connectionString;
                 }
-
-                // Proveedores a intentar en orden.
-                var providers = new[] { "Microsoft.ACE.OLEDB.12.0", "Microsoft.ACE.OLEDB.16.0" };
-                Exception lastEx = null;
-
-                foreach (var provider in providers)
-                {
-                    var connString = $"Provider={provider};Data Source={rutaArchivo};Persist Security Info=False;";
-                    try
-                    {
-                        using (var conn = new OleDbConnection(connString))
-                        {
-                            conn.Open(); // Intento abrir para validar proveedor.
-                            // Si abre correctamente, guardo la cadena y la ruta.
-                            _connectionString = connString;
-                            _rutaArchivo = rutaArchivo;
-                            return true;
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        lastEx = ex; // guardo para el mensaje final y pruebo siguiente proveedor
-                    }
-                }
-
-                // Si llegamos acá, ninguno de los proveedores funcionó.
-                if (lastEx != null)
-                {
-                    errorMessage = lastEx.Message + " Asegúrese de tener instalado Microsoft Access Database Engine (ACE) apropiado para su plataforma (12.0 o 16.0).";
-                }
-                else
-                {
-                    errorMessage = "No se pudo conectar por un error desconocido.";
-                }
-
-                return false;
+                catch { }
             }
 
-            // Devuelve los nombres de todas las tablas de usuario en la base (sin las del sistema MSys*).
-            public DataTable ObtenerTablas()
-            {
-                var tablas = new DataTable();
-                tablas.Columns.Add("TABLE_NAME");
+            throw new Exception("No se pudo conectar. Verificá que tenés instalado Microsoft Access Database Engine.");
+        }
 
-                using (var conn = new OleDbConnection(_connectionString))
+        public static bool ValidarUsuario(string mail, string password, out string nombreUsuario, out string rol)
+        {
+            nombreUsuario = null;
+            rol = null;
+
+            try
+            {
+                using (var conn = new OleDbConnection(ObtenerConnectionString()))
                 {
                     conn.Open();
-                    var schema = conn.GetSchema("Tables"); // Pido a la conexión el esquema de tablas.
-
-                    foreach (DataRow row in schema.Rows)
+                    string sql = "SELECT U.Nombre, U.Apellido, P._Nombre " +
+                                 "FROM (Usuario U " +
+                                 "INNER JOIN [Relacion-Usuario-Perfil] R ON U.ID_Usuario = R.ID_Usuario) " +
+                                 "INNER JOIN Perfil P ON R.ID_Perfil = P.ID_Perfil " +
+                                 "WHERE U.Mail = ? AND U.Contraseña = ?";
+                    using (var cmd = new OleDbCommand(sql, conn))
                     {
-                        var nombre = row["TABLE_NAME"]?.ToString();
-                        var tipo = row["TABLE_TYPE"]?.ToString();
-
-                        if (string.IsNullOrWhiteSpace(nombre)) continue;
-                        if (nombre.StartsWith("MSys", StringComparison.OrdinalIgnoreCase)) continue; // Las MSys son del sistema, las salto.
-                        if (tipo != null && tipo.ToUpperInvariant() != "TABLE") continue; // Solo tablas (no vistas ni internas).
-
-                        tablas.Rows.Add(nombre);
+                        cmd.Parameters.AddWithValue("?", mail);
+                        cmd.Parameters.AddWithValue("?", password);
+                        using (var reader = cmd.ExecuteReader())
+                        {
+                            if (reader.Read())
+                            {
+                                nombreUsuario = reader["Nombre"] + " " + reader["Apellido"];
+                                rol = reader["_Nombre"].ToString();
+                                return true;
+                            }
+                        }
                     }
                 }
-
-                return tablas;
+                return false;
             }
-
-            // Devuelve todos los datos de una tabla.
-            public DataTable ObtenerDatosDeTabla(string nombreTabla)
+            catch
             {
-                var datos = new DataTable();
-                using (var conn = new OleDbConnection(_connectionString))
-                using (var da = new OleDbDataAdapter($"SELECT * FROM [{nombreTabla}]", conn)) // Uso corchetes por si el nombre tiene espacios.
-                {
-                    da.Fill(datos);
-                }
-                return datos;
+                return false;
             }
+        }
+
+        public static void CrearTablaAuditoriaSiNoExiste()
+        {
+            try
+            {
+                using (var conn = new OleDbConnection(ObtenerConnectionString()))
+                {
+                    conn.Open();
+                    var schema = conn.GetSchema("Tables");
+                    foreach (DataRow row in schema.Rows)
+                    {
+                        if (row["TABLE_NAME"].ToString() == "AuditoriaSesion")
+                            return;
+                    }
+                    using (var cmd = new OleDbCommand(
+                        "CREATE TABLE AuditoriaSesion (Id AUTOINCREMENT PRIMARY KEY, FechaHora DATETIME, Usuario TEXT(100), Exitoso YESNO)", conn))
+                    {
+                        cmd.ExecuteNonQuery();
+                    }
+                }
+            }
+            catch { }
+        }
+
+        public static void RegistrarAuditoria(string usuario, bool exitoso)
+        {
+            try
+            {
+                using (var conn = new OleDbConnection(ObtenerConnectionString()))
+                {
+                    conn.Open();
+                    using (var cmd = new OleDbCommand("INSERT INTO AuditoriaSesion (FechaHora, Usuario, Exitoso) VALUES (?, ?, ?)", conn))
+                    {
+                        cmd.Parameters.AddWithValue("?", DateTime.Now);
+                        cmd.Parameters.AddWithValue("?", usuario);
+                        cmd.Parameters.AddWithValue("?", exitoso);
+                        cmd.ExecuteNonQuery();
+                    }
+                }
+            }
+            catch { }
         }
     }
 }
