@@ -17,6 +17,7 @@ namespace pryZarateERP
 
         private void frmPrincipal_Load(object sender, EventArgs e)
         {
+            dgvJugadores.DataSource = clsBaseDatos.ObtenerAuditoria();
         }
     }
 }

@@ -133,7 +133,7 @@
             this.lblListado.Name = "lblListado";
             this.lblListado.Size = new System.Drawing.Size(58, 19);
             this.lblListado.TabIndex = 0;
-            this.lblListado.Text = "Persona";
+            this.lblListado.Text = "Auditoría de Sesión";
             // 
             // pnlEstado
             // 
@@ -188,9 +188,8 @@
             this.lblTitulo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(167)))), ((int)(((byte)(139)))), ((int)(((byte)(250)))));
             this.lblTitulo.Location = new System.Drawing.Point(22, 14);
             this.lblTitulo.Name = "lblTitulo";
-            this.lblTitulo.Size = new System.Drawing.Size(231, 32);
+            this.lblTitulo.Size = new System.Drawing.Size(0, 32);
             this.lblTitulo.TabIndex = 0;
-            this.lblTitulo.Text = "Bienvenido, Usuario";
             // 
             // frmPrincipal
             // 
@@ -201,7 +200,7 @@
             this.Controls.Add(this.pnlGrilla);
             this.Controls.Add(this.pnlEstado);
             this.Controls.Add(this.pnlHeader);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "frmPrincipal";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;

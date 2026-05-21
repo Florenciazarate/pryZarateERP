@@ -43,7 +43,7 @@ namespace pryZarateERP
                 using (var conn = new OleDbConnection(ObtenerConnectionString()))
                 {
                     conn.Open();
-                    string sql = "SELECT U.Nombre, U.Apellido, P._Nombre " +
+                    string sql = "SELECT U.Nombre, U.Apellido, P.[_Nombre] " +
                                  "FROM (Usuario U " +
                                  "INNER JOIN [Relacion-Usuario-Perfil] R ON U.ID_Usuario = R.ID_Usuario) " +
                                  "INNER JOIN Perfil P ON R.ID_Perfil = P.ID_Perfil " +
@@ -56,7 +56,7 @@ namespace pryZarateERP
                         {
                             if (reader.Read())
                             {
-                                nombreUsuario = reader["Nombre"] + " " + reader["Apellido"];
+                                nombreUsuario = reader["Nombre"].ToString();
                                 rol = reader["_Nombre"].ToString();
                                 return true;
                             }
@@ -111,6 +111,21 @@ namespace pryZarateERP
                 }
             }
             catch { }
+        }
+
+        public static DataTable ObtenerAuditoria()
+        {
+            var tabla = new DataTable();
+            try
+            {
+                using (var conn = new OleDbConnection(ObtenerConnectionString()))
+                using (var da = new OleDbDataAdapter("SELECT FechaHora, Usuario, Exitoso FROM AuditoriaSesion ORDER BY FechaHora DESC", conn))
+                {
+                    da.Fill(tabla);
+                }
+            }
+            catch { }
+            return tabla;
         }
     }
 }
