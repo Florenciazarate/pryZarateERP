@@ -71,7 +71,7 @@ namespace pryZarateERP
             }
         }
 
-        public static void CrearTablaAuditoriaSiNoExiste()
+        public static void CrearTablaAuditoriaSiNoExiste() 
         {
             try
             {

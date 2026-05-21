@@ -38,6 +38,8 @@
             this.lblMail = new System.Windows.Forms.Label();
             this.lblSubtitulo = new System.Windows.Forms.Label();
             this.lblTitulo = new System.Windows.Forms.Label();
+            this.cmbPerfil = new Guna.UI2.WinForms.Guna2ComboBox();
+            this.lblPerfil = new System.Windows.Forms.Label();
             this.pnlContenedor.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -47,6 +49,8 @@
             this.pnlContenedor.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(116)))), ((int)(((byte)(139)))));
             this.pnlContenedor.BorderRadius = 12;
             this.pnlContenedor.BorderThickness = 1;
+            this.pnlContenedor.Controls.Add(this.lblPerfil);
+            this.pnlContenedor.Controls.Add(this.cmbPerfil);
             this.pnlContenedor.Controls.Add(this.lblError);
             this.pnlContenedor.Controls.Add(this.btnAceptar);
             this.pnlContenedor.Controls.Add(this.txtContraseña);
@@ -65,9 +69,9 @@
             // 
             this.lblError.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.lblError.ForeColor = System.Drawing.Color.IndianRed;
-            this.lblError.Location = new System.Drawing.Point(32, 330);
+            this.lblError.Location = new System.Drawing.Point(32, 381);
             this.lblError.Name = "lblError";
-            this.lblError.Size = new System.Drawing.Size(336, 80);
+            this.lblError.Size = new System.Drawing.Size(336, 29);
             this.lblError.TabIndex = 7;
             this.lblError.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
@@ -81,7 +85,7 @@
             this.btnAceptar.Font = new System.Drawing.Font("Segoe UI Semibold", 10F, System.Drawing.FontStyle.Bold);
             this.btnAceptar.ForeColor = System.Drawing.Color.White;
             this.btnAceptar.HoverState.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(167)))), ((int)(((byte)(139)))), ((int)(((byte)(250)))));
-            this.btnAceptar.Location = new System.Drawing.Point(32, 270);
+            this.btnAceptar.Location = new System.Drawing.Point(31, 336);
             this.btnAceptar.Name = "btnAceptar";
             this.btnAceptar.Size = new System.Drawing.Size(336, 42);
             this.btnAceptar.TabIndex = 3;
@@ -174,12 +178,41 @@
             this.lblTitulo.TabIndex = 0;
             this.lblTitulo.Text = "Iniciar Sesion";
             // 
+            // cmbPerfil
+            // 
+            this.cmbPerfil.BackColor = System.Drawing.Color.Transparent;
+            this.cmbPerfil.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(116)))), ((int)(((byte)(139)))));
+            this.cmbPerfil.BorderRadius = 6;
+            this.cmbPerfil.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
+            this.cmbPerfil.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbPerfil.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(15)))), ((int)(((byte)(23)))), ((int)(((byte)(42)))));
+            this.cmbPerfil.FocusedColor = System.Drawing.Color.FromArgb(((int)(((byte)(94)))), ((int)(((byte)(148)))), ((int)(((byte)(255)))));
+            this.cmbPerfil.FocusedState.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(94)))), ((int)(((byte)(148)))), ((int)(((byte)(255)))));
+            this.cmbPerfil.Font = new System.Drawing.Font("Segoe UI", 10F);
+            this.cmbPerfil.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(68)))), ((int)(((byte)(88)))), ((int)(((byte)(112)))));
+            this.cmbPerfil.ItemHeight = 30;
+            this.cmbPerfil.Location = new System.Drawing.Point(33, 277);
+            this.cmbPerfil.Name = "cmbPerfil";
+            this.cmbPerfil.Size = new System.Drawing.Size(336, 36);
+            this.cmbPerfil.TabIndex = 8;
+            // 
+            // lblPerfil
+            // 
+            this.lblPerfil.AutoSize = true;
+            this.lblPerfil.Font = new System.Drawing.Font("Segoe UI Semibold", 9F, System.Drawing.FontStyle.Bold);
+            this.lblPerfil.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(226)))), ((int)(((byte)(232)))), ((int)(((byte)(240)))));
+            this.lblPerfil.Location = new System.Drawing.Point(32, 257);
+            this.lblPerfil.Name = "lblPerfil";
+            this.lblPerfil.Size = new System.Drawing.Size(34, 15);
+            this.lblPerfil.TabIndex = 9;
+            this.lblPerfil.Text = "Perfil";
+            // 
             // frmInicioSesion
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(15)))), ((int)(((byte)(23)))), ((int)(((byte)(42)))));
-            this.ClientSize = new System.Drawing.Size(427, 465);
+            this.ClientSize = new System.Drawing.Size(426, 465);
             this.Controls.Add(this.pnlContenedor);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
@@ -204,5 +237,7 @@
         private System.Windows.Forms.Label lblMail;
         private System.Windows.Forms.Label lblSubtitulo;
         private System.Windows.Forms.Label lblTitulo;
+        private Guna.UI2.WinForms.Guna2ComboBox cmbPerfil;
+        private System.Windows.Forms.Label lblPerfil;
     }
 }

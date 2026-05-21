@@ -38,8 +38,8 @@
             this.pnlEstado = new Guna.UI2.WinForms.Guna2Panel();
             this.lblEstado = new System.Windows.Forms.Label();
             this.pnlHeader = new Guna.UI2.WinForms.Guna2Panel();
-            this.lblSubtitulo = new System.Windows.Forms.Label();
             this.lblTitulo = new System.Windows.Forms.Label();
+            this.lblSubtitulo = new System.Windows.Forms.Label();
             this.pnlGrilla.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvJugadores)).BeginInit();
             this.pnlEstado.SuspendLayout();
@@ -57,10 +57,10 @@
             this.pnlGrilla.BorderThickness = 1;
             this.pnlGrilla.Controls.Add(this.dgvJugadores);
             this.pnlGrilla.Controls.Add(this.lblListado);
-            this.pnlGrilla.Location = new System.Drawing.Point(24, 197);
+            this.pnlGrilla.Location = new System.Drawing.Point(24, 160);
             this.pnlGrilla.Name = "pnlGrilla";
             this.pnlGrilla.Padding = new System.Windows.Forms.Padding(15);
-            this.pnlGrilla.Size = new System.Drawing.Size(752, 410);
+            this.pnlGrilla.Size = new System.Drawing.Size(752, 330);
             this.pnlGrilla.TabIndex = 5;
             // 
             // dgvJugadores
@@ -100,7 +100,7 @@
             this.dgvJugadores.ReadOnly = true;
             this.dgvJugadores.RowHeadersVisible = false;
             this.dgvJugadores.RowTemplate.Height = 32;
-            this.dgvJugadores.Size = new System.Drawing.Size(716, 350);
+            this.dgvJugadores.Size = new System.Drawing.Size(716, 270);
             this.dgvJugadores.TabIndex = 1;
             this.dgvJugadores.ThemeStyle.AlternatingRowsStyle.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(40)))), ((int)(((byte)(51)))), ((int)(((byte)(69)))));
             this.dgvJugadores.ThemeStyle.AlternatingRowsStyle.Font = null;
@@ -131,7 +131,7 @@
             this.lblListado.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(226)))), ((int)(((byte)(232)))), ((int)(((byte)(240)))));
             this.lblListado.Location = new System.Drawing.Point(18, 15);
             this.lblListado.Name = "lblListado";
-            this.lblListado.Size = new System.Drawing.Size(58, 19);
+            this.lblListado.Size = new System.Drawing.Size(131, 19);
             this.lblListado.TabIndex = 0;
             this.lblListado.Text = "Auditoría de Sesión";
             // 
@@ -142,7 +142,7 @@
             this.pnlEstado.BorderRadius = 8;
             this.pnlEstado.BorderThickness = 1;
             this.pnlEstado.Controls.Add(this.lblEstado);
-            this.pnlEstado.Location = new System.Drawing.Point(24, 132);
+            this.pnlEstado.Location = new System.Drawing.Point(24, 95);
             this.pnlEstado.Name = "pnlEstado";
             this.pnlEstado.Padding = new System.Windows.Forms.Padding(15);
             this.pnlEstado.Size = new System.Drawing.Size(752, 50);
@@ -170,17 +170,6 @@
             this.pnlHeader.Size = new System.Drawing.Size(800, 80);
             this.pnlHeader.TabIndex = 3;
             // 
-            // lblSubtitulo
-            // 
-            this.lblSubtitulo.AutoSize = true;
-            this.lblSubtitulo.Font = new System.Drawing.Font("Segoe UI", 9F);
-            this.lblSubtitulo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(148)))), ((int)(((byte)(163)))), ((int)(((byte)(184)))));
-            this.lblSubtitulo.Location = new System.Drawing.Point(24, 50);
-            this.lblSubtitulo.Name = "lblSubtitulo";
-            this.lblSubtitulo.Size = new System.Drawing.Size(137, 15);
-            this.lblSubtitulo.TabIndex = 1;
-            this.lblSubtitulo.Text = "Gracias por iniciar sesión";
-            // 
             // lblTitulo
             // 
             this.lblTitulo.AutoSize = true;
@@ -191,12 +180,22 @@
             this.lblTitulo.Size = new System.Drawing.Size(0, 32);
             this.lblTitulo.TabIndex = 0;
             // 
+            // lblSubtitulo
+            // 
+            this.lblSubtitulo.AutoSize = true;
+            this.lblSubtitulo.Font = new System.Drawing.Font("Segoe UI", 9F);
+            this.lblSubtitulo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(148)))), ((int)(((byte)(163)))), ((int)(((byte)(184)))));
+            this.lblSubtitulo.Location = new System.Drawing.Point(26, 50);
+            this.lblSubtitulo.Name = "lblSubtitulo";
+            this.lblSubtitulo.Size = new System.Drawing.Size(0, 15);
+            this.lblSubtitulo.TabIndex = 1;
+            // 
             // frmPrincipal
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(15)))), ((int)(((byte)(23)))), ((int)(((byte)(42)))));
-            this.ClientSize = new System.Drawing.Size(800, 638);
+            this.ClientSize = new System.Drawing.Size(800, 558);
             this.Controls.Add(this.pnlGrilla);
             this.Controls.Add(this.pnlEstado);
             this.Controls.Add(this.pnlHeader);
@@ -225,8 +224,8 @@
         private Guna.UI2.WinForms.Guna2Panel pnlEstado;
         private System.Windows.Forms.Label lblEstado;
         private Guna.UI2.WinForms.Guna2Panel pnlHeader;
-        private System.Windows.Forms.Label lblSubtitulo;
         private System.Windows.Forms.Label lblTitulo;
+        private System.Windows.Forms.Label lblSubtitulo;
     }
 }
 
