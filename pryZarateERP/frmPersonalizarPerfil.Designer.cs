@@ -191,7 +191,7 @@
             this.txtMail.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.txtMail.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(241)))), ((int)(((byte)(245)))), ((int)(((byte)(249)))));
             this.txtMail.HoverState.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(148)))), ((int)(((byte)(163)))), ((int)(((byte)(184)))));
-            this.txtMail.Location = new System.Drawing.Point(121, 509);
+            this.txtMail.Location = new System.Drawing.Point(121, 510);
             this.txtMail.Name = "txtMail";
             this.txtMail.PlaceholderForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(116)))), ((int)(((byte)(139)))));
             this.txtMail.PlaceholderText = "";
