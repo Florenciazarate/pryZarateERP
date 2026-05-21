@@ -85,7 +85,7 @@
             this.btnAceptar.Font = new System.Drawing.Font("Segoe UI Semibold", 10F, System.Drawing.FontStyle.Bold);
             this.btnAceptar.ForeColor = System.Drawing.Color.White;
             this.btnAceptar.HoverState.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(167)))), ((int)(((byte)(139)))), ((int)(((byte)(250)))));
-            this.btnAceptar.Location = new System.Drawing.Point(31, 336);
+            this.btnAceptar.Location = new System.Drawing.Point(31, 337);
             this.btnAceptar.Name = "btnAceptar";
             this.btnAceptar.Size = new System.Drawing.Size(336, 42);
             this.btnAceptar.TabIndex = 3;
