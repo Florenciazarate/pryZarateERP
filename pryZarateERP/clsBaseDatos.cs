@@ -21,7 +21,7 @@ namespace pryZarateERP
             {
                 var cs = $"Provider={prov};Data Source={ruta};Persist Security Info=False;"; //"$"texto con variables dentro
                 try
-                {   
+                {
                     using (var conn = new OleDbConnection(cs)) //usalo y cerralo cuando termines
                         conn.Open();
                     _connectionString = cs;
@@ -56,7 +56,7 @@ namespace pryZarateERP
                         {
                             if (reader.Read()) //si hay un resultado, lee el nombre y rol del usuario
                             {
-                                nombreUsuario = reader["Nombre"].ToString(); 
+                                nombreUsuario = reader["Nombre"].ToString();
                                 rol = reader["_Nombre"].ToString();
                                 return true;
                             }
@@ -85,7 +85,7 @@ namespace pryZarateERP
                             return;
                     }
                     using (var cmd = new OleDbCommand( //si no existe, creala con esta consulta SQL
-                        "CREATE TABLE AuditoriaSesion (Id AUTOINCREMENT PRIMARY KEY, FechaHora DATETIME, Usuario TEXT(100), Exitoso YESNO)", conn)) 
+                        "CREATE TABLE AuditoriaSesion (Id AUTOINCREMENT PRIMARY KEY, FechaHora DATETIME, Usuario TEXT(100), Exitoso YESNO)", conn))
                     {
                         cmd.ExecuteNonQuery(); //ejecuta la consulta sin devolver resultados
                     }
@@ -100,7 +100,7 @@ namespace pryZarateERP
             {
                 using (var conn = new OleDbConnection(ObtenerConnectionString())) //abre la conexión
                 {
-                    conn.Open(); 
+                    conn.Open();
                     using (var cmd = new OleDbCommand("INSERT INTO AuditoriaSesion (FechaHora, Usuario, Exitoso) VALUES (?, ?, ?)", conn)) //prepara la consulta para insertar un nuevo registro con la fecha y hora actual, el usuario y si fue exitoso o no
                     {
                         cmd.Parameters.AddWithValue("?", DateTime.Now); //reemplaza los ? con la fecha y hora actual, el usuario y el resultado del intento de inicio de sesión
@@ -118,8 +118,8 @@ namespace pryZarateERP
             var tabla = new DataTable(); //crea un nuevo DataTable para almacenar los resultados de la consulta
             try //intenta abrir la conexión y ejecutar la consulta para llenar el DataTable con los registros de auditoría
             {
-                using (var conn = new OleDbConnection(ObtenerConnectionString())) 
-                using (var da = new OleDbDataAdapter("SELECT FechaHora, Usuario, Exitoso FROM AuditoriaSesion ORDER BY FechaHora DESC", conn)) 
+                using (var conn = new OleDbConnection(ObtenerConnectionString()))
+                using (var da = new OleDbDataAdapter("SELECT FechaHora, Usuario, Exitoso FROM AuditoriaSesion ORDER BY FechaHora DESC", conn))
                 {
                     da.Fill(tabla); //ejecuta la consulta y llena el DataTable con los resultados
                 }

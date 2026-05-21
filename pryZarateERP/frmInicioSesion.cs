@@ -32,17 +32,16 @@ namespace pryZarateERP
             string mail = txtMail.Text.Trim();
             string password = txtContraseña.Text;
 
-            string nombreUsuario, rol;
-            bool ok = clsBaseDatos.ValidarUsuario(mail, password, out nombreUsuario, out rol);
+            string nombreUsuario, rol; // Variables para almacenar el nombre de usuario y rol obtenidos de la base de datos
+            bool ok = clsBaseDatos.ValidarUsuario(mail, password, out nombreUsuario, out rol); // Validar el usuario y obtener su nombre y rol
+            clsBaseDatos.RegistrarAuditoria(mail, ok); // Registrar el intento de inicio de sesión en la auditoría
 
-            clsBaseDatos.RegistrarAuditoria(mail, ok);
-
-            if (ok)
+            if (ok) // Si la validación es exitosa, abrir el formulario principal
             {
                 this.Hide();
-                using (var principal = new frmPrincipal(nombreUsuario, rol, DateTime.Now))
+                using (var principal = new frmPrincipal(nombreUsuario, rol, DateTime.Now)) // Pasar el nombre de usuario, rol y fecha de inicio de sesión al formulario principal
                 {
-                    principal.ShowDialog();
+                    principal.ShowDialog(); // Mostrar el formulario principal como un diálogo modal
                 }
                 this.Close();
             }
