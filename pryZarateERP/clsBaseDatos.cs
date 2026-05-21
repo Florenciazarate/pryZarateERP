@@ -127,5 +127,22 @@ namespace pryZarateERP
             catch { }
             return tabla;
         }
+        public static DataTable ObtenerPerfiles()
+        {
+            var tabla = new DataTable();
+            try
+            {
+                using (var conn = new OleDbConnection(ObtenerConnectionString()))
+                using (var da = new OleDbDataAdapter("SELECT DISTINCT Perfil FROM Perfil WHERE Perfil IS NOT NULL", conn))
+                {
+                    da.Fill(tabla);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error al cargar perfiles: " + ex.Message);
+            }
+            return tabla;
+        }
     }
 }

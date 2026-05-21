@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmPersonalizarPerfil));
             this.pnlContenedor = new Guna.UI2.WinForms.Guna2Panel();
             this.guna2Button1 = new Guna.UI2.WinForms.Guna2Button();
             this.lblContacto = new System.Windows.Forms.Label();
@@ -57,7 +58,6 @@
             this.lblDni = new System.Windows.Forms.Label();
             this.lblTitulo = new System.Windows.Forms.Label();
             this.guna2Button3 = new Guna.UI2.WinForms.Guna2Button();
-            this.guna2Button2 = new Guna.UI2.WinForms.Guna2Button();
             this.pnlContenedor.SuspendLayout();
             this.guna2Panel1.SuspendLayout();
             this.SuspendLayout();
@@ -211,10 +211,9 @@
             // 
             // guna2Panel1
             // 
-            this.guna2Panel1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(15)))), ((int)(((byte)(23)))), ((int)(((byte)(42)))));
-            this.guna2Panel1.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(116)))), ((int)(((byte)(139)))));
-            this.guna2Panel1.BorderRadius = 20;
-            this.guna2Panel1.BorderThickness = 1;
+            this.guna2Panel1.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(15)))), ((int)(((byte)(23)))), ((int)(((byte)(42)))));
+            this.guna2Panel1.BorderRadius = 15;
+            this.guna2Panel1.BorderThickness = 2;
             this.guna2Panel1.Controls.Add(this.cmbProvincia);
             this.guna2Panel1.Controls.Add(this.lblProvincia);
             this.guna2Panel1.Controls.Add(this.lblLocalidad);
@@ -228,7 +227,7 @@
             this.guna2Panel1.Location = new System.Drawing.Point(17, 219);
             this.guna2Panel1.Name = "guna2Panel1";
             this.guna2Panel1.Padding = new System.Windows.Forms.Padding(30);
-            this.guna2Panel1.Size = new System.Drawing.Size(433, 241);
+            this.guna2Panel1.Size = new System.Drawing.Size(433, 247);
             this.guna2Panel1.TabIndex = 10;
             // 
             // cmbProvincia
@@ -244,7 +243,7 @@
             this.cmbProvincia.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.cmbProvincia.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(68)))), ((int)(((byte)(88)))), ((int)(((byte)(112)))));
             this.cmbProvincia.ItemHeight = 30;
-            this.cmbProvincia.Location = new System.Drawing.Point(112, 187);
+            this.cmbProvincia.Location = new System.Drawing.Point(100, 191);
             this.cmbProvincia.Name = "cmbProvincia";
             this.cmbProvincia.Size = new System.Drawing.Size(300, 36);
             this.cmbProvincia.TabIndex = 10;
@@ -254,7 +253,7 @@
             this.lblProvincia.AutoSize = true;
             this.lblProvincia.Font = new System.Drawing.Font("Segoe UI Semibold", 9F, System.Drawing.FontStyle.Bold);
             this.lblProvincia.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(226)))), ((int)(((byte)(232)))), ((int)(((byte)(240)))));
-            this.lblProvincia.Location = new System.Drawing.Point(41, 199);
+            this.lblProvincia.Location = new System.Drawing.Point(29, 203);
             this.lblProvincia.Name = "lblProvincia";
             this.lblProvincia.Size = new System.Drawing.Size(56, 15);
             this.lblProvincia.TabIndex = 11;
@@ -265,7 +264,7 @@
             this.lblLocalidad.AutoSize = true;
             this.lblLocalidad.Font = new System.Drawing.Font("Segoe UI Semibold", 9F, System.Drawing.FontStyle.Bold);
             this.lblLocalidad.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(226)))), ((int)(((byte)(232)))), ((int)(((byte)(240)))));
-            this.lblLocalidad.Location = new System.Drawing.Point(42, 152);
+            this.lblLocalidad.Location = new System.Drawing.Point(30, 156);
             this.lblLocalidad.Name = "lblLocalidad";
             this.lblLocalidad.Size = new System.Drawing.Size(58, 15);
             this.lblLocalidad.TabIndex = 10;
@@ -284,7 +283,7 @@
             this.cmbLocalidad.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.cmbLocalidad.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(68)))), ((int)(((byte)(88)))), ((int)(((byte)(112)))));
             this.cmbLocalidad.ItemHeight = 30;
-            this.cmbLocalidad.Location = new System.Drawing.Point(112, 140);
+            this.cmbLocalidad.Location = new System.Drawing.Point(100, 144);
             this.cmbLocalidad.Name = "cmbLocalidad";
             this.cmbLocalidad.Size = new System.Drawing.Size(300, 36);
             this.cmbLocalidad.TabIndex = 9;
@@ -319,7 +318,7 @@
             this.cmbGeo.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.cmbGeo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(241)))), ((int)(((byte)(245)))), ((int)(((byte)(249)))));
             this.cmbGeo.HoverState.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(148)))), ((int)(((byte)(163)))), ((int)(((byte)(184)))));
-            this.cmbGeo.Location = new System.Drawing.Point(112, 93);
+            this.cmbGeo.Location = new System.Drawing.Point(100, 97);
             this.cmbGeo.Name = "cmbGeo";
             this.cmbGeo.PlaceholderForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(116)))), ((int)(((byte)(139)))));
             this.cmbGeo.PlaceholderText = "";
@@ -332,7 +331,7 @@
             this.lblGeo.AutoSize = true;
             this.lblGeo.Font = new System.Drawing.Font("Segoe UI Semibold", 9F, System.Drawing.FontStyle.Bold);
             this.lblGeo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(226)))), ((int)(((byte)(232)))), ((int)(((byte)(240)))));
-            this.lblGeo.Location = new System.Drawing.Point(41, 105);
+            this.lblGeo.Location = new System.Drawing.Point(29, 109);
             this.lblGeo.Name = "lblGeo";
             this.lblGeo.Size = new System.Drawing.Size(28, 15);
             this.lblGeo.TabIndex = 4;
@@ -349,7 +348,7 @@
             this.cmbDireccion.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.cmbDireccion.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(241)))), ((int)(((byte)(245)))), ((int)(((byte)(249)))));
             this.cmbDireccion.HoverState.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(148)))), ((int)(((byte)(163)))), ((int)(((byte)(184)))));
-            this.cmbDireccion.Location = new System.Drawing.Point(112, 46);
+            this.cmbDireccion.Location = new System.Drawing.Point(100, 50);
             this.cmbDireccion.Name = "cmbDireccion";
             this.cmbDireccion.PlaceholderForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(116)))), ((int)(((byte)(139)))));
             this.cmbDireccion.PlaceholderText = "";
@@ -362,7 +361,7 @@
             this.lblDireccion.AutoSize = true;
             this.lblDireccion.Font = new System.Drawing.Font("Segoe UI Semibold", 9F, System.Drawing.FontStyle.Bold);
             this.lblDireccion.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(226)))), ((int)(((byte)(232)))), ((int)(((byte)(240)))));
-            this.lblDireccion.Location = new System.Drawing.Point(37, 56);
+            this.lblDireccion.Location = new System.Drawing.Point(25, 60);
             this.lblDireccion.Name = "lblDireccion";
             this.lblDireccion.Size = new System.Drawing.Size(58, 15);
             this.lblDireccion.TabIndex = 2;
@@ -373,7 +372,7 @@
             this.lblDomicilio.AutoSize = true;
             this.lblDomicilio.Font = new System.Drawing.Font("Segoe UI Semibold", 20F, System.Drawing.FontStyle.Bold);
             this.lblDomicilio.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(167)))), ((int)(((byte)(139)))), ((int)(((byte)(250)))));
-            this.lblDomicilio.Location = new System.Drawing.Point(15, 4);
+            this.lblDomicilio.Location = new System.Drawing.Point(16, 10);
             this.lblDomicilio.Name = "lblDomicilio";
             this.lblDomicilio.Size = new System.Drawing.Size(133, 37);
             this.lblDomicilio.TabIndex = 0;
@@ -512,35 +511,18 @@
             this.guna2Button3.TabIndex = 19;
             this.guna2Button3.Text = "Ingresar";
             // 
-            // guna2Button2
-            // 
-            this.guna2Button2.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(139)))), ((int)(((byte)(92)))), ((int)(((byte)(246)))));
-            this.guna2Button2.BorderRadius = 6;
-            this.guna2Button2.BorderThickness = 2;
-            this.guna2Button2.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.guna2Button2.DisabledState.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(63)))), ((int)(((byte)(63)))), ((int)(((byte)(70)))));
-            this.guna2Button2.DisabledState.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(141)))), ((int)(((byte)(141)))), ((int)(((byte)(141)))));
-            this.guna2Button2.FillColor = System.Drawing.Color.Transparent;
-            this.guna2Button2.Font = new System.Drawing.Font("Segoe UI Semibold", 10F, System.Drawing.FontStyle.Bold);
-            this.guna2Button2.ForeColor = System.Drawing.Color.White;
-            this.guna2Button2.HoverState.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(167)))), ((int)(((byte)(139)))), ((int)(((byte)(250)))));
-            this.guna2Button2.Location = new System.Drawing.Point(210, 703);
-            this.guna2Button2.Name = "guna2Button2";
-            this.guna2Button2.Size = new System.Drawing.Size(132, 42);
-            this.guna2Button2.TabIndex = 20;
-            this.guna2Button2.Text = "Ingresar";
-            // 
             // frmPersonalizarPerfil
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(15)))), ((int)(((byte)(23)))), ((int)(((byte)(42)))));
             this.ClientSize = new System.Drawing.Size(504, 749);
-            this.Controls.Add(this.guna2Button2);
             this.Controls.Add(this.guna2Button3);
             this.Controls.Add(this.guna2Button1);
             this.Controls.Add(this.pnlContenedor);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "frmPersonalizarPerfil";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "frmPersonalizarPerfil";
             this.pnlContenedor.ResumeLayout(false);
             this.pnlContenedor.PerformLayout();
@@ -581,6 +563,5 @@
         private System.Windows.Forms.Label lblContacto;
         private Guna.UI2.WinForms.Guna2Button guna2Button1;
         private Guna.UI2.WinForms.Guna2Button guna2Button3;
-        private Guna.UI2.WinForms.Guna2Button guna2Button2;
     }
 }
