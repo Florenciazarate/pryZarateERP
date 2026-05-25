@@ -139,7 +139,7 @@
             this.txtMail.Location = new System.Drawing.Point(32, 135);
             this.txtMail.Name = "txtMail";
             this.txtMail.PlaceholderForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(116)))), ((int)(((byte)(139)))));
-            this.txtMail.PlaceholderText = "Ingresa tu mail";
+            this.txtMail.PlaceholderText = "Ingresa tu usuario";
             this.txtMail.SelectedText = "";
             this.txtMail.Size = new System.Drawing.Size(336, 36);
             this.txtMail.TabIndex = 1;
@@ -154,7 +154,7 @@
             this.lblMail.Name = "lblMail";
             this.lblMail.Size = new System.Drawing.Size(30, 15);
             this.lblMail.TabIndex = 2;
-            this.lblMail.Text = "Mail";
+            this.lblMail.Text = "Usuario";
             // 
             // lblSubtitulo
             // 

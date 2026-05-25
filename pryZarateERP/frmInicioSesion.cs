@@ -24,25 +24,51 @@ namespace pryZarateERP
 
         private void frmInicioSesion_Load(object sender, EventArgs e)
         {
-            clsBaseDatos.CrearTablaAuditoriaSiNoExiste();
+            // Cargo los perfiles de la BD en el combo
+            var tablaPerfiles = clsBaseDatos.ObtenerPerfiles();
+            cmbPerfil.DataSource = tablaPerfiles;
+            cmbPerfil.DisplayMember = "Perfil";   // La columna que se MUESTRA en el combo
+            cmbPerfil.ValueMember = "Perfil";      // La columna que se USA como valor
+            cmbPerfil.SelectedIndex = -1;          // Que arranque sin nada seleccionado
         }
 
         private void btnAceptar_Click(object sender, EventArgs e)
         {
-            string mail = txtMail.Text.Trim();
+            string usuario = txtMail.Text.Trim();
             string password = txtContraseña.Text;
+            string perfilElegido = cmbPerfil.Text;
 
-            string nombreUsuario, rol; // Variables para almacenar el nombre de usuario y rol obtenidos de la base de datos
-            bool ok = clsBaseDatos.ValidarUsuario(mail, password, out nombreUsuario, out rol); // Validar el usuario y obtener su nombre y rol
-            clsBaseDatos.RegistrarAuditoria(mail, ok); // Registrar el intento de inicio de sesión en la auditoría
-
-            if (ok) // Si la validación es exitosa, abrir el formulario principal
+            if (string.IsNullOrEmpty(perfilElegido))
             {
+                lblError.ForeColor = Color.IndianRed;
+                lblError.Text = "Seleccioná un perfil.";
+                return;
+            }
+
+            string nombreUsuario, rol;
+            bool ok = clsBaseDatos.ValidarUsuario(usuario, password, perfilElegido, out nombreUsuario, out rol); // Ahora también valida el perfil
+            clsBaseDatos.RegistrarAuditoria(usuario, ok);
+
+            if (ok)
+            {
+
                 this.Hide();
-                using (var principal = new frmPrincipal(nombreUsuario, rol, DateTime.Now)) // Pasar el nombre de usuario, rol y fecha de inicio de sesión al formulario principal
+
+                if (perfilElegido == "Administrador")
                 {
-                    principal.ShowDialog(); // Mostrar el formulario principal como un diálogo modal
+                    using (var principal = new frmPrincipal(nombreUsuario, rol, DateTime.Now))
+                    {
+                        principal.ShowDialog();
+                    }
                 }
+                else if (perfilElegido == "Recursos Humanos")
+                {
+                    using (var perfil = new frmPersonalizarPerfil())
+                    {
+                        perfil.ShowDialog();
+                    }
+                }
+
                 this.Close();
             }
             else
@@ -51,7 +77,7 @@ namespace pryZarateERP
                 lblError.ForeColor = Color.IndianRed;
                 lblError.Text = intentosFallidos >= MaxIntentos
                     ? "Cuenta bloqueada tras 3 intentos fallidos."
-                    : "Mail o contraseña incorrecta.";
+                    : "Usuario, contraseña o perfil incorrecto.";
                 btnAceptar.Enabled = intentosFallidos < MaxIntentos;
             }
         }
