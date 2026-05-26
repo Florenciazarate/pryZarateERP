@@ -612,7 +612,7 @@ namespace pryZarateERP
             this.btnEliminarCont.Font = new System.Drawing.Font("Segoe UI Semibold", 10F, System.Drawing.FontStyle.Bold);
             this.btnEliminarCont.ForeColor = System.Drawing.Color.White;
             this.btnEliminarCont.HoverState.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(116)))), ((int)(((byte)(139)))));
-            this.btnEliminarCont.Location = new System.Drawing.Point(145, 10);
+            this.btnEliminarCont.Location = new System.Drawing.Point(143, 10);
             this.btnEliminarCont.Name = "btnEliminarCont";
             this.btnEliminarCont.Size = new System.Drawing.Size(32, 25);
             this.btnEliminarCont.TabIndex = 6;
