@@ -30,6 +30,8 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmInicioSesion));
             this.pnlContenedor = new Guna.UI2.WinForms.Guna2Panel();
+            this.lblPerfil = new System.Windows.Forms.Label();
+            this.cmbPerfil = new Guna.UI2.WinForms.Guna2ComboBox();
             this.lblError = new System.Windows.Forms.Label();
             this.btnAceptar = new Guna.UI2.WinForms.Guna2Button();
             this.txtContraseña = new Guna.UI2.WinForms.Guna2TextBox();
@@ -38,8 +40,6 @@
             this.lblMail = new System.Windows.Forms.Label();
             this.lblSubtitulo = new System.Windows.Forms.Label();
             this.lblTitulo = new System.Windows.Forms.Label();
-            this.cmbPerfil = new Guna.UI2.WinForms.Guna2ComboBox();
-            this.lblPerfil = new System.Windows.Forms.Label();
             this.pnlContenedor.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -59,11 +59,40 @@
             this.pnlContenedor.Controls.Add(this.lblMail);
             this.pnlContenedor.Controls.Add(this.lblSubtitulo);
             this.pnlContenedor.Controls.Add(this.lblTitulo);
-            this.pnlContenedor.Location = new System.Drawing.Point(12, 12);
+            this.pnlContenedor.Location = new System.Drawing.Point(13, 12);
             this.pnlContenedor.Name = "pnlContenedor";
             this.pnlContenedor.Padding = new System.Windows.Forms.Padding(30);
             this.pnlContenedor.Size = new System.Drawing.Size(400, 440);
             this.pnlContenedor.TabIndex = 1;
+            // 
+            // lblPerfil
+            // 
+            this.lblPerfil.AutoSize = true;
+            this.lblPerfil.Font = new System.Drawing.Font("Segoe UI Semibold", 9F, System.Drawing.FontStyle.Bold);
+            this.lblPerfil.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(226)))), ((int)(((byte)(232)))), ((int)(((byte)(240)))));
+            this.lblPerfil.Location = new System.Drawing.Point(32, 257);
+            this.lblPerfil.Name = "lblPerfil";
+            this.lblPerfil.Size = new System.Drawing.Size(34, 15);
+            this.lblPerfil.TabIndex = 9;
+            this.lblPerfil.Text = "Perfil";
+            // 
+            // cmbPerfil
+            // 
+            this.cmbPerfil.BackColor = System.Drawing.Color.Transparent;
+            this.cmbPerfil.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(116)))), ((int)(((byte)(139)))));
+            this.cmbPerfil.BorderRadius = 6;
+            this.cmbPerfil.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
+            this.cmbPerfil.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbPerfil.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(15)))), ((int)(((byte)(23)))), ((int)(((byte)(42)))));
+            this.cmbPerfil.FocusedColor = System.Drawing.Color.FromArgb(((int)(((byte)(94)))), ((int)(((byte)(148)))), ((int)(((byte)(255)))));
+            this.cmbPerfil.FocusedState.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(94)))), ((int)(((byte)(148)))), ((int)(((byte)(255)))));
+            this.cmbPerfil.Font = new System.Drawing.Font("Segoe UI", 10F);
+            this.cmbPerfil.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(68)))), ((int)(((byte)(88)))), ((int)(((byte)(112)))));
+            this.cmbPerfil.ItemHeight = 30;
+            this.cmbPerfil.Location = new System.Drawing.Point(33, 277);
+            this.cmbPerfil.Name = "cmbPerfil";
+            this.cmbPerfil.Size = new System.Drawing.Size(336, 36);
+            this.cmbPerfil.TabIndex = 8;
             // 
             // lblError
             // 
@@ -152,7 +181,7 @@
             this.lblMail.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(226)))), ((int)(((byte)(232)))), ((int)(((byte)(240)))));
             this.lblMail.Location = new System.Drawing.Point(32, 115);
             this.lblMail.Name = "lblMail";
-            this.lblMail.Size = new System.Drawing.Size(30, 15);
+            this.lblMail.Size = new System.Drawing.Size(47, 15);
             this.lblMail.TabIndex = 2;
             this.lblMail.Text = "Usuario";
             // 
@@ -177,35 +206,6 @@
             this.lblTitulo.Size = new System.Drawing.Size(179, 37);
             this.lblTitulo.TabIndex = 0;
             this.lblTitulo.Text = "Iniciar Sesion";
-            // 
-            // cmbPerfil
-            // 
-            this.cmbPerfil.BackColor = System.Drawing.Color.Transparent;
-            this.cmbPerfil.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(116)))), ((int)(((byte)(139)))));
-            this.cmbPerfil.BorderRadius = 6;
-            this.cmbPerfil.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
-            this.cmbPerfil.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbPerfil.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(15)))), ((int)(((byte)(23)))), ((int)(((byte)(42)))));
-            this.cmbPerfil.FocusedColor = System.Drawing.Color.FromArgb(((int)(((byte)(94)))), ((int)(((byte)(148)))), ((int)(((byte)(255)))));
-            this.cmbPerfil.FocusedState.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(94)))), ((int)(((byte)(148)))), ((int)(((byte)(255)))));
-            this.cmbPerfil.Font = new System.Drawing.Font("Segoe UI", 10F);
-            this.cmbPerfil.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(68)))), ((int)(((byte)(88)))), ((int)(((byte)(112)))));
-            this.cmbPerfil.ItemHeight = 30;
-            this.cmbPerfil.Location = new System.Drawing.Point(33, 277);
-            this.cmbPerfil.Name = "cmbPerfil";
-            this.cmbPerfil.Size = new System.Drawing.Size(336, 36);
-            this.cmbPerfil.TabIndex = 8;
-            // 
-            // lblPerfil
-            // 
-            this.lblPerfil.AutoSize = true;
-            this.lblPerfil.Font = new System.Drawing.Font("Segoe UI Semibold", 9F, System.Drawing.FontStyle.Bold);
-            this.lblPerfil.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(226)))), ((int)(((byte)(232)))), ((int)(((byte)(240)))));
-            this.lblPerfil.Location = new System.Drawing.Point(32, 257);
-            this.lblPerfil.Name = "lblPerfil";
-            this.lblPerfil.Size = new System.Drawing.Size(34, 15);
-            this.lblPerfil.TabIndex = 9;
-            this.lblPerfil.Text = "Perfil";
             // 
             // frmInicioSesion
             // 
