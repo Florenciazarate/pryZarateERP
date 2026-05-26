@@ -12,7 +12,7 @@ namespace pryZarateERP
 
         private void frmAuditoria_Load(object sender, EventArgs e)
         {
-            dgvAuditoria.DataSource = clsBaseDatos.ObtenerAuditoria();
+            dgvAuditoria.DataSource = clsBaseDatos.ObtenerAuditoria(); // Cargar los datos de auditoría en el DataGridView al cargar el formulario
         }
     }
 }

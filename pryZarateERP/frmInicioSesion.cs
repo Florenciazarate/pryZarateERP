@@ -1,5 +1,4 @@
 using System;
-using System.Drawing;
 using System.Windows.Forms;
 
 namespace pryZarateERP
@@ -34,20 +33,19 @@ namespace pryZarateERP
 
         private void btnAceptar_Click(object sender, EventArgs e)
         {
-            string usuario = txtMail.Text.Trim();
-            string password = txtContraseña.Text;
-            string perfilElegido = cmbPerfil.Text;
+            string usuario = txtMail.Text.Trim(); // Asumo que el mail es el usuario
+            string password = txtContraseña.Text; 
+            string perfilElegido = cmbPerfil.Text; // Obtengo el perfil seleccionado como texto
 
             if (string.IsNullOrEmpty(perfilElegido))
             {
-                lblError.ForeColor = Color.IndianRed;
                 lblError.Text = "Seleccioná un perfil.";
                 return;
             }
 
-            string nombreUsuario, rol;
+            string nombreUsuario, rol; // Variables para recibir el nombre y rol desde la validación
             bool ok = clsBaseDatos.ValidarUsuario(usuario, password, perfilElegido, out nombreUsuario, out rol); // Ahora también valida el perfil
-            clsBaseDatos.RegistrarAuditoria(usuario, ok);
+            clsBaseDatos.RegistrarAuditoria(usuario, ok); // Registro el intento en la auditoría
 
             if (ok)
             {
@@ -56,14 +54,14 @@ namespace pryZarateERP
 
                 if (perfilElegido == "Administrador")
                 {
-                    using (var principal = new frmPrincipal(nombreUsuario, rol, DateTime.Now))
+                    using (var principal = new frmPrincipal(nombreUsuario, rol, DateTime.Now)) // Paso el nombre, rol y fecha al frmPrincipal
                     {
                         principal.ShowDialog();
                     }
                 }
                 else if (perfilElegido == "Recursos Humanos")
                 {
-                    using (var perfil = new frmPersonalizarPerfil())
+                    using (var perfil = new frmPersonalizarPerfil()) 
                     {
                         perfil.ShowDialog();
                     }
@@ -74,7 +72,6 @@ namespace pryZarateERP
             else
             {
                 intentosFallidos++;
-                lblError.ForeColor = Color.IndianRed;
                 lblError.Text = intentosFallidos >= MaxIntentos
                     ? "Cuenta bloqueada tras 3 intentos fallidos."
                     : "Usuario, contraseña o perfil incorrecto.";
