@@ -18,8 +18,18 @@ namespace pryZarateERP
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmAuditoria));
             this.pnlGrilla = new Guna.UI2.WinForms.Guna2Panel();
+            this.dtpHasta = new System.Windows.Forms.DateTimePicker();
+            this.dtpDesde = new System.Windows.Forms.DateTimePicker();
+            this.lblHasta = new System.Windows.Forms.Label();
+            this.lblDesde = new System.Windows.Forms.Label();
+            this.txtAccion = new System.Windows.Forms.TextBox();
+            this.txtUsuarioFiltro = new System.Windows.Forms.TextBox();
+            this.lblAccion = new System.Windows.Forms.Label();
+            this.lblUsuarioFiltro = new System.Windows.Forms.Label();
             this.dgvAuditoria = new Guna.UI2.WinForms.Guna2DataGridView();
             this.lblListado = new System.Windows.Forms.Label();
+            this.btnFiltrar = new Guna.UI2.WinForms.Guna2Button();
+            this.btnLimpiar = new Guna.UI2.WinForms.Guna2Button();
             this.pnlGrilla.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvAuditoria)).BeginInit();
             this.SuspendLayout();
@@ -33,6 +43,16 @@ namespace pryZarateERP
             this.pnlGrilla.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(116)))), ((int)(((byte)(139)))));
             this.pnlGrilla.BorderRadius = 8;
             this.pnlGrilla.BorderThickness = 1;
+            this.pnlGrilla.Controls.Add(this.btnFiltrar);
+            this.pnlGrilla.Controls.Add(this.btnLimpiar);
+            this.pnlGrilla.Controls.Add(this.dtpHasta);
+            this.pnlGrilla.Controls.Add(this.dtpDesde);
+            this.pnlGrilla.Controls.Add(this.lblHasta);
+            this.pnlGrilla.Controls.Add(this.lblDesde);
+            this.pnlGrilla.Controls.Add(this.txtAccion);
+            this.pnlGrilla.Controls.Add(this.txtUsuarioFiltro);
+            this.pnlGrilla.Controls.Add(this.lblAccion);
+            this.pnlGrilla.Controls.Add(this.lblUsuarioFiltro);
             this.pnlGrilla.Controls.Add(this.dgvAuditoria);
             this.pnlGrilla.Controls.Add(this.lblListado);
             this.pnlGrilla.Location = new System.Drawing.Point(24, 24);
@@ -40,6 +60,90 @@ namespace pryZarateERP
             this.pnlGrilla.Padding = new System.Windows.Forms.Padding(15);
             this.pnlGrilla.Size = new System.Drawing.Size(850, 700);
             this.pnlGrilla.TabIndex = 0;
+            // 
+            // dtpHasta
+            // 
+            this.dtpHasta.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.dtpHasta.CalendarMonthBackground = System.Drawing.SystemColors.WindowText;
+            this.dtpHasta.Format = System.Windows.Forms.DateTimePickerFormat.Short;
+            this.dtpHasta.Location = new System.Drawing.Point(614, 44);
+            this.dtpHasta.Name = "dtpHasta";
+            this.dtpHasta.ShowCheckBox = true;
+            this.dtpHasta.Size = new System.Drawing.Size(94, 20);
+            this.dtpHasta.TabIndex = 9;
+            // 
+            // dtpDesde
+            // 
+            this.dtpDesde.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.dtpDesde.CalendarForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(30)))), ((int)(((byte)(41)))), ((int)(((byte)(59)))));
+            this.dtpDesde.CalendarMonthBackground = System.Drawing.Color.FromArgb(((int)(((byte)(30)))), ((int)(((byte)(41)))), ((int)(((byte)(59)))));
+            this.dtpDesde.CalendarTitleBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(30)))), ((int)(((byte)(41)))), ((int)(((byte)(59)))));
+            this.dtpDesde.Format = System.Windows.Forms.DateTimePickerFormat.Short;
+            this.dtpDesde.Location = new System.Drawing.Point(473, 44);
+            this.dtpDesde.Name = "dtpDesde";
+            this.dtpDesde.ShowCheckBox = true;
+            this.dtpDesde.Size = new System.Drawing.Size(94, 20);
+            this.dtpDesde.TabIndex = 8;
+            // 
+            // lblHasta
+            // 
+            this.lblHasta.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.lblHasta.AutoSize = true;
+            this.lblHasta.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(241)))), ((int)(((byte)(245)))), ((int)(((byte)(249)))));
+            this.lblHasta.Location = new System.Drawing.Point(573, 47);
+            this.lblHasta.Name = "lblHasta";
+            this.lblHasta.Size = new System.Drawing.Size(35, 13);
+            this.lblHasta.TabIndex = 7;
+            this.lblHasta.Text = "Hasta";
+            // 
+            // lblDesde
+            // 
+            this.lblDesde.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.lblDesde.AutoSize = true;
+            this.lblDesde.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(241)))), ((int)(((byte)(245)))), ((int)(((byte)(249)))));
+            this.lblDesde.Location = new System.Drawing.Point(429, 48);
+            this.lblDesde.Name = "lblDesde";
+            this.lblDesde.Size = new System.Drawing.Size(38, 13);
+            this.lblDesde.TabIndex = 6;
+            this.lblDesde.Text = "Desde";
+            // 
+            // txtAccion
+            // 
+            this.txtAccion.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(30)))), ((int)(((byte)(41)))), ((int)(((byte)(59)))));
+            this.txtAccion.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtAccion.Location = new System.Drawing.Point(272, 46);
+            this.txtAccion.Name = "txtAccion";
+            this.txtAccion.Size = new System.Drawing.Size(140, 20);
+            this.txtAccion.TabIndex = 5;
+            // 
+            // txtUsuarioFiltro
+            // 
+            this.txtUsuarioFiltro.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(30)))), ((int)(((byte)(41)))), ((int)(((byte)(59)))));
+            this.txtUsuarioFiltro.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtUsuarioFiltro.Location = new System.Drawing.Point(67, 47);
+            this.txtUsuarioFiltro.Name = "txtUsuarioFiltro";
+            this.txtUsuarioFiltro.Size = new System.Drawing.Size(140, 20);
+            this.txtUsuarioFiltro.TabIndex = 4;
+            // 
+            // lblAccion
+            // 
+            this.lblAccion.AutoSize = true;
+            this.lblAccion.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(241)))), ((int)(((byte)(245)))), ((int)(((byte)(249)))));
+            this.lblAccion.Location = new System.Drawing.Point(226, 50);
+            this.lblAccion.Name = "lblAccion";
+            this.lblAccion.Size = new System.Drawing.Size(40, 13);
+            this.lblAccion.TabIndex = 3;
+            this.lblAccion.Text = "Acción";
+            // 
+            // lblUsuarioFiltro
+            // 
+            this.lblUsuarioFiltro.AutoSize = true;
+            this.lblUsuarioFiltro.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(241)))), ((int)(((byte)(245)))), ((int)(((byte)(249)))));
+            this.lblUsuarioFiltro.Location = new System.Drawing.Point(18, 50);
+            this.lblUsuarioFiltro.Name = "lblUsuarioFiltro";
+            this.lblUsuarioFiltro.Size = new System.Drawing.Size(43, 13);
+            this.lblUsuarioFiltro.TabIndex = 2;
+            this.lblUsuarioFiltro.Text = "Usuario";
             // 
             // dgvAuditoria
             // 
@@ -71,13 +175,13 @@ namespace pryZarateERP
             dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
             this.dgvAuditoria.DefaultCellStyle = dataGridViewCellStyle3;
             this.dgvAuditoria.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(51)))), ((int)(((byte)(65)))), ((int)(((byte)(85)))));
-            this.dgvAuditoria.Location = new System.Drawing.Point(18, 50);
+            this.dgvAuditoria.Location = new System.Drawing.Point(18, 103);
             this.dgvAuditoria.MultiSelect = false;
             this.dgvAuditoria.Name = "dgvAuditoria";
             this.dgvAuditoria.ReadOnly = true;
             this.dgvAuditoria.RowHeadersVisible = false;
             this.dgvAuditoria.RowTemplate.Height = 32;
-            this.dgvAuditoria.Size = new System.Drawing.Size(814, 635);
+            this.dgvAuditoria.Size = new System.Drawing.Size(814, 582);
             this.dgvAuditoria.TabIndex = 1;
             this.dgvAuditoria.ThemeStyle.AlternatingRowsStyle.BackColor = System.Drawing.Color.White;
             this.dgvAuditoria.ThemeStyle.AlternatingRowsStyle.Font = null;
@@ -112,6 +216,36 @@ namespace pryZarateERP
             this.lblListado.TabIndex = 0;
             this.lblListado.Text = "Auditoría de Sesión";
             // 
+            // btnFiltrar
+            // 
+            this.btnFiltrar.BorderRadius = 6;
+            this.btnFiltrar.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btnFiltrar.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(139)))), ((int)(((byte)(92)))), ((int)(((byte)(246)))));
+            this.btnFiltrar.Font = new System.Drawing.Font("Segoe UI Semibold", 10F, System.Drawing.FontStyle.Bold);
+            this.btnFiltrar.ForeColor = System.Drawing.Color.White;
+            this.btnFiltrar.HoverState.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(167)))), ((int)(((byte)(139)))), ((int)(((byte)(250)))));
+            this.btnFiltrar.Location = new System.Drawing.Point(734, 35);
+            this.btnFiltrar.Name = "btnFiltrar";
+            this.btnFiltrar.Size = new System.Drawing.Size(98, 25);
+            this.btnFiltrar.TabIndex = 12;
+            this.btnFiltrar.Text = "Filtrar";
+            // 
+            // btnLimpiar
+            // 
+            this.btnLimpiar.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(139)))), ((int)(((byte)(92)))), ((int)(((byte)(246)))));
+            this.btnLimpiar.BorderRadius = 6;
+            this.btnLimpiar.BorderThickness = 2;
+            this.btnLimpiar.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btnLimpiar.FillColor = System.Drawing.Color.Transparent;
+            this.btnLimpiar.Font = new System.Drawing.Font("Segoe UI Semibold", 10F, System.Drawing.FontStyle.Bold);
+            this.btnLimpiar.ForeColor = System.Drawing.Color.White;
+            this.btnLimpiar.HoverState.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(167)))), ((int)(((byte)(139)))), ((int)(((byte)(250)))));
+            this.btnLimpiar.Location = new System.Drawing.Point(734, 67);
+            this.btnLimpiar.Name = "btnLimpiar";
+            this.btnLimpiar.Size = new System.Drawing.Size(98, 30);
+            this.btnLimpiar.TabIndex = 13;
+            this.btnLimpiar.Text = "Limpiar";
+            // 
             // frmAuditoria
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -134,5 +268,15 @@ namespace pryZarateERP
         private Guna.UI2.WinForms.Guna2Panel pnlGrilla;
         private Guna.UI2.WinForms.Guna2DataGridView dgvAuditoria;
         private System.Windows.Forms.Label lblListado;
+        private System.Windows.Forms.Label lblUsuarioFiltro;
+        private System.Windows.Forms.Label lblAccion;
+        private System.Windows.Forms.TextBox txtUsuarioFiltro;
+        private System.Windows.Forms.TextBox txtAccion;
+        private System.Windows.Forms.Label lblDesde;
+        private System.Windows.Forms.Label lblHasta;
+        private System.Windows.Forms.DateTimePicker dtpDesde;
+        private System.Windows.Forms.DateTimePicker dtpHasta;
+        private Guna.UI2.WinForms.Guna2Button btnFiltrar;
+        private Guna.UI2.WinForms.Guna2Button btnLimpiar;
     }
 }

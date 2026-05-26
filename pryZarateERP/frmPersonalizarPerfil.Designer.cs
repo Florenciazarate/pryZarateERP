@@ -36,6 +36,7 @@ namespace pryZarateERP
             this.btnLimpiar = new Guna.UI2.WinForms.Guna2Button();
             this.btnVerMapa = new Guna.UI2.WinForms.Guna2Button();
             this.pnlDomicilio = new Guna.UI2.WinForms.Guna2Panel();
+            this.btnAgregarDom = new Guna.UI2.WinForms.Guna2Button();
             this.lblDomicilio = new System.Windows.Forms.Label();
             this.lblDireccion = new System.Windows.Forms.Label();
             this.txtDireccion = new Guna.UI2.WinForms.Guna2TextBox();
@@ -45,15 +46,14 @@ namespace pryZarateERP
             this.cmbProvincia = new Guna.UI2.WinForms.Guna2ComboBox();
             this.lblLocalidad = new System.Windows.Forms.Label();
             this.cmbLocalidad = new Guna.UI2.WinForms.Guna2ComboBox();
-            this.btnAgregarDom = new Guna.UI2.WinForms.Guna2Button();
             this.btnEliminarDom = new Guna.UI2.WinForms.Guna2Button();
             this.dgvDomicilios = new Guna.UI2.WinForms.Guna2DataGridView();
             this.pnlContacto = new Guna.UI2.WinForms.Guna2Panel();
+            this.txtValor = new Guna.UI2.WinForms.Guna2TextBox();
             this.lblContacto = new System.Windows.Forms.Label();
             this.lblTipo = new System.Windows.Forms.Label();
             this.cmbTipo = new Guna.UI2.WinForms.Guna2ComboBox();
             this.lblValor = new System.Windows.Forms.Label();
-            this.txtValor = new Guna.UI2.WinForms.Guna2TextBox();
             this.btnAgregarCont = new Guna.UI2.WinForms.Guna2Button();
             this.btnEliminarCont = new Guna.UI2.WinForms.Guna2Button();
             this.dgvContactos = new Guna.UI2.WinForms.Guna2DataGridView();
@@ -252,8 +252,8 @@ namespace pryZarateERP
             this.btnLimpiar.Name = "btnLimpiar";
             this.btnLimpiar.Size = new System.Drawing.Size(125, 38);
             this.btnLimpiar.TabIndex = 10;
-            this.btnLimpiar.Text = "Limpiar";
-            this.btnLimpiar.Click += new System.EventHandler(this.btnLimpiar_Click);
+            this.btnLimpiar.Text = "Modificar";
+            this.btnLimpiar.Click += new System.EventHandler(this.btnModificar_Click);
             // 
             // btnVerMapa
             // 
@@ -293,6 +293,21 @@ namespace pryZarateERP
             this.pnlDomicilio.Name = "pnlDomicilio";
             this.pnlDomicilio.Size = new System.Drawing.Size(440, 370);
             this.pnlDomicilio.TabIndex = 1;
+            // 
+            // btnAgregarDom
+            // 
+            this.btnAgregarDom.BorderRadius = 6;
+            this.btnAgregarDom.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btnAgregarDom.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(139)))), ((int)(((byte)(92)))), ((int)(((byte)(246)))));
+            this.btnAgregarDom.Font = new System.Drawing.Font("Segoe UI Semibold", 10F, System.Drawing.FontStyle.Bold);
+            this.btnAgregarDom.ForeColor = System.Drawing.Color.White;
+            this.btnAgregarDom.HoverState.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(167)))), ((int)(((byte)(139)))), ((int)(((byte)(250)))));
+            this.btnAgregarDom.Location = new System.Drawing.Point(109, 10);
+            this.btnAgregarDom.Name = "btnAgregarDom";
+            this.btnAgregarDom.Size = new System.Drawing.Size(32, 25);
+            this.btnAgregarDom.TabIndex = 10;
+            this.btnAgregarDom.Text = "+";
+            this.btnAgregarDom.Click += new System.EventHandler(this.btnAgregarDom_Click);
             // 
             // lblDomicilio
             // 
@@ -419,21 +434,6 @@ namespace pryZarateERP
             this.cmbLocalidad.Size = new System.Drawing.Size(340, 32);
             this.cmbLocalidad.TabIndex = 8;
             // 
-            // btnAgregarDom
-            // 
-            this.btnAgregarDom.BorderRadius = 6;
-            this.btnAgregarDom.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.btnAgregarDom.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(139)))), ((int)(((byte)(92)))), ((int)(((byte)(246)))));
-            this.btnAgregarDom.Font = new System.Drawing.Font("Segoe UI Semibold", 10F, System.Drawing.FontStyle.Bold);
-            this.btnAgregarDom.ForeColor = System.Drawing.Color.White;
-            this.btnAgregarDom.HoverState.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(167)))), ((int)(((byte)(139)))), ((int)(((byte)(250)))));
-            this.btnAgregarDom.Location = new System.Drawing.Point(109, 10);
-            this.btnAgregarDom.Name = "btnAgregarDom";
-            this.btnAgregarDom.Size = new System.Drawing.Size(32, 25);
-            this.btnAgregarDom.TabIndex = 10;
-            this.btnAgregarDom.Text = "+";
-            this.btnAgregarDom.Click += new System.EventHandler(this.btnAgregarDom_Click);
-            // 
             // btnEliminarDom
             // 
             this.btnEliminarDom.BorderRadius = 6;
@@ -521,6 +521,23 @@ namespace pryZarateERP
             this.pnlContacto.Size = new System.Drawing.Size(440, 260);
             this.pnlContacto.TabIndex = 2;
             // 
+            // txtValor
+            // 
+            this.txtValor.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(116)))), ((int)(((byte)(139)))));
+            this.txtValor.BorderRadius = 6;
+            this.txtValor.Cursor = System.Windows.Forms.Cursors.IBeam;
+            this.txtValor.DefaultText = "";
+            this.txtValor.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(15)))), ((int)(((byte)(23)))), ((int)(((byte)(42)))));
+            this.txtValor.FocusedState.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(167)))), ((int)(((byte)(139)))), ((int)(((byte)(250)))));
+            this.txtValor.Font = new System.Drawing.Font("Segoe UI", 9F);
+            this.txtValor.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(241)))), ((int)(((byte)(245)))), ((int)(((byte)(249)))));
+            this.txtValor.Location = new System.Drawing.Point(270, 49);
+            this.txtValor.Name = "txtValor";
+            this.txtValor.PlaceholderText = "";
+            this.txtValor.SelectedText = "";
+            this.txtValor.Size = new System.Drawing.Size(150, 32);
+            this.txtValor.TabIndex = 4;
+            // 
             // lblContacto
             // 
             this.lblContacto.AutoSize = true;
@@ -571,23 +588,6 @@ namespace pryZarateERP
             this.lblValor.Size = new System.Drawing.Size(51, 15);
             this.lblValor.TabIndex = 3;
             this.lblValor.Text = "Nombre";
-            // 
-            // txtValor
-            // 
-            this.txtValor.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(116)))), ((int)(((byte)(139)))));
-            this.txtValor.BorderRadius = 6;
-            this.txtValor.Cursor = System.Windows.Forms.Cursors.IBeam;
-            this.txtValor.DefaultText = "";
-            this.txtValor.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(15)))), ((int)(((byte)(23)))), ((int)(((byte)(42)))));
-            this.txtValor.FocusedState.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(167)))), ((int)(((byte)(139)))), ((int)(((byte)(250)))));
-            this.txtValor.Font = new System.Drawing.Font("Segoe UI", 9F);
-            this.txtValor.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(241)))), ((int)(((byte)(245)))), ((int)(((byte)(249)))));
-            this.txtValor.Location = new System.Drawing.Point(270, 49);
-            this.txtValor.Name = "txtValor";
-            this.txtValor.PlaceholderText = "";
-            this.txtValor.SelectedText = "";
-            this.txtValor.Size = new System.Drawing.Size(150, 32);
-            this.txtValor.TabIndex = 4;
             // 
             // btnAgregarCont
             // 
