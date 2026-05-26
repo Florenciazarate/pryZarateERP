@@ -1,6 +1,7 @@
 using System;
 using System.Data;
 using System.Diagnostics;
+using System.Linq;
 using System.Windows.Forms;
 
 namespace pryZarateERP
@@ -55,10 +56,57 @@ namespace pryZarateERP
                 prov.Equals("Cordoba", StringComparison.OrdinalIgnoreCase))
             {
                 var tabla = clsBaseDatos.ObtenerLocalidadesCordoba();
-                cmbLocalidad.DataSource = tabla;
-                cmbLocalidad.DisplayMember = "LocalidadesCordoba";
-                cmbLocalidad.ValueMember = "ID_Localidades";
-                cmbLocalidad.SelectedIndex = -1;
+
+                // If there are no rows, clear the combo
+                if (tabla == null || tabla.Rows.Count == 0)
+                {
+                    cmbLocalidad.DataSource = null;
+                    return;
+                }
+
+                // Determine display and value column names dynamically to avoid mismatches with DB schema
+                string displayCol = null;
+                string valueCol = null;
+
+                // Prefer columns whose name contains 'localidad' or 'localidades'
+                displayCol = tabla.Columns.Cast<DataColumn>()
+                    .FirstOrDefault(c => c.DataType == typeof(string) && 
+                        (c.ColumnName.IndexOf("localidad", StringComparison.OrdinalIgnoreCase) >= 0 ||
+                         c.ColumnName.IndexOf("localidades", StringComparison.OrdinalIgnoreCase) >= 0))
+                    ?.ColumnName;
+
+                // Fallback to the last string column
+                if (string.IsNullOrEmpty(displayCol))
+                {
+                    displayCol = tabla.Columns.Cast<DataColumn>()
+                        .FirstOrDefault(c => c.DataType == typeof(string))?.ColumnName;
+                }
+
+                // Determine value column: prefer column containing 'id'
+                valueCol = tabla.Columns.Cast<DataColumn>()
+                    .FirstOrDefault(c => c.ColumnName.IndexOf("id", StringComparison.OrdinalIgnoreCase) >= 0)?.ColumnName;
+
+                // Fallback to the first column if none matched
+                if (string.IsNullOrEmpty(valueCol))
+                {
+                    valueCol = tabla.Columns[0].ColumnName;
+                }
+
+                // If still no display column, just bind the table and let ToString be used
+                if (!string.IsNullOrEmpty(displayCol))
+                {
+                    cmbLocalidad.DataSource = tabla;
+                    cmbLocalidad.DisplayMember = displayCol;
+                    cmbLocalidad.ValueMember = valueCol;
+                    cmbLocalidad.SelectedIndex = -1;
+                }
+                else
+                {
+                    // As a last resort bind to a list of strings from the last column
+                    var list = tabla.Rows.Cast<DataRow>().Select(r => r[tabla.Columns.Count - 1].ToString()).ToList();
+                    cmbLocalidad.DataSource = list;
+                    cmbLocalidad.SelectedIndex = -1;
+                }
             }
             else
             {

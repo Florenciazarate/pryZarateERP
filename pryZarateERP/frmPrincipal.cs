@@ -17,6 +17,9 @@ namespace pryZarateERP
             // Arranca en la pestaña Personal
             MarcarActivo(lblTabPersonal);
             MostrarFormulario(new frmPersonalizarPerfil());
+
+            // Registrar auditoría de apertura de la sección Personal
+            try { AuditLogger.Log(SessionInfo.Usuario, "Abrir: Personalizar Perfil"); } catch { }
         }
 
         // ── Navegación ──
@@ -25,12 +28,14 @@ namespace pryZarateERP
         {
             MarcarActivo(lblTabPersonal);
             MostrarFormulario(new frmPersonalizarPerfil());
+            try { AuditLogger.Log(SessionInfo.Usuario, "Abrir: Personalizar Perfil"); } catch { }
         }
 
         private void lblTabAuditoria_Click(object sender, EventArgs e)
         {
             MarcarActivo(lblTabAuditoria);
             MostrarFormulario(new frmAuditoria());
+            try { AuditLogger.Log(SessionInfo.Usuario, "Abrir: Auditoria"); } catch { }
         }
 
         // Pinta el tab activo (blanco + bold + indicador debajo)
@@ -62,6 +67,16 @@ namespace pryZarateERP
             form.Dock = DockStyle.Fill;
             pnlContenido.Controls.Add(form);
             form.Show();
+        }
+
+        private void pnlContenido_Paint(object sender, PaintEventArgs e)
+        {
+
+        }
+
+        private void frmPrincipal_Load(object sender, EventArgs e)
+        {
+
         }
     }
 }
