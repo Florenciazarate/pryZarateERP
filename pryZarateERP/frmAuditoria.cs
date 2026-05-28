@@ -7,7 +7,7 @@ namespace pryZarateERP
 {
     public partial class frmAuditoria : Form
     {
-        private DataTable originalTable;
+        private DataTable tablaOriginal;
 
         public frmAuditoria()
         {
@@ -16,101 +16,63 @@ namespace pryZarateERP
 
         private void frmAuditoria_Load(object sender, EventArgs e)
         {
-            LoadAuditData();
-        }
+            // Cargo del archivo de auditoría
+            tablaOriginal = AuditLogger.ReadAllAsDataTable();
 
-        private void LoadAuditData()
-        {
-            // Load either file-based or DB-based audit into a DataTable
-            try
+            // Si está vacío, intento cargar de la BD
+            if (tablaOriginal.Rows.Count == 0)
             {
-                var dtFile = AuditLogger.ReadAllAsDataTable();
-                if (dtFile.Rows.Count > 0)
+                var tablaBD = clsBaseDatos.ObtenerAuditoria();
+                if (tablaBD.Rows.Count > 0)
                 {
-                    originalTable = dtFile;
-                    dgvAuditoria.DataSource = originalTable;
-                    return;
+                    tablaOriginal = new DataTable();
+                    tablaOriginal.Columns.Add("FechaHora", typeof(DateTime));
+                    tablaOriginal.Columns.Add("Usuario", typeof(string));
+                    tablaOriginal.Columns.Add("Accion", typeof(string));
+
+                    foreach (DataRow row in tablaBD.Rows)
+                    {
+                        string accion = Convert.ToBoolean(row["Exitoso"]) ? "Inicio de sesion exitoso" : "Inicio de sesion fallido";
+                        tablaOriginal.Rows.Add(row["FechaHora"], row["Usuario"], accion);
+                    }
                 }
             }
-            catch { }
 
-            originalTable = clsBaseDatos.ObtenerAuditoria();
-            dgvAuditoria.DataSource = originalTable;
+            dgvAuditoria.DataSource = tablaOriginal;
         }
 
         private void btnFiltrar_Click(object sender, EventArgs e)
         {
-            if (originalTable == null) return;
+            if (tablaOriginal == null) return;
 
-            string usuario = txtUsuarioFiltro.Text?.Trim();
-            string accion = txtAccion.Text?.Trim();
+            var filtrado = tablaOriginal.AsEnumerable().AsEnumerable();
 
-            var filtered = originalTable.AsEnumerable();
+            string usuario = txtUsuarioFiltro.Text.Trim();
+            string accion = txtAccion.Text.Trim();
 
             if (!string.IsNullOrEmpty(usuario))
-            {
-                filtered = filtered.Where(r => (r["Usuario"]?.ToString() ?? string.Empty).IndexOf(usuario, StringComparison.OrdinalIgnoreCase) >= 0);
-            }
+                filtrado = filtrado.Where(r => r["Usuario"].ToString().IndexOf(usuario, StringComparison.OrdinalIgnoreCase) >= 0);
 
             if (!string.IsNullOrEmpty(accion))
-            {
-                // Some sources may store action in column named 'Accion' or 'Exitoso' or similar; try to match
-                string accionCol = null;
-                if (originalTable.Columns.Contains("Accion")) accionCol = "Accion";
-                else if (originalTable.Columns.Contains("Exitoso")) accionCol = "Exitoso"; // fallback
-                else
-                {
-                    // Try find a column likely to be action
-                    var col = originalTable.Columns.Cast<DataColumn>().FirstOrDefault(c => c.ColumnName.IndexOf("accion", StringComparison.OrdinalIgnoreCase) >= 0 || c.ColumnName.IndexOf("exito", StringComparison.OrdinalIgnoreCase) >= 0 || c.ColumnName.IndexOf("observ", StringComparison.OrdinalIgnoreCase) >= 0);
-                    if (col != null) accionCol = col.ColumnName;
-                }
+                filtrado = filtrado.Where(r => r["Accion"].ToString().IndexOf(accion, StringComparison.OrdinalIgnoreCase) >= 0);
 
-                if (!string.IsNullOrEmpty(accionCol))
-                {
-                    string colName = accionCol;
-                    filtered = filtered.Where(r => (r[colName]?.ToString() ?? string.Empty).IndexOf(accion, StringComparison.OrdinalIgnoreCase) >= 0);
-                }
-            }
+            if (dtpDesde.Checked)
+                filtrado = filtrado.Where(r => r.Field<DateTime>("FechaHora").Date >= dtpDesde.Value.Date);
 
-            // Date filtering: try find a datetime column
-            if (dtpDesde.Checked || dtpHasta.Checked)
-            {
-                string dateCol = null;
-                if (originalTable.Columns.Contains("FechaHora")) dateCol = "FechaHora";
-                else
-                {
-                    var col = originalTable.Columns.Cast<DataColumn>().FirstOrDefault(c => c.DataType == typeof(DateTime) || c.ColumnName.IndexOf("fecha", StringComparison.OrdinalIgnoreCase) >= 0);
-                    if (col != null) dateCol = col.ColumnName;
-                }
+            if (dtpHasta.Checked)
+                filtrado = filtrado.Where(r => r.Field<DateTime>("FechaHora").Date <= dtpHasta.Value.Date);
 
-                if (!string.IsNullOrEmpty(dateCol))
-                {
-                    if (dtpDesde.Checked)
-                    {
-                        var desde = dtpDesde.Value.Date;
-                        filtered = filtered.Where(r => DateTime.TryParse(r[dateCol]?.ToString() ?? string.Empty, out DateTime d) && d.Date >= desde);
-                    }
-                    if (dtpHasta.Checked)
-                    {
-                        var hasta = dtpHasta.Value.Date;
-                        filtered = filtered.Where(r => DateTime.TryParse(r[dateCol]?.ToString() ?? string.Empty, out DateTime d) && d.Date <= hasta);
-                    }
-                }
-            }
-
-            var result = filtered.CopyToDataTableOrEmpty();
-            dgvAuditoria.DataSource = result;
+            var resultado = filtrado.ToList();
+            dgvAuditoria.DataSource = resultado.Any() ? resultado.CopyToDataTable() : new DataTable();
         }
 
         private void btnLimpiar_Click(object sender, EventArgs e)
         {
-            txtUsuarioFiltro.Text = string.Empty;
-            txtAccion.Text = string.Empty;
+            txtUsuarioFiltro.Text = "";
+            txtAccion.Text = "";
             dtpDesde.Checked = false;
             dtpHasta.Checked = false;
-
-            if (originalTable != null)
-                dgvAuditoria.DataSource = originalTable;
+            dgvAuditoria.DataSource = tablaOriginal;
         }
     }
 }
