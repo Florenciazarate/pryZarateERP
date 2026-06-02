@@ -762,7 +762,7 @@ namespace pryZarateERP
             this.AutoScroll = true;
             this.AutoScrollMinSize = new System.Drawing.Size(0, 960);
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(15)))), ((int)(((byte)(23)))), ((int)(((byte)(42)))));
-            this.ClientSize = new System.Drawing.Size(900, 960);
+            this.ClientSize = new System.Drawing.Size(900, 992);
             this.Controls.Add(this.pnlGrilla);
             this.Controls.Add(this.pnlContacto);
             this.Controls.Add(this.pnlDomicilio);
