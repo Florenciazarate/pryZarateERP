@@ -8,26 +8,28 @@ namespace pryZarateERP
 {
     internal class clsBaseDatos
     {
-        private static string _connectionString;
+        private static string _connectionString; // guarda la cadena de conexión para no recalcularla cada vez
 
         private static string ObtenerConnectionString()
         {
-            if (_connectionString != null) return _connectionString;
+            if (_connectionString != null) return _connectionString; // si ya la tengo guardada, la devuelvo
 
+            // armo la ruta al archivo de la base de datos Access
             string ruta = Path.Combine(Application.StartupPath, "BaseDatos", "Zarate.accdb");
+            // proveedores OleDb que puede tener instalado el equipo
             string[] providers = { "Microsoft.ACE.OLEDB.12.0", "Microsoft.ACE.OLEDB.16.0" };
 
-            foreach (var prov in providers)
+            foreach (var prov in providers) // por cada proveedor disponible
             {
                 var cs = $"Provider={prov};Data Source={ruta};Persist Security Info=False;";
                 try
                 {
-                    using (var conn = new OleDbConnection(cs))
-                        conn.Open();
-                    _connectionString = cs;
+                    using (var conn = new OleDbConnection(cs)) // creo una conexión con ese proveedor
+                        conn.Open(); // intento abrirla para ver si funciona
+                    _connectionString = cs; // si no tiró error, guardo la cadena
                     return _connectionString;
                 }
-                catch { }
+                catch { } // si falla, pruebo con el siguiente proveedor
             }
             return null;
         }
@@ -38,6 +40,7 @@ namespace pryZarateERP
 
         public static bool ValidarUsuario(string usuario, string password, string perfil, out string nombreUsuario, out string rol)
         {
+            // inicializo las variables de salida en null
             nombreUsuario = null;
             rol = null;
 
@@ -46,6 +49,7 @@ namespace pryZarateERP
                 using (var conn = new OleDbConnection(ObtenerConnectionString()))
                 {
                     conn.Open();
+                    // consulta que une Usuario con Perfil a través de la tabla Relacion-Usuario-Perfil
                     string sql = "SELECT U.[Nombre], U.[Apellido], P.[Perfil] " +
                                  "FROM ([Usuario] U " +
                                  "INNER JOIN [Relacion-Usuario-Perfil] R ON U.[ID_Usuario] = R.[ID_Usuario]) " +
@@ -53,21 +57,21 @@ namespace pryZarateERP
                                  "WHERE U.[Nombre] = ? AND U.[Contraseña] = ? AND P.[Perfil] = ?";
                     using (var cmd = new OleDbCommand(sql, conn))
                     {
-                        cmd.Parameters.AddWithValue("?", usuario);
-                        cmd.Parameters.AddWithValue("?", password);
-                        cmd.Parameters.AddWithValue("?", perfil);
-                        using (var reader = cmd.ExecuteReader())
+                        cmd.Parameters.AddWithValue("?", usuario); // reemplazo el primer ? por el usuario
+                        cmd.Parameters.AddWithValue("?", password); // reemplazo el segundo ? por la contraseña
+                        cmd.Parameters.AddWithValue("?", perfil); // reemplazo el tercer ? por el perfil
+                        using (var reader = cmd.ExecuteReader()) // ejecuto la consulta y obtengo un lector de resultados
                         {
-                            if (reader.Read())
+                            if (reader.Read()) // si hay al menos una fila, el usuario es válido
                             {
                                 nombreUsuario = reader["Nombre"].ToString();
                                 rol = reader["Perfil"].ToString();
-                                return true;
+                                return true; // login correcto
                             }
                         }
                     }
                 }
-                return false;
+                return false; // no encontró coincidencia
             }
             catch { return false; }
         }
@@ -78,9 +82,10 @@ namespace pryZarateERP
             try
             {
                 using (var conn = new OleDbConnection(ObtenerConnectionString()))
+                // traigo los perfiles únicos (sin repetir) que no sean null
                 using (var da = new OleDbDataAdapter("SELECT DISTINCT Perfil FROM Perfil WHERE Perfil IS NOT NULL", conn))
                 {
-                    da.Fill(tabla);
+                    da.Fill(tabla); // lleno la tabla con los resultados
                 }
             }
             catch { }
@@ -100,13 +105,13 @@ namespace pryZarateERP
                     conn.Open();
                     using (var cmd = new OleDbCommand("INSERT INTO AuditoriaSesion (FechaHora, Usuario, Exitoso, Detalle, Modulo, Accion) VALUES (?, ?, ?, ?, ?, ?)", conn))
                     {
-                        cmd.Parameters.AddWithValue("?", DateTime.Now);
-                        cmd.Parameters.AddWithValue("?", usuario ?? "desconocido");
+                        cmd.Parameters.AddWithValue("?", DateTime.Now); // fecha y hora actual
+                        cmd.Parameters.AddWithValue("?", usuario ?? "desconocido"); // si usuario es null, pongo "desconocido"
                         cmd.Parameters.AddWithValue("?", exitoso);
-                        cmd.Parameters.AddWithValue("?", detalle ?? "");
+                        cmd.Parameters.AddWithValue("?", detalle ?? ""); // si detalle es null, pongo vacío
                         cmd.Parameters.AddWithValue("?", modulo ?? "");
                         cmd.Parameters.AddWithValue("?", accion ?? "");
-                        cmd.ExecuteNonQuery();
+                        cmd.ExecuteNonQuery(); // ejecuto el INSERT
                     }
                 }
             }
@@ -119,6 +124,7 @@ namespace pryZarateERP
             try
             {
                 using (var conn = new OleDbConnection(ObtenerConnectionString()))
+                // traigo todos los registros de auditoría ordenados del más reciente al más viejo
                 using (var da = new OleDbDataAdapter("SELECT FechaHora, Usuario, Modulo, Accion, Exitoso, Detalle FROM AuditoriaSesion ORDER BY FechaHora DESC", conn))
                 {
                     da.Fill(tabla);
@@ -148,7 +154,6 @@ namespace pryZarateERP
             return tabla;
         }
 
-        // Insertar y devolver el ID generado
         public static int InsertarPersonal(string dni, string nombre, string apellido, bool activo)
         {
             using (var conn = new OleDbConnection(ObtenerConnectionString()))
@@ -162,10 +167,9 @@ namespace pryZarateERP
                     cmd.Parameters.AddWithValue("?", activo);
                     cmd.ExecuteNonQuery();
                 }
-                // Obtener el ID que se acaba de generar
-                using (var cmd2 = new OleDbCommand("SELECT @@IDENTITY", conn))
+                using (var cmd2 = new OleDbCommand("SELECT @@IDENTITY", conn)) // @@IDENTITY devuelve el último ID autogenerado
                 {
-                    return Convert.ToInt32(cmd2.ExecuteScalar());
+                    return Convert.ToInt32(cmd2.ExecuteScalar()); // lo convierto a int y lo devuelvo
                 }
             }
         }
@@ -192,7 +196,7 @@ namespace pryZarateERP
             using (var conn = new OleDbConnection(ObtenerConnectionString()))
             {
                 conn.Open();
-                // Primero borro sus domicilios y contactos
+                // borro primero los domicilios y contactos asociados para no violar las relaciones
                 using (var cmd = new OleDbCommand("DELETE FROM PersonalDomicilios WHERE IdPersonal=?", conn))
                 {
                     cmd.Parameters.AddWithValue("?", idPersonal);
@@ -203,6 +207,7 @@ namespace pryZarateERP
                     cmd.Parameters.AddWithValue("?", idPersonal);
                     cmd.ExecuteNonQuery();
                 }
+                // recién ahora borro el personal
                 using (var cmd = new OleDbCommand("DELETE FROM Personal WHERE IdPersonal=?", conn))
                 {
                     cmd.Parameters.AddWithValue("?", idPersonal);
@@ -211,7 +216,7 @@ namespace pryZarateERP
             }
         }
 
-        public static bool ExisteDni(string dni, int excluirId = -1)
+        public static bool ExisteDni(string dni, int excluirId = -1) // excluirId = -1 significa que no excluyo ningún registro
         {
             try
             {
@@ -221,13 +226,13 @@ namespace pryZarateERP
                     string sql;
                     OleDbCommand cmd;
 
-                    if (excluirId == -1)
+                    if (excluirId == -1) // si no tengo que excluir ningún ID
                     {
-                        sql = "SELECT COUNT(*) FROM Personal WHERE DNI = ?";
+                        sql = "SELECT COUNT(*) FROM Personal WHERE DNI = ?"; // cuento cuántos tienen ese DNI
                         cmd = new OleDbCommand(sql, conn);
                         cmd.Parameters.AddWithValue("?", dni);
                     }
-                    else
+                    else // si tengo que excluir un ID (para no comparar consigo mismo al editar)
                     {
                         sql = "SELECT COUNT(*) FROM Personal WHERE DNI = ? AND IdPersonal <> ?";
                         cmd = new OleDbCommand(sql, conn);
@@ -235,9 +240,9 @@ namespace pryZarateERP
                         cmd.Parameters.AddWithValue("?", excluirId);
                     }
 
-                    int count = Convert.ToInt32(cmd.ExecuteScalar());
-                    cmd.Dispose();
-                    return count > 0;
+                    int count = Convert.ToInt32(cmd.ExecuteScalar()); // obtengo el resultado del COUNT
+                    cmd.Dispose(); // libero el comando
+                    return count > 0; // si count es mayor a 0, el DNI ya existe
                 }
             }
             catch { return false; }
@@ -255,7 +260,7 @@ namespace pryZarateERP
                 using (var conn = new OleDbConnection(ObtenerConnectionString()))
                 using (var da = new OleDbDataAdapter("SELECT IdDomicilio, Direccion, Geo, Provincia, Localidad FROM PersonalDomicilios WHERE IdPersonal=?", conn))
                 {
-                    da.SelectCommand.Parameters.AddWithValue("?", idPersonal);
+                    da.SelectCommand.Parameters.AddWithValue("?", idPersonal); // le paso el ID del personal al parámetro
                     da.Fill(tabla);
                 }
             }

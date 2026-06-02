@@ -55,46 +55,44 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AuditLogger.cs" />
-    <Compile Include="clsBaseDatos.cs" />
-    <Compile Include="DataTableExtensions.cs" />
-    <Compile Include="frmInicioSesion.cs">
+    <Compile Include="BaseDatos\clsBaseDatos.cs" />
+    <Compile Include="Formularios\frmInicioSesion.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="frmInicioSesion.Designer.cs">
+    <Compile Include="Formularios\frmInicioSesion.Designer.cs">
       <DependentUpon>frmInicioSesion.cs</DependentUpon>
     </Compile>
-    <Compile Include="frmPersonalizarPerfil.cs">
+    <Compile Include="Formularios\frmPersonalizarPerfil.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="frmPersonalizarPerfil.Designer.cs">
+    <Compile Include="Formularios\frmPersonalizarPerfil.Designer.cs">
       <DependentUpon>frmPersonalizarPerfil.cs</DependentUpon>
     </Compile>
-    <Compile Include="frmAuditoria.cs">
+    <Compile Include="Formularios\frmAuditoria.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="frmAuditoria.Designer.cs">
+    <Compile Include="Formularios\frmAuditoria.Designer.cs">
       <DependentUpon>frmAuditoria.cs</DependentUpon>
     </Compile>
-    <Compile Include="frmPrincipal.cs">
+    <Compile Include="Formularios\frmPrincipal.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="frmPrincipal.Designer.cs">
+    <Compile Include="Formularios\frmPrincipal.Designer.cs">
       <DependentUpon>frmPrincipal.cs</DependentUpon>
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SessionInfo.cs" />
-    <EmbeddedResource Include="frmAuditoria.resx">
+    <EmbeddedResource Include="Formularios\frmAuditoria.resx">
       <DependentUpon>frmAuditoria.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="frmInicioSesion.resx">
+    <EmbeddedResource Include="Formularios\frmInicioSesion.resx">
       <DependentUpon>frmInicioSesion.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="frmPersonalizarPerfil.resx">
+    <EmbeddedResource Include="Formularios\frmPersonalizarPerfil.resx">
       <DependentUpon>frmPersonalizarPerfil.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="frmPrincipal.resx">
+    <EmbeddedResource Include="Formularios\frmPrincipal.resx">
       <DependentUpon>frmPrincipal.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
