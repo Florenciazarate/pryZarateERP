@@ -28,20 +28,20 @@ namespace pryZarateERP
         private void CargarProvincias()
         {
             var tabla = clsBaseDatos.ObtenerProvincias(); // traigo las provincias de la BD
-            cmbProvincia.DataSource = tabla; // las cargo como fuente de datos del combo
-            cmbProvincia.DisplayMember = "Provincias"; // lo que se muestra en el combo
-            cmbProvincia.ValueMember = "ID_Provincias"; // el valor interno de cada item
-            cmbProvincia.SelectedIndex = -1; // que arranque sin nada seleccionado
+            cmbLocalidad.DataSource = tabla; // las cargo como fuente de datos del combo
+            cmbLocalidad.DisplayMember = "Provincias"; // lo que se muestra en el combo
+            cmbLocalidad.ValueMember = "ID_Provincias"; // el valor interno de cada item
+            cmbLocalidad.SelectedIndex = -1; // que arranque sin nada seleccionado
 
             // cuando el usuario seleccione o escriba una provincia, intento cargar sus localidades
-            cmbProvincia.SelectedIndexChanged += cmbProvincia_SelectedIndexChanged; // evento para cuando selecciona una provincia del combo
-            cmbProvincia.TextChanged += cmbProvincia_TextChanged; // evento para cuando escribe algo en el combo (si borra el texto, también se limpia el combo de localidades)
+            cmbLocalidad.SelectedIndexChanged += cmbProvincia_SelectedIndexChanged; // evento para cuando selecciona una provincia del combo
+            cmbLocalidad.TextChanged += cmbProvincia_TextChanged; // evento para cuando escribe algo en el combo (si borra el texto, también se limpia el combo de localidades)
 
             // habilito que el combo sugiera opciones mientras el usuario escribe
             try
             {
-                cmbProvincia.AutoCompleteMode = AutoCompleteMode.SuggestAppend; // el combo sugiere y completa automáticamente mientras el usuario escribe
-                cmbProvincia.AutoCompleteSource = AutoCompleteSource.ListItems; // las sugerencias se basan en los items del combo (las provincias que cargué de la BD)
+                cmbLocalidad.AutoCompleteMode = AutoCompleteMode.SuggestAppend; // el combo sugiere y completa automáticamente mientras el usuario escribe
+                cmbLocalidad.AutoCompleteSource = AutoCompleteSource.ListItems; // las sugerencias se basan en los items del combo (las provincias que cargué de la BD)
             }
             catch { } // si el autocompletado no funciona por alguna razón, no hago nada para que el combo siga funcionando aunque sin esa función
         }
@@ -62,12 +62,12 @@ namespace pryZarateERP
 
         private void cmbProvincia_TextChanged(object sender, EventArgs e)
         {
-            CargarLocalidades(cmbProvincia.Text.Trim());
+            CargarLocalidades(cmbLocalidad.Text.Trim());
         }
 
         private void cmbProvincia_SelectedIndexChanged(object sender, EventArgs e)
         {
-            CargarLocalidades(cmbProvincia.Text.Trim());
+            CargarLocalidades(cmbLocalidad.Text.Trim());
         }
 
         private void CargarLocalidades(string provincia)
@@ -75,16 +75,16 @@ namespace pryZarateERP
             // si no escribió nada, limpio el combo de localidades y salgo
             if (string.IsNullOrEmpty(provincia))
             {
-                cmbLocalidad.DataSource = null;
-                cmbLocalidad.Items.Clear();
+                cmbProvincia.DataSource = null;
+                cmbProvincia.Items.Clear();
                 return;
             }
 
             // solo cargo localidades si la provincia contiene "Cord" (acepta Córdoba, Cordoba, etc.)
             if (provincia.IndexOf("Cord", StringComparison.OrdinalIgnoreCase) < 0) // si la provincia no contiene "Cord" (en cualquier combinación de mayúsculas/minúsculas), limpio el combo de localidades y salgo, porque solo tengo localidades de Córdoba cargadas en la BD
             {
-                cmbLocalidad.DataSource = null; // limpio el combo de localidades porque la provincia seleccionada no es Córdoba, y solo tengo localidades de Córdoba en la BD, así evito mostrar localidades que no corresponden a la provincia seleccionada
-                cmbLocalidad.Items.Clear(); // limpio los items del combo de localidades para que quede vacío
+                cmbProvincia.DataSource = null; // limpio el combo de localidades porque la provincia seleccionada no es Córdoba, y solo tengo localidades de Córdoba en la BD, así evito mostrar localidades que no corresponden a la provincia seleccionada
+                cmbProvincia.Items.Clear(); // limpio los items del combo de localidades para que quede vacío
                 return;
             }
 
@@ -92,22 +92,22 @@ namespace pryZarateERP
 
             if (tabla == null || tabla.Rows.Count == 0) // si no hay localidades para mostrar, limpio el combo de localidades y salgo
             {
-                cmbLocalidad.DataSource = null; // limpio la fuente de datos del combo de localidades para que quede vacío
-                cmbLocalidad.Items.Clear(); 
+                cmbProvincia.DataSource = null; // limpio la fuente de datos del combo de localidades para que quede vacío
+                cmbProvincia.Items.Clear(); 
                 return;
             }
 
             // cargo las localidades en el combo
-            cmbLocalidad.DataSource = tabla;
-            cmbLocalidad.DisplayMember = "LocalidadesCordoba"; // columna que se muestra
-            cmbLocalidad.ValueMember = "ID_Localidades"; // columna del ID
-            cmbLocalidad.SelectedIndex = -1;
+            cmbProvincia.DataSource = tabla;
+            cmbProvincia.DisplayMember = "LocalidadesCordoba"; // columna que se muestra
+            cmbProvincia.ValueMember = "ID_Localidades"; // columna del ID
+            cmbProvincia.SelectedIndex = -1;
 
             // habilito autocompletado en el combo de localidades
             try
             {
-                cmbLocalidad.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
-                cmbLocalidad.AutoCompleteSource = AutoCompleteSource.ListItems;
+                cmbProvincia.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
+                cmbProvincia.AutoCompleteSource = AutoCompleteSource.ListItems;
             }
             catch { }
         }
@@ -244,9 +244,9 @@ namespace pryZarateERP
             }
 
             // tomo provincia y localidad del combo, si hay algo seleccionado
-            string provincia = cmbProvincia.SelectedIndex >= 0 ? cmbProvincia.Text : ""; // si no hay nada seleccionado, dejo vacío para que se guarde como NULL en la BD
-            string localidad = (cmbLocalidad.DataSource != null && cmbLocalidad.SelectedIndex >= 0) // solo tomo la localidad si el combo tiene datos y hay algo seleccionado, sino dejo vacío para que se guarde como NULL en la BD
-                                ? cmbLocalidad.Text : ""; // si no hay nada seleccionado, dejo vacío para que se guarde como NULL en la BD
+            string provincia = cmbLocalidad.SelectedIndex >= 0 ? cmbLocalidad.Text : ""; // si no hay nada seleccionado, dejo vacío para que se guarde como NULL en la BD
+            string localidad = (cmbProvincia.DataSource != null && cmbProvincia.SelectedIndex >= 0) // solo tomo la localidad si el combo tiene datos y hay algo seleccionado, sino dejo vacío para que se guarde como NULL en la BD
+                                ? cmbProvincia.Text : ""; // si no hay nada seleccionado, dejo vacío para que se guarde como NULL en la BD
 
             try
             {
@@ -255,8 +255,8 @@ namespace pryZarateERP
                 // limpio los campos después de agregar
                 txtDireccion.Text = "";
                 txtGeo.Text = "";
-                cmbProvincia.SelectedIndex = -1;
-                cmbLocalidad.DataSource = null;
+                cmbLocalidad.SelectedIndex = -1;
+                cmbProvincia.DataSource = null;
 
                 CargarDomicilios();
             }
@@ -454,9 +454,9 @@ namespace pryZarateERP
             chkActivar.Checked = true;
             txtDireccion.Text = "";
             txtGeo.Text = "";
-            cmbProvincia.SelectedIndex = -1;
-            cmbLocalidad.DataSource = null;
-            cmbLocalidad.Items.Clear();
+            cmbLocalidad.SelectedIndex = -1;
+            cmbProvincia.DataSource = null;
+            cmbProvincia.Items.Clear();
             cmbTipo.SelectedIndex = -1;
             txtValor.Text = "";
             dgvDomicilios.DataSource = null;

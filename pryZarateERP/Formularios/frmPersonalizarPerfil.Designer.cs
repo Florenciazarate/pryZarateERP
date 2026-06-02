@@ -43,9 +43,9 @@ namespace pryZarateERP
             this.lblGeo = new System.Windows.Forms.Label();
             this.txtGeo = new Guna.UI2.WinForms.Guna2TextBox();
             this.lblProvincia = new System.Windows.Forms.Label();
-            this.cmbProvincia = new Guna.UI2.WinForms.Guna2ComboBox();
-            this.lblLocalidad = new System.Windows.Forms.Label();
             this.cmbLocalidad = new Guna.UI2.WinForms.Guna2ComboBox();
+            this.lblLocalidad = new System.Windows.Forms.Label();
+            this.cmbProvincia = new Guna.UI2.WinForms.Guna2ComboBox();
             this.btnEliminarDom = new Guna.UI2.WinForms.Guna2Button();
             this.dgvDomicilios = new Guna.UI2.WinForms.Guna2DataGridView();
             this.pnlContacto = new Guna.UI2.WinForms.Guna2Panel();
@@ -283,9 +283,9 @@ namespace pryZarateERP
             this.pnlDomicilio.Controls.Add(this.lblGeo);
             this.pnlDomicilio.Controls.Add(this.txtGeo);
             this.pnlDomicilio.Controls.Add(this.lblProvincia);
-            this.pnlDomicilio.Controls.Add(this.cmbProvincia);
-            this.pnlDomicilio.Controls.Add(this.lblLocalidad);
             this.pnlDomicilio.Controls.Add(this.cmbLocalidad);
+            this.pnlDomicilio.Controls.Add(this.lblLocalidad);
+            this.pnlDomicilio.Controls.Add(this.cmbProvincia);
             this.pnlDomicilio.Controls.Add(this.btnVerMapa);
             this.pnlDomicilio.Controls.Add(this.btnEliminarDom);
             this.pnlDomicilio.Controls.Add(this.dgvDomicilios);
@@ -387,35 +387,6 @@ namespace pryZarateERP
             this.lblProvincia.TabIndex = 5;
             this.lblProvincia.Text = "Provincia";
             // 
-            // cmbProvincia
-            // 
-            this.cmbProvincia.BackColor = System.Drawing.Color.Transparent;
-            this.cmbProvincia.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(116)))), ((int)(((byte)(139)))));
-            this.cmbProvincia.BorderRadius = 6;
-            this.cmbProvincia.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
-            this.cmbProvincia.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbProvincia.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(15)))), ((int)(((byte)(23)))), ((int)(((byte)(42)))));
-            this.cmbProvincia.FocusedColor = System.Drawing.Color.FromArgb(((int)(((byte)(167)))), ((int)(((byte)(139)))), ((int)(((byte)(250)))));
-            this.cmbProvincia.FocusedState.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(167)))), ((int)(((byte)(139)))), ((int)(((byte)(250)))));
-            this.cmbProvincia.Font = new System.Drawing.Font("Segoe UI", 9F);
-            this.cmbProvincia.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(68)))), ((int)(((byte)(88)))), ((int)(((byte)(112)))));
-            this.cmbProvincia.ItemHeight = 26;
-            this.cmbProvincia.Location = new System.Drawing.Point(85, 163);
-            this.cmbProvincia.Name = "cmbProvincia";
-            this.cmbProvincia.Size = new System.Drawing.Size(340, 32);
-            this.cmbProvincia.TabIndex = 6;
-            // 
-            // lblLocalidad
-            // 
-            this.lblLocalidad.AutoSize = true;
-            this.lblLocalidad.Font = new System.Drawing.Font("Segoe UI Semibold", 9F, System.Drawing.FontStyle.Bold);
-            this.lblLocalidad.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(226)))), ((int)(((byte)(232)))), ((int)(((byte)(240)))));
-            this.lblLocalidad.Location = new System.Drawing.Point(15, 205);
-            this.lblLocalidad.Name = "lblLocalidad";
-            this.lblLocalidad.Size = new System.Drawing.Size(58, 15);
-            this.lblLocalidad.TabIndex = 7;
-            this.lblLocalidad.Text = "Localidad";
-            // 
             // cmbLocalidad
             // 
             this.cmbLocalidad.BackColor = System.Drawing.Color.Transparent;
@@ -432,7 +403,38 @@ namespace pryZarateERP
             this.cmbLocalidad.Location = new System.Drawing.Point(85, 199);
             this.cmbLocalidad.Name = "cmbLocalidad";
             this.cmbLocalidad.Size = new System.Drawing.Size(340, 32);
-            this.cmbLocalidad.TabIndex = 8;
+            this.cmbLocalidad.TabIndex = 6;
+            // 
+            // lblLocalidad
+            // 
+            this.lblLocalidad.AutoSize = true;
+            this.lblLocalidad.Font = new System.Drawing.Font("Segoe UI Semibold", 9F, System.Drawing.FontStyle.Bold);
+            this.lblLocalidad.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(226)))), ((int)(((byte)(232)))), ((int)(((byte)(240)))));
+            this.lblLocalidad.Location = new System.Drawing.Point(15, 205);
+            this.lblLocalidad.Name = "lblLocalidad";
+            this.lblLocalidad.Size = new System.Drawing.Size(58, 15);
+            this.lblLocalidad.TabIndex = 7;
+            this.lblLocalidad.Text = "Localidad";
+            // 
+            // cmbProvincia
+            // 
+            this.cmbProvincia.BackColor = System.Drawing.Color.Transparent;
+            this.cmbProvincia.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(116)))), ((int)(((byte)(139)))));
+            this.cmbProvincia.BorderRadius = 6;
+            this.cmbProvincia.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
+            this.cmbProvincia.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbProvincia.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(15)))), ((int)(((byte)(23)))), ((int)(((byte)(42)))));
+            this.cmbProvincia.FocusedColor = System.Drawing.Color.FromArgb(((int)(((byte)(167)))), ((int)(((byte)(139)))), ((int)(((byte)(250)))));
+            this.cmbProvincia.FocusedState.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(167)))), ((int)(((byte)(139)))), ((int)(((byte)(250)))));
+            this.cmbProvincia.Font = new System.Drawing.Font("Segoe UI", 9F);
+            this.cmbProvincia.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(68)))), ((int)(((byte)(88)))), ((int)(((byte)(112)))));
+            this.cmbProvincia.ItemHeight = 26;
+            this.cmbProvincia.Items.AddRange(new object[] {
+            "Córdoba"});
+            this.cmbProvincia.Location = new System.Drawing.Point(85, 164);
+            this.cmbProvincia.Name = "cmbProvincia";
+            this.cmbProvincia.Size = new System.Drawing.Size(340, 32);
+            this.cmbProvincia.TabIndex = 8;
             // 
             // btnEliminarDom
             // 
@@ -802,9 +804,9 @@ namespace pryZarateERP
         private System.Windows.Forms.Label lblGeo;
         private Guna.UI2.WinForms.Guna2TextBox txtGeo;
         private System.Windows.Forms.Label lblProvincia;
-        private Guna.UI2.WinForms.Guna2ComboBox cmbProvincia;
-        private System.Windows.Forms.Label lblLocalidad;
         private Guna.UI2.WinForms.Guna2ComboBox cmbLocalidad;
+        private System.Windows.Forms.Label lblLocalidad;
+        private Guna.UI2.WinForms.Guna2ComboBox cmbProvincia;
         private Guna.UI2.WinForms.Guna2Button btnVerMapa;
         private Guna.UI2.WinForms.Guna2Button btnAgregarDom;
         private Guna.UI2.WinForms.Guna2Button btnEliminarDom;
