@@ -17,17 +17,15 @@ namespace pryZarateERP
             this.pnlHeader = new Guna.UI2.WinForms.Guna2Panel();
             this.lblSubtitulo = new System.Windows.Forms.Label();
             this.lblTitulo = new System.Windows.Forms.Label();
-            this.pnlNav = new Guna.UI2.WinForms.Guna2Panel();
-            this.pnlIndicador = new Guna.UI2.WinForms.Guna2Panel();
-            this.lblTabPersonal = new System.Windows.Forms.Label();
-            this.lblTabAuditoria = new System.Windows.Forms.Label();
-            this.pnlContenido = new System.Windows.Forms.Panel();
+            this.tabControl = new Guna.UI2.WinForms.Guna2TabControl();
+            this.tabPersonal = new System.Windows.Forms.TabPage();
+            this.tabAuditoria = new System.Windows.Forms.TabPage();
             this.pnlHeader.SuspendLayout();
-            this.pnlNav.SuspendLayout();
+            this.tabControl.SuspendLayout();
             this.SuspendLayout();
-            // 
+            //
             // pnlHeader
-            // 
+            //
             this.pnlHeader.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(30)))), ((int)(((byte)(41)))), ((int)(((byte)(59)))));
             this.pnlHeader.Controls.Add(this.lblSubtitulo);
             this.pnlHeader.Controls.Add(this.lblTitulo);
@@ -36,9 +34,9 @@ namespace pryZarateERP
             this.pnlHeader.Name = "pnlHeader";
             this.pnlHeader.Size = new System.Drawing.Size(900, 70);
             this.pnlHeader.TabIndex = 0;
-            // 
+            //
             // lblSubtitulo
-            // 
+            //
             this.lblSubtitulo.AutoSize = true;
             this.lblSubtitulo.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.lblSubtitulo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(148)))), ((int)(((byte)(163)))), ((int)(((byte)(184)))));
@@ -46,9 +44,9 @@ namespace pryZarateERP
             this.lblSubtitulo.Name = "lblSubtitulo";
             this.lblSubtitulo.Size = new System.Drawing.Size(0, 15);
             this.lblSubtitulo.TabIndex = 1;
-            // 
+            //
             // lblTitulo
-            // 
+            //
             this.lblTitulo.AutoSize = true;
             this.lblTitulo.Font = new System.Drawing.Font("Segoe UI Semibold", 16F, System.Drawing.FontStyle.Bold);
             this.lblTitulo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(167)))), ((int)(((byte)(139)))), ((int)(((byte)(250)))));
@@ -56,97 +54,71 @@ namespace pryZarateERP
             this.lblTitulo.Name = "lblTitulo";
             this.lblTitulo.Size = new System.Drawing.Size(0, 30);
             this.lblTitulo.TabIndex = 0;
-            // 
-            // pnlNav
-            // 
-            this.pnlNav.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(30)))), ((int)(((byte)(41)))), ((int)(((byte)(59)))));
-            this.pnlNav.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(51)))), ((int)(((byte)(65)))), ((int)(((byte)(85)))));
-            this.pnlNav.Controls.Add(this.pnlIndicador);
-            this.pnlNav.Controls.Add(this.lblTabPersonal);
-            this.pnlNav.Controls.Add(this.lblTabAuditoria);
-            this.pnlNav.Dock = System.Windows.Forms.DockStyle.Top;
-            this.pnlNav.Location = new System.Drawing.Point(0, 70);
-            this.pnlNav.Name = "pnlNav";
-            this.pnlNav.Size = new System.Drawing.Size(900, 40);
-            this.pnlNav.TabIndex = 1;
-            // 
-            // pnlIndicador
-            // 
-            this.pnlIndicador.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(139)))), ((int)(((byte)(92)))), ((int)(((byte)(246)))));
-            this.pnlIndicador.BorderRadius = 2;
-            this.pnlIndicador.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(139)))), ((int)(((byte)(92)))), ((int)(((byte)(246)))));
-            this.pnlIndicador.Location = new System.Drawing.Point(30, 34);
-            this.pnlIndicador.Name = "pnlIndicador";
-            this.pnlIndicador.Size = new System.Drawing.Size(68, 3);
-            this.pnlIndicador.TabIndex = 2;
-            // 
-            // lblTabPersonal
-            // 
-            this.lblTabPersonal.AutoSize = true;
-            this.lblTabPersonal.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.lblTabPersonal.Font = new System.Drawing.Font("Segoe UI Semibold", 10F, System.Drawing.FontStyle.Bold);
-            this.lblTabPersonal.ForeColor = System.Drawing.Color.White;
-            this.lblTabPersonal.Location = new System.Drawing.Point(30, 10);
-            this.lblTabPersonal.Name = "lblTabPersonal";
-            this.lblTabPersonal.Size = new System.Drawing.Size(62, 19);
-            this.lblTabPersonal.TabIndex = 0;
-            this.lblTabPersonal.Text = "Personal";
-            this.lblTabPersonal.Click += new System.EventHandler(this.lblTabPersonal_Click);
-            // 
-            // lblTabAuditoria
-            // 
-            this.lblTabAuditoria.AutoSize = true;
-            this.lblTabAuditoria.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.lblTabAuditoria.Font = new System.Drawing.Font("Segoe UI", 10F);
-            this.lblTabAuditoria.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(148)))), ((int)(((byte)(163)))), ((int)(((byte)(184)))));
-            this.lblTabAuditoria.Location = new System.Drawing.Point(120, 10);
-            this.lblTabAuditoria.Name = "lblTabAuditoria";
-            this.lblTabAuditoria.Size = new System.Drawing.Size(65, 19);
-            this.lblTabAuditoria.TabIndex = 1;
-            this.lblTabAuditoria.Text = "Auditoría";
-            this.lblTabAuditoria.Click += new System.EventHandler(this.lblTabAuditoria_Click);
-            // 
-            // pnlContenido
-            // 
-            this.pnlContenido.AutoScroll = true;
-            this.pnlContenido.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(15)))), ((int)(((byte)(23)))), ((int)(((byte)(42)))));
-            this.pnlContenido.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pnlContenido.Location = new System.Drawing.Point(0, 110);
-            this.pnlContenido.Name = "pnlContenido";
-            this.pnlContenido.Size = new System.Drawing.Size(900, 790);
-            this.pnlContenido.TabIndex = 2;
-            this.pnlContenido.Paint += new System.Windows.Forms.PaintEventHandler(this.pnlContenido_Paint);
-            // 
+            //
+            // tabControl
+            //
+            this.tabControl.Controls.Add(this.tabPersonal);
+            this.tabControl.Controls.Add(this.tabAuditoria);
+            this.tabControl.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tabControl.Location = new System.Drawing.Point(0, 70);
+            this.tabControl.Name = "tabControl";
+            this.tabControl.SelectedIndex = 0;
+            this.tabControl.Size = new System.Drawing.Size(900, 830);
+            this.tabControl.TabButtonHoverState.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(51)))), ((int)(((byte)(65)))), ((int)(((byte)(85)))));
+            this.tabControl.TabButtonHoverState.ForeColor = System.Drawing.Color.White;
+            this.tabControl.TabButtonSelectedState.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(139)))), ((int)(((byte)(92)))), ((int)(((byte)(246)))));
+            this.tabControl.TabButtonSelectedState.ForeColor = System.Drawing.Color.White;
+            this.tabControl.TabButtonSelectedState.InnerColor = System.Drawing.Color.FromArgb(((int)(((byte)(139)))), ((int)(((byte)(92)))), ((int)(((byte)(246)))));
+            this.tabControl.TabButtonIdleState.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(30)))), ((int)(((byte)(41)))), ((int)(((byte)(59)))));
+            this.tabControl.TabButtonIdleState.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(148)))), ((int)(((byte)(163)))), ((int)(((byte)(184)))));
+            this.tabControl.TabButtonSize = new System.Drawing.Size(100, 36);
+            this.tabControl.Alignment = System.Windows.Forms.TabAlignment.Top;
+            this.tabControl.TabIndex = 1;
+            this.tabControl.TabMenuBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(30)))), ((int)(((byte)(41)))), ((int)(((byte)(59)))));
+            this.tabControl.SelectedIndexChanged += new System.EventHandler(this.tabControl_SelectedIndexChanged);
+            //
+            // tabPersonal
+            //
+            this.tabPersonal.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(15)))), ((int)(((byte)(23)))), ((int)(((byte)(42)))));
+            this.tabPersonal.Location = new System.Drawing.Point(4, 40);
+            this.tabPersonal.Name = "tabPersonal";
+            this.tabPersonal.Size = new System.Drawing.Size(892, 786);
+            this.tabPersonal.TabIndex = 0;
+            this.tabPersonal.Text = "Personal";
+            //
+            // tabAuditoria
+            //
+            this.tabAuditoria.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(15)))), ((int)(((byte)(23)))), ((int)(((byte)(42)))));
+            this.tabAuditoria.Location = new System.Drawing.Point(4, 40);
+            this.tabAuditoria.Name = "tabAuditoria";
+            this.tabAuditoria.Size = new System.Drawing.Size(892, 786);
+            this.tabAuditoria.TabIndex = 1;
+            this.tabAuditoria.Text = "Auditoría";
+            //
             // frmPrincipal
-            // 
+            //
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(15)))), ((int)(((byte)(23)))), ((int)(((byte)(42)))));
             this.ClientSize = new System.Drawing.Size(900, 900);
-            this.Controls.Add(this.pnlContenido);
-            this.Controls.Add(this.pnlNav);
+            this.Controls.Add(this.tabControl);
             this.Controls.Add(this.pnlHeader);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "frmPrincipal";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "ERP";
-            this.Load += new System.EventHandler(this.frmPrincipal_Load);
             this.pnlHeader.ResumeLayout(false);
             this.pnlHeader.PerformLayout();
-            this.pnlNav.ResumeLayout(false);
-            this.pnlNav.PerformLayout();
+            this.tabControl.ResumeLayout(false);
             this.ResumeLayout(false);
-
         }
 
         private Guna.UI2.WinForms.Guna2Panel pnlHeader;
         private System.Windows.Forms.Label lblTitulo;
         private System.Windows.Forms.Label lblSubtitulo;
-        private Guna.UI2.WinForms.Guna2Panel pnlNav;
-        private System.Windows.Forms.Label lblTabPersonal;
-        private System.Windows.Forms.Label lblTabAuditoria;
-        private Guna.UI2.WinForms.Guna2Panel pnlIndicador;
-        private System.Windows.Forms.Panel pnlContenido;
+        private Guna.UI2.WinForms.Guna2TabControl tabControl;
+        private System.Windows.Forms.TabPage tabPersonal;
+        private System.Windows.Forms.TabPage tabAuditoria;
     }
 }

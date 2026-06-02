@@ -45,14 +45,12 @@ namespace pryZarateERP
 
             string nombreUsuario, rol; // Variables para recibir el nombre y rol desde la validación
             bool ok = clsBaseDatos.ValidarUsuario(usuario, password, perfilElegido, out nombreUsuario, out rol); // Ahora también valida el perfil
-            clsBaseDatos.RegistrarAuditoria(usuario, ok); // Registro el intento en la auditoría (BD)
-
-            // Registro en el archivo de auditoría también
-            try
-            {
-                AuditLogger.Log(usuario, ok ? $"Inicio de sesión exitoso (Perfil: {perfilElegido})" : $"Inicio de sesión fallido (Perfil: {perfilElegido})");
-            }
-            catch { }
+            clsBaseDatos.RegistrarAuditoria(
+                usuario,
+                "Inicio de Sesión",
+                ok ? "Inicio exitoso" : "Intento fallido",
+                $"Perfil: {perfilElegido}",
+                ok);
 
             if (ok)
             {

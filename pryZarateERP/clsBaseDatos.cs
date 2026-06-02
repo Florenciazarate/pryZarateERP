@@ -91,18 +91,21 @@ namespace pryZarateERP
         // AUDITORIA
         // ══════════════════════════════════
 
-        public static void RegistrarAuditoria(string usuario, bool exitoso)
+        public static void RegistrarAuditoria(string usuario, string modulo, string accion, string detalle, bool exitoso)
         {
             try
             {
                 using (var conn = new OleDbConnection(ObtenerConnectionString()))
                 {
                     conn.Open();
-                    using (var cmd = new OleDbCommand("INSERT INTO AuditoriaSesion (FechaHora, Usuario, Exitoso) VALUES (?, ?, ?)", conn))
+                    using (var cmd = new OleDbCommand("INSERT INTO AuditoriaSesion (FechaHora, Usuario, Exitoso, Detalle, Modulo, Accion) VALUES (?, ?, ?, ?, ?, ?)", conn))
                     {
                         cmd.Parameters.AddWithValue("?", DateTime.Now);
-                        cmd.Parameters.AddWithValue("?", usuario);
+                        cmd.Parameters.AddWithValue("?", usuario ?? "desconocido");
                         cmd.Parameters.AddWithValue("?", exitoso);
+                        cmd.Parameters.AddWithValue("?", detalle ?? "");
+                        cmd.Parameters.AddWithValue("?", modulo ?? "");
+                        cmd.Parameters.AddWithValue("?", accion ?? "");
                         cmd.ExecuteNonQuery();
                     }
                 }
@@ -116,7 +119,7 @@ namespace pryZarateERP
             try
             {
                 using (var conn = new OleDbConnection(ObtenerConnectionString()))
-                using (var da = new OleDbDataAdapter("SELECT FechaHora, Usuario, Exitoso FROM AuditoriaSesion ORDER BY FechaHora DESC", conn))
+                using (var da = new OleDbDataAdapter("SELECT FechaHora, Usuario, Modulo, Accion, Exitoso, Detalle FROM AuditoriaSesion ORDER BY FechaHora DESC", conn))
                 {
                     da.Fill(tabla);
                 }

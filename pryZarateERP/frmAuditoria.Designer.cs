@@ -21,8 +21,8 @@ namespace pryZarateERP
             this.lblTitulo = new System.Windows.Forms.Label();
             this.lblUsuarioFiltro = new System.Windows.Forms.Label();
             this.txtUsuarioFiltro = new Guna.UI2.WinForms.Guna2TextBox();
-            this.lblAccion = new System.Windows.Forms.Label();
-            this.txtAccion = new Guna.UI2.WinForms.Guna2TextBox();
+            this.lblResultado = new System.Windows.Forms.Label();
+            this.cmbExitosoFiltro = new Guna.UI2.WinForms.Guna2ComboBox();
             this.lblDesde = new System.Windows.Forms.Label();
             this.dtpDesde = new Guna.UI2.WinForms.Guna2DateTimePicker();
             this.lblHasta = new System.Windows.Forms.Label();
@@ -44,18 +44,18 @@ namespace pryZarateERP
             this.pnlFiltros.BorderThickness = 1;
             this.pnlFiltros.Controls.Add(this.lblTitulo);
             this.pnlFiltros.Controls.Add(this.lblUsuarioFiltro);
+            this.pnlFiltros.Controls.Add(this.btnLimpiar);
             this.pnlFiltros.Controls.Add(this.txtUsuarioFiltro);
-            this.pnlFiltros.Controls.Add(this.lblAccion);
-            this.pnlFiltros.Controls.Add(this.txtAccion);
+            this.pnlFiltros.Controls.Add(this.lblResultado);
+            this.pnlFiltros.Controls.Add(this.cmbExitosoFiltro);
             this.pnlFiltros.Controls.Add(this.lblDesde);
             this.pnlFiltros.Controls.Add(this.dtpDesde);
             this.pnlFiltros.Controls.Add(this.lblHasta);
             this.pnlFiltros.Controls.Add(this.dtpHasta);
             this.pnlFiltros.Controls.Add(this.btnFiltrar);
-            this.pnlFiltros.Controls.Add(this.btnLimpiar);
             this.pnlFiltros.Location = new System.Drawing.Point(20, 15);
             this.pnlFiltros.Name = "pnlFiltros";
-            this.pnlFiltros.Size = new System.Drawing.Size(855, 139);
+            this.pnlFiltros.Size = new System.Drawing.Size(902, 146);
             this.pnlFiltros.TabIndex = 0;
             // 
             // lblTitulo
@@ -63,7 +63,7 @@ namespace pryZarateERP
             this.lblTitulo.AutoSize = true;
             this.lblTitulo.Font = new System.Drawing.Font("Segoe UI Semibold", 14F, System.Drawing.FontStyle.Bold);
             this.lblTitulo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(167)))), ((int)(((byte)(139)))), ((int)(((byte)(250)))));
-            this.lblTitulo.Location = new System.Drawing.Point(18, 12);
+            this.lblTitulo.Location = new System.Drawing.Point(16, 16);
             this.lblTitulo.Name = "lblTitulo";
             this.lblTitulo.Size = new System.Drawing.Size(178, 25);
             this.lblTitulo.TabIndex = 0;
@@ -90,47 +90,48 @@ namespace pryZarateERP
             this.txtUsuarioFiltro.FocusedState.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(167)))), ((int)(((byte)(139)))), ((int)(((byte)(250)))));
             this.txtUsuarioFiltro.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.txtUsuarioFiltro.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(241)))), ((int)(((byte)(245)))), ((int)(((byte)(249)))));
-            this.txtUsuarioFiltro.Location = new System.Drawing.Point(72, 55);
+            this.txtUsuarioFiltro.Location = new System.Drawing.Point(68, 56);
             this.txtUsuarioFiltro.Name = "txtUsuarioFiltro";
             this.txtUsuarioFiltro.PlaceholderText = "";
             this.txtUsuarioFiltro.SelectedText = "";
-            this.txtUsuarioFiltro.Size = new System.Drawing.Size(130, 30);
+            this.txtUsuarioFiltro.Size = new System.Drawing.Size(130, 26);
             this.txtUsuarioFiltro.TabIndex = 2;
             // 
-            // lblAccion
+            // lblResultado
             // 
-            this.lblAccion.AutoSize = true;
-            this.lblAccion.Font = new System.Drawing.Font("Segoe UI Semibold", 9F, System.Drawing.FontStyle.Bold);
-            this.lblAccion.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(226)))), ((int)(((byte)(232)))), ((int)(((byte)(240)))));
-            this.lblAccion.Location = new System.Drawing.Point(215, 62);
-            this.lblAccion.Name = "lblAccion";
-            this.lblAccion.Size = new System.Drawing.Size(44, 15);
-            this.lblAccion.TabIndex = 3;
-            this.lblAccion.Text = "Accion";
+            this.lblResultado.AutoSize = true;
+            this.lblResultado.Font = new System.Drawing.Font("Segoe UI Semibold", 9F, System.Drawing.FontStyle.Bold);
+            this.lblResultado.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(226)))), ((int)(((byte)(232)))), ((int)(((byte)(240)))));
+            this.lblResultado.Location = new System.Drawing.Point(213, 63);
+            this.lblResultado.Name = "lblResultado";
+            this.lblResultado.Size = new System.Drawing.Size(59, 15);
+            this.lblResultado.TabIndex = 3;
+            this.lblResultado.Text = "Resultado";
             // 
-            // txtAccion
+            // cmbExitosoFiltro
             // 
-            this.txtAccion.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(116)))), ((int)(((byte)(139)))));
-            this.txtAccion.BorderRadius = 6;
-            this.txtAccion.Cursor = System.Windows.Forms.Cursors.IBeam;
-            this.txtAccion.DefaultText = "";
-            this.txtAccion.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(15)))), ((int)(((byte)(23)))), ((int)(((byte)(42)))));
-            this.txtAccion.FocusedState.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(167)))), ((int)(((byte)(139)))), ((int)(((byte)(250)))));
-            this.txtAccion.Font = new System.Drawing.Font("Segoe UI", 9F);
-            this.txtAccion.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(241)))), ((int)(((byte)(245)))), ((int)(((byte)(249)))));
-            this.txtAccion.Location = new System.Drawing.Point(265, 55);
-            this.txtAccion.Name = "txtAccion";
-            this.txtAccion.PlaceholderText = "";
-            this.txtAccion.SelectedText = "";
-            this.txtAccion.Size = new System.Drawing.Size(130, 30);
-            this.txtAccion.TabIndex = 4;
+            this.cmbExitosoFiltro.BackColor = System.Drawing.Color.Transparent;
+            this.cmbExitosoFiltro.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(116)))), ((int)(((byte)(139)))));
+            this.cmbExitosoFiltro.BorderRadius = 6;
+            this.cmbExitosoFiltro.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
+            this.cmbExitosoFiltro.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbExitosoFiltro.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(15)))), ((int)(((byte)(23)))), ((int)(((byte)(42)))));
+            this.cmbExitosoFiltro.FocusedColor = System.Drawing.Color.FromArgb(((int)(((byte)(167)))), ((int)(((byte)(139)))), ((int)(((byte)(250)))));
+            this.cmbExitosoFiltro.FocusedState.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(167)))), ((int)(((byte)(139)))), ((int)(((byte)(250)))));
+            this.cmbExitosoFiltro.Font = new System.Drawing.Font("Segoe UI", 9F);
+            this.cmbExitosoFiltro.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(241)))), ((int)(((byte)(245)))), ((int)(((byte)(249)))));
+            this.cmbExitosoFiltro.ItemHeight = 20;
+            this.cmbExitosoFiltro.Location = new System.Drawing.Point(274, 57);
+            this.cmbExitosoFiltro.Name = "cmbExitosoFiltro";
+            this.cmbExitosoFiltro.Size = new System.Drawing.Size(130, 26);
+            this.cmbExitosoFiltro.TabIndex = 4;
             // 
             // lblDesde
             // 
             this.lblDesde.AutoSize = true;
             this.lblDesde.Font = new System.Drawing.Font("Segoe UI Semibold", 9F, System.Drawing.FontStyle.Bold);
             this.lblDesde.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(226)))), ((int)(((byte)(232)))), ((int)(((byte)(240)))));
-            this.lblDesde.Location = new System.Drawing.Point(410, 62);
+            this.lblDesde.Location = new System.Drawing.Point(416, 63);
             this.lblDesde.Name = "lblDesde";
             this.lblDesde.Size = new System.Drawing.Size(40, 15);
             this.lblDesde.TabIndex = 5;
@@ -140,15 +141,16 @@ namespace pryZarateERP
             // 
             this.dtpDesde.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(116)))), ((int)(((byte)(139)))));
             this.dtpDesde.BorderRadius = 6;
+            this.dtpDesde.Checked = true;
             this.dtpDesde.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(15)))), ((int)(((byte)(23)))), ((int)(((byte)(42)))));
             this.dtpDesde.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.dtpDesde.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(241)))), ((int)(((byte)(245)))), ((int)(((byte)(249)))));
             this.dtpDesde.Format = System.Windows.Forms.DateTimePickerFormat.Short;
-            this.dtpDesde.Location = new System.Drawing.Point(455, 55);
+            this.dtpDesde.Location = new System.Drawing.Point(459, 57);
             this.dtpDesde.MaxDate = new System.DateTime(9998, 12, 31, 0, 0, 0, 0);
             this.dtpDesde.MinDate = new System.DateTime(1753, 1, 1, 0, 0, 0, 0);
             this.dtpDesde.Name = "dtpDesde";
-            this.dtpDesde.Size = new System.Drawing.Size(120, 30);
+            this.dtpDesde.Size = new System.Drawing.Size(130, 26);
             this.dtpDesde.TabIndex = 6;
             this.dtpDesde.Value = new System.DateTime(2026, 5, 28, 20, 11, 9, 439);
             // 
@@ -157,7 +159,7 @@ namespace pryZarateERP
             this.lblHasta.AutoSize = true;
             this.lblHasta.Font = new System.Drawing.Font("Segoe UI Semibold", 9F, System.Drawing.FontStyle.Bold);
             this.lblHasta.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(226)))), ((int)(((byte)(232)))), ((int)(((byte)(240)))));
-            this.lblHasta.Location = new System.Drawing.Point(585, 62);
+            this.lblHasta.Location = new System.Drawing.Point(597, 62);
             this.lblHasta.Name = "lblHasta";
             this.lblHasta.Size = new System.Drawing.Size(37, 15);
             this.lblHasta.TabIndex = 7;
@@ -167,15 +169,16 @@ namespace pryZarateERP
             // 
             this.dtpHasta.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(116)))), ((int)(((byte)(139)))));
             this.dtpHasta.BorderRadius = 6;
+            this.dtpHasta.Checked = true;
             this.dtpHasta.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(15)))), ((int)(((byte)(23)))), ((int)(((byte)(42)))));
             this.dtpHasta.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.dtpHasta.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(241)))), ((int)(((byte)(245)))), ((int)(((byte)(249)))));
             this.dtpHasta.Format = System.Windows.Forms.DateTimePickerFormat.Short;
-            this.dtpHasta.Location = new System.Drawing.Point(625, 55);
+            this.dtpHasta.Location = new System.Drawing.Point(636, 57);
             this.dtpHasta.MaxDate = new System.DateTime(9998, 12, 31, 0, 0, 0, 0);
             this.dtpHasta.MinDate = new System.DateTime(1753, 1, 1, 0, 0, 0, 0);
             this.dtpHasta.Name = "dtpHasta";
-            this.dtpHasta.Size = new System.Drawing.Size(120, 30);
+            this.dtpHasta.Size = new System.Drawing.Size(130, 26);
             this.dtpHasta.TabIndex = 8;
             this.dtpHasta.Value = new System.DateTime(2026, 5, 28, 20, 11, 9, 495);
             // 
@@ -187,7 +190,7 @@ namespace pryZarateERP
             this.btnFiltrar.Font = new System.Drawing.Font("Segoe UI Semibold", 9F, System.Drawing.FontStyle.Bold);
             this.btnFiltrar.ForeColor = System.Drawing.Color.White;
             this.btnFiltrar.HoverState.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(167)))), ((int)(((byte)(139)))), ((int)(((byte)(250)))));
-            this.btnFiltrar.Location = new System.Drawing.Point(760, 54);
+            this.btnFiltrar.Location = new System.Drawing.Point(772, 57);
             this.btnFiltrar.Name = "btnFiltrar";
             this.btnFiltrar.Size = new System.Drawing.Size(80, 30);
             this.btnFiltrar.TabIndex = 9;
@@ -204,7 +207,7 @@ namespace pryZarateERP
             this.btnLimpiar.Font = new System.Drawing.Font("Segoe UI Semibold", 9F, System.Drawing.FontStyle.Bold);
             this.btnLimpiar.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(148)))), ((int)(((byte)(163)))), ((int)(((byte)(184)))));
             this.btnLimpiar.HoverState.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(51)))), ((int)(((byte)(65)))), ((int)(((byte)(85)))));
-            this.btnLimpiar.Location = new System.Drawing.Point(760, 90);
+            this.btnLimpiar.Location = new System.Drawing.Point(772, 93);
             this.btnLimpiar.Name = "btnLimpiar";
             this.btnLimpiar.Size = new System.Drawing.Size(80, 33);
             this.btnLimpiar.TabIndex = 10;
@@ -218,9 +221,9 @@ namespace pryZarateERP
             this.pnlGrilla.BorderRadius = 12;
             this.pnlGrilla.BorderThickness = 1;
             this.pnlGrilla.Controls.Add(this.dgvAuditoria);
-            this.pnlGrilla.Location = new System.Drawing.Point(20, 160);
+            this.pnlGrilla.Location = new System.Drawing.Point(20, 181);
             this.pnlGrilla.Name = "pnlGrilla";
-            this.pnlGrilla.Size = new System.Drawing.Size(855, 575);
+            this.pnlGrilla.Size = new System.Drawing.Size(902, 554);
             this.pnlGrilla.TabIndex = 1;
             // 
             // dgvAuditoria
@@ -284,7 +287,7 @@ namespace pryZarateERP
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(15)))), ((int)(((byte)(23)))), ((int)(((byte)(42)))));
-            this.ClientSize = new System.Drawing.Size(900, 750);
+            this.ClientSize = new System.Drawing.Size(945, 750);
             this.Controls.Add(this.pnlGrilla);
             this.Controls.Add(this.pnlFiltros);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
@@ -304,8 +307,8 @@ namespace pryZarateERP
         private System.Windows.Forms.Label lblTitulo;
         private System.Windows.Forms.Label lblUsuarioFiltro;
         private Guna.UI2.WinForms.Guna2TextBox txtUsuarioFiltro;
-        private System.Windows.Forms.Label lblAccion;
-        private Guna.UI2.WinForms.Guna2TextBox txtAccion;
+        private System.Windows.Forms.Label lblResultado;
+        private Guna.UI2.WinForms.Guna2ComboBox cmbExitosoFiltro;
         private System.Windows.Forms.Label lblDesde;
         private Guna.UI2.WinForms.Guna2DateTimePicker dtpDesde;
         private System.Windows.Forms.Label lblHasta;
