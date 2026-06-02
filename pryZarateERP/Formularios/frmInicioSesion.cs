@@ -79,10 +79,16 @@ namespace pryZarateERP
             else
             {
                 intentosFallidos++;
-                lblError.Text = intentosFallidos >= MaxIntentos
-                    ? "Cuenta bloqueada tras 3 intentos fallidos."
-                    : "Usuario, contraseña o perfil incorrecto.";
-                btnAceptar.Enabled = intentosFallidos < MaxIntentos;
+
+                if (intentosFallidos >= MaxIntentos)
+                {
+                    lblError.Text = "Cuenta bloqueada tras 3 intentos fallidos.";
+                    btnAceptar.Enabled = false;
+                }
+                else
+                {
+                    lblError.Text = "Usuario, contraseña o perfil incorrecto.";
+                }
             }
         }
     }

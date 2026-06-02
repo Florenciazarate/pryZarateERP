@@ -224,25 +224,21 @@ namespace pryZarateERP
                 {
                     conn.Open();
                     string sql;
-                    OleDbCommand cmd;
 
                     if (excluirId == -1) // si no tengo que excluir ningún ID
-                    {
-                        sql = "SELECT COUNT(*) FROM Personal WHERE DNI = ?"; // cuento cuántos tienen ese DNI
-                        cmd = new OleDbCommand(sql, conn);
-                        cmd.Parameters.AddWithValue("?", dni);
-                    }
+                        sql = "SELECT COUNT(*) FROM Personal WHERE DNI = ?";
                     else // si tengo que excluir un ID (para no comparar consigo mismo al editar)
-                    {
                         sql = "SELECT COUNT(*) FROM Personal WHERE DNI = ? AND IdPersonal <> ?";
-                        cmd = new OleDbCommand(sql, conn);
-                        cmd.Parameters.AddWithValue("?", dni);
-                        cmd.Parameters.AddWithValue("?", excluirId);
-                    }
 
-                    int count = Convert.ToInt32(cmd.ExecuteScalar()); // obtengo el resultado del COUNT
-                    cmd.Dispose(); // libero el comando
-                    return count > 0; // si count es mayor a 0, el DNI ya existe
+                    using (var cmd = new OleDbCommand(sql, conn))
+                    {
+                        cmd.Parameters.AddWithValue("?", dni);
+                        if (excluirId != -1)
+                            cmd.Parameters.AddWithValue("?", excluirId);
+
+                        int count = Convert.ToInt32(cmd.ExecuteScalar()); // obtengo el resultado del COUNT
+                        return count > 0; // si count es mayor a 0, el DNI ya existe
+                    }
                 }
             }
             catch { return false; }
@@ -308,7 +304,7 @@ namespace pryZarateERP
             try
             {
                 using (var conn = new OleDbConnection(ObtenerConnectionString()))
-                using (var da = new OleDbDataAdapter("SELECT IdContacto, Tipo, Valor FROM PersonalContactos WHERE IdPersonal=? ORDER BY Tipo", conn))
+                using (var da = new OleDbDataAdapter("SELECT IdContacto, Tipo, Valor AS Nombre FROM PersonalContactos WHERE IdPersonal=? ORDER BY Tipo", conn))
                 {
                     da.SelectCommand.Parameters.AddWithValue("?", idPersonal);
                     da.Fill(tabla);
