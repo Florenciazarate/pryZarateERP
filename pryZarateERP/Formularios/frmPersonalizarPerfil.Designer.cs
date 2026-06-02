@@ -430,7 +430,13 @@ namespace pryZarateERP
             this.cmbProvincia.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(68)))), ((int)(((byte)(88)))), ((int)(((byte)(112)))));
             this.cmbProvincia.ItemHeight = 26;
             this.cmbProvincia.Items.AddRange(new object[] {
-            "Córdoba"});
+            "Córdoba",
+            "Mendoza",
+            "Buenos Aires",
+            "Bariloche",
+            "Catamarca",
+            "Chaco",
+            "Chubut"});
             this.cmbProvincia.Location = new System.Drawing.Point(85, 164);
             this.cmbProvincia.Name = "cmbProvincia";
             this.cmbProvincia.Size = new System.Drawing.Size(340, 32);
