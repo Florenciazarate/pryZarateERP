@@ -200,7 +200,7 @@ namespace pryZarateERP
             this.btnDesactivar.Name = "btnDesactivar";
             this.btnDesactivar.Size = new System.Drawing.Size(165, 34);
             this.btnDesactivar.TabIndex = 7;
-            this.btnDesactivar.Text = "Desactivar usuario";
+            this.btnDesactivar.Text = "Desactivar";
             this.btnDesactivar.Click += new System.EventHandler(this.btnDesactivar_Click);
             // 
             // lblDni
@@ -540,13 +540,23 @@ namespace pryZarateERP
             this.cmbTipo.Font = new System.Drawing.Font("Segoe UI", 9.5F);
             this.cmbTipo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(241)))), ((int)(((byte)(245)))), ((int)(((byte)(249)))));
             this.cmbTipo.ItemHeight = 30;
+            this.cmbTipo.Items.AddRange(new object[] {
+            "Email",
+            "Teléfono",
+            "Correo",
+            "Instagram",
+            "Facebook",
+            "Twitter / X",
+            "LinkedIn",
+            "TikTok",
+            "WhatsApp"});
             this.cmbTipo.Location = new System.Drawing.Point(336, 198);
             this.cmbTipo.Name = "cmbTipo";
             this.cmbTipo.Size = new System.Drawing.Size(304, 36);
             this.cmbTipo.TabIndex = 16;
-            // 
+            //
             // lblValor
-            // 
+            //
             this.lblValor.AutoSize = true;
             this.lblValor.Font = new System.Drawing.Font("Segoe UI Semibold", 9F, System.Drawing.FontStyle.Bold);
             this.lblValor.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(148)))), ((int)(((byte)(163)))), ((int)(((byte)(184)))));
@@ -571,7 +581,7 @@ namespace pryZarateERP
             this.txtValor.PlaceholderText = "";
             this.txtValor.SelectedText = "";
             this.txtValor.Size = new System.Drawing.Size(304, 36);
-            this.txtValor.TabIndex = 17;
+            this.txtValor.TabIndex = 18;
             // 
             // btnAgregarCont
             // 
@@ -584,7 +594,7 @@ namespace pryZarateERP
             this.btnAgregarCont.Location = new System.Drawing.Point(336, 322);
             this.btnAgregarCont.Name = "btnAgregarCont";
             this.btnAgregarCont.Size = new System.Drawing.Size(304, 36);
-            this.btnAgregarCont.TabIndex = 18;
+            this.btnAgregarCont.TabIndex = 19;
             this.btnAgregarCont.Text = "Agregar contacto";
             this.btnAgregarCont.Click += new System.EventHandler(this.btnAgregarCont_Click);
             // 
@@ -598,10 +608,10 @@ namespace pryZarateERP
             this.lstCont.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(226)))), ((int)(((byte)(232)))), ((int)(((byte)(240)))));
             this.lstCont.IntegralHeight = false;
             this.lstCont.ItemHeight = 17;
-            this.lstCont.Location = new System.Drawing.Point(336, 384);
+            this.lstCont.Location = new System.Drawing.Point(336, 370);
             this.lstCont.Name = "lstCont";
-            this.lstCont.Size = new System.Drawing.Size(304, 308);
-            this.lstCont.TabIndex = 19;
+            this.lstCont.Size = new System.Drawing.Size(304, 276);
+            this.lstCont.TabIndex = 20;
             // 
             // btnQuitarCont
             // 
@@ -618,8 +628,8 @@ namespace pryZarateERP
             this.btnQuitarCont.Location = new System.Drawing.Point(336, 704);
             this.btnQuitarCont.Name = "btnQuitarCont";
             this.btnQuitarCont.Size = new System.Drawing.Size(304, 36);
-            this.btnQuitarCont.TabIndex = 20;
-            this.btnQuitarCont.Text = "Quitar contacto ";
+            this.btnQuitarCont.TabIndex = 21;
+            this.btnQuitarCont.Text = "Quitar contacto";
             this.btnQuitarCont.Click += new System.EventHandler(this.btnQuitarCont_Click);
             // 
             // frmPersonalizarPerfil

@@ -5,8 +5,6 @@ using System.Windows.Forms;
 
 namespace pryZarateERP
 {
-    // Formulario de gestión de personal: permite crear, editar y desactivar personas,
-    // y agregar/quitar sus domicilios y contactos.
     public partial class frmPersonalizarPerfil : Form
     {
         private int       idSeleccionado = -1; // ID de la persona seleccionada (-1 = ninguna / modo alta)
@@ -17,18 +15,17 @@ namespace pryZarateERP
         private class DomItem     { public int Id; public string T;     public override string ToString() => T; }
         private class ContItem    { public int Id; public string T;     public override string ToString() => T; }
 
-        public frmPersonalizarPerfil() { InitializeComponent(); }
-
-        // ─────────────────────────────────────────────────────────────────
-        // LOAD
-        // ─────────────────────────────────────────────────────────────────
+        public frmPersonalizarPerfil()
+        {
+            InitializeComponent();
+            txtDni.KeyPress += (s, e) => { if (!char.IsDigit(e.KeyChar) && !char.IsControl(e.KeyChar)) e.Handled = true; };
+        }
 
         private void frmPersonalizarPerfil_Load(object sender, EventArgs e)
         {
             CargarProvincias();
-            CargarTipos();
             CargarLista();
-            SetModo(false); // arranca en modo alta (sin persona seleccionada)
+            SetModo(false);
         }
 
         // ─────────────────────────────────────────────────────────────────
@@ -54,6 +51,7 @@ namespace pryZarateERP
             txtValor.Enabled       = edicion;
             btnAgregarCont.Enabled = edicion;
             btnQuitarCont.Enabled  = edicion;
+
         }
 
         // ─────────────────────────────────────────────────────────────────
@@ -66,7 +64,7 @@ namespace pryZarateERP
             FiltrarLista();
         }
 
-        // Muestra en el ListBox solo las personas que coinciden con el buscador
+        // recorre _tabla y muestra solo las personas que coinciden con el buscador
         private void FiltrarLista()
         {
             lstPersonas.Items.Clear();
@@ -81,7 +79,6 @@ namespace pryZarateERP
                 string ape = row["Apellido"].ToString();
                 bool   act = Convert.ToBoolean(row["Activo"]);
 
-                // Si hay texto en el buscador y la fila no coincide, la salteo
                 if (f.Length > 0 &&
                     !ape.ToUpperInvariant().Contains(f) &&
                     !nom.ToUpperInvariant().Contains(f) &&
@@ -135,7 +132,7 @@ namespace pryZarateERP
             cmbProvincia.SelectedIndex = -1;
         }
 
-        // Solo carga localidades si la provincia es Córdoba (las demás no tienen datos en la BD)
+        // solo carga localidades si la provincia es Córdoba (las demás no tienen datos en la BD)
         private void cmbProvincia_SelectedIndexChanged(object sender, EventArgs e)
         {
             cmbLocalidad.DataSource = null;
@@ -159,13 +156,6 @@ namespace pryZarateERP
             }
         }
 
-        private void CargarTipos()
-        {
-            cmbTipo.Items.AddRange(new object[]
-                { "Email", "Teléfono", "WhatsApp", "Instagram", "Facebook", "Twitter / X", "LinkedIn", "TikTok" });
-            cmbTipo.SelectedIndex = -1;
-        }
-
         // ─────────────────────────────────────────────────────────────────
         // NUEVA / GUARDAR / DESACTIVAR
         // ─────────────────────────────────────────────────────────────────
@@ -180,7 +170,6 @@ namespace pryZarateERP
 
         private void btnGuardar_Click(object sender, EventArgs e)
         {
-            // Validación de campos obligatorios
             if (string.IsNullOrWhiteSpace(txtDni.Text))      { Aviso("Completá el DNI.");      return; }
             if (string.IsNullOrWhiteSpace(txtNombre.Text))   { Aviso("Completá el nombre.");   return; }
             if (string.IsNullOrWhiteSpace(txtApellido.Text)) { Aviso("Completá el apellido."); return; }
@@ -211,7 +200,6 @@ namespace pryZarateERP
 
                 try
                 {
-                    // El texto del botón indica el estado actual: "Desactivar" = está activo
                     bool activo = btnDesactivar.Text == "Desactivar";
                     clsBaseDatos.ActualizarPersonal(idSeleccionado,
                         txtDni.Text.Trim(), txtNombre.Text.Trim(), txtApellido.Text.Trim(), activo);
@@ -228,7 +216,6 @@ namespace pryZarateERP
         {
             if (idSeleccionado == -1) return;
 
-            // El texto del botón indica la acción a realizar
             bool desactivar = btnDesactivar.Text == "Desactivar";
 
             if (MessageBox.Show($"¿{(desactivar ? "Desactivar" : "Reactivar")} a {txtNombre.Text} {txtApellido.Text}?",
@@ -236,7 +223,7 @@ namespace pryZarateERP
 
             try
             {
-                bool nuevoEstado = !desactivar; // si voy a desactivar, el nuevo estado es inactivo (false)
+                bool nuevoEstado = !desactivar;
                 clsBaseDatos.ActualizarPersonal(idSeleccionado,
                     txtDni.Text.Trim(), txtNombre.Text.Trim(), txtApellido.Text.Trim(), nuevoEstado);
 
@@ -254,7 +241,8 @@ namespace pryZarateERP
             txtDireccion.Clear(); txtGeo.Clear();
             cmbProvincia.SelectedIndex = -1;
             cmbLocalidad.DataSource = null; cmbLocalidad.Items.Clear(); cmbLocalidad.Enabled = true;
-            cmbTipo.SelectedIndex = -1; txtValor.Clear();
+            cmbTipo.SelectedIndex = -1;
+            txtValor.Clear();
             lstDom.Items.Clear(); lstCont.Items.Clear();
         }
 
@@ -287,7 +275,6 @@ namespace pryZarateERP
             try
             {
                 clsBaseDatos.InsertarDomicilio(idSeleccionado, txtDireccion.Text.Trim(), txtGeo.Text.Trim(), prov, loc);
-
                 txtDireccion.Clear(); txtGeo.Clear();
                 cmbProvincia.SelectedIndex = -1;
                 cmbLocalidad.DataSource = null; cmbLocalidad.Items.Clear(); cmbLocalidad.Enabled = true;
@@ -303,7 +290,7 @@ namespace pryZarateERP
             catch (Exception ex) { Err(ex); }
         }
 
-        // Abre el campo Geo en Google Maps (acepta URL directa o coordenadas)
+        // abre el campo Geo en Google Maps (acepta URL directa o texto de búsqueda)
         private void btnVerMapa_Click(object sender, EventArgs e)
         {
             string t = txtGeo.Text.Trim();
@@ -332,13 +319,15 @@ namespace pryZarateERP
         private void btnAgregarCont_Click(object sender, EventArgs e)
         {
             if (idSeleccionado == -1) return;
-            if (cmbTipo.SelectedIndex < 0)                { Aviso("Elegí el tipo.");      return; }
-            if (string.IsNullOrWhiteSpace(txtValor.Text)) { Aviso("Completá el dato.");   return; }
+            if (cmbTipo.SelectedIndex < 0) { Aviso("Elegí el tipo."); return; }
+
+            if (string.IsNullOrWhiteSpace(txtValor.Text)) { Aviso("Completá el dato."); return; }
 
             try
             {
                 clsBaseDatos.InsertarContacto(idSeleccionado, cmbTipo.Text, txtValor.Text.Trim());
-                cmbTipo.SelectedIndex = -1; txtValor.Clear();
+                cmbTipo.SelectedIndex = -1;
+                txtValor.Clear();
                 CargarContactos();
             }
             catch (Exception ex) { Err(ex); }
@@ -357,5 +346,6 @@ namespace pryZarateERP
 
         private void Aviso(string msg) => MessageBox.Show(msg, "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Warning);
         private void Err(Exception ex) => MessageBox.Show("Error: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
     }
 }
