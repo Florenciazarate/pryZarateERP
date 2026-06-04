@@ -18,59 +18,31 @@ namespace pryZarateERP
         // Se ejecuta cuando el formulario termina de cargarse
         private void frmAuditoria_Load(object sender, EventArgs e)
         {
-            // Cargo las opciones fijas del combo "Resultado"
-            cmbExitosoFiltro.Items.Clear();
-            cmbExitosoFiltro.Items.AddRange(new object[] { "Todos", "Inicio Exitoso", "Intento Fallido" });
-            cmbExitosoFiltro.SelectedIndex = 0; // selecciono "Todos" por defecto
-
             CargarAuditoria(); // traigo los datos de la base de datos
 
-            // Cargo el combo de usuarios con todos los usuarios únicos que aparecen en la auditoría
+            // cmbExitosoFiltro ya tiene sus ítems fijos en el Designer (Todos, Exitoso, Fallido)
+            cmbExitosoFiltro.SelectedIndex = 0;
+
+            // cmbUsuarioFiltro se carga dinámico con los usuarios únicos que aparecen en la auditoría
             cmbUsuarioFiltro.Items.Clear();
             cmbUsuarioFiltro.Items.Add("Todos los usuarios");
             var vistos = new System.Collections.Generic.HashSet<string>(StringComparer.OrdinalIgnoreCase);
             foreach (DataRow row in tablaOriginal.Rows)
             {
                 string u = row["Usuario"].ToString();
-                if (!string.IsNullOrEmpty(u) && vistos.Add(u)) // vistos.Add devuelve false si ya estaba
+                if (!string.IsNullOrEmpty(u) && vistos.Add(u))
                     cmbUsuarioFiltro.Items.Add(u);
             }
-            cmbUsuarioFiltro.SelectedIndex = 0; // selecciono "Todos los usuarios" por defecto
+            cmbUsuarioFiltro.SelectedIndex = 0;
         }
 
-        // Trae los datos de la tabla AuditoriaSesion de la base de datos
-        // y los convierte a un formato más amigable para mostrar en la grilla
+        // Trae los datos directamente de la BD — el IIF en la query ya devuelve "Exitoso"/"Fallido"
         private void CargarAuditoria()
         {
-            var tablaBD = clsBaseDatos.ObtenerAuditoria(); // traigo todos los registros de la BD
-
-            // Creo una DataTable nueva con las columnas que quiero mostrar en la grilla
-            tablaOriginal = new DataTable();
-            tablaOriginal.Columns.Add("FechaHora", typeof(DateTime));
-            tablaOriginal.Columns.Add("Usuario",   typeof(string));
-            tablaOriginal.Columns.Add("Accion",    typeof(string));
-            tablaOriginal.Columns.Add("Resultado", typeof(string));
-            tablaOriginal.Columns.Add("Detalle",   typeof(string));
-
-            // Por cada fila que vino de la BD, la transformo y la agrego a tablaOriginal
-            foreach (DataRow row in tablaBD.Rows)
-            {
-                // Convierto el booleano "Exitoso" (true/false) a texto legible
-                string resultado = Convert.ToBoolean(row["Exitoso"]) ? "Exitoso" : "Fallido";
-
-                tablaOriginal.Rows.Add(
-                    row["FechaHora"],
-                    row["Usuario"],
-                    row["Accion"],
-                    resultado,
-                    row["Detalle"]);
-            }
-
-            dgvAuditoria.DataSource        = tablaOriginal;                            // conecto la tabla a la grilla
-            dgvAuditoria.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;   // las columnas llenan el ancho disponible
-
-            // Renombro los encabezados de columna para que se vean más prolijos
-            if (dgvAuditoria.Columns.Contains("FechaHora")) dgvAuditoria.Columns["FechaHora"].HeaderText = "Fecha y hora";
+            tablaOriginal = clsBaseDatos.ObtenerAuditoria();
+            dgvAuditoria.DataSource          = tablaOriginal; // muestro la tabla completa sin filtrar en la grilla
+            dgvAuditoria.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill; // ajusto el ancho de las columnas para que ocupen todo el espacio disponible
+            if (dgvAuditoria.Columns.Contains("FechaHora")) dgvAuditoria.Columns["FechaHora"].HeaderText = "Fecha y hora"; 
             if (dgvAuditoria.Columns.Contains("Accion"))    dgvAuditoria.Columns["Accion"].HeaderText    = "Acción";
         }
 
@@ -91,17 +63,14 @@ namespace pryZarateERP
                 if (usuario != "" && row["Usuario"].ToString().ToUpper().IndexOf(usuario.ToUpper()) < 0)
                     continue;
 
-                // Si eligió "Inicio Exitoso" y esta fila es Fallido, la salteo
-                if (seleccion == "Inicio Exitoso"  && row["Resultado"].ToString() != "Exitoso") continue;
-
-                // Si eligió "Intento Fallido" y esta fila es Exitoso, la salteo
-                if (seleccion == "Intento Fallido" && row["Resultado"].ToString() != "Fallido") continue;
+                // si eligió un resultado específico y esta fila no coincide, la salteo
+                if (seleccion != "Todos" && row["Resultado"].ToString() != seleccion) continue;
 
                 // Si el checkbox "Desde" está tildado y la fecha es anterior, la salteo
-                if (dtpDesde.Checked && Convert.ToDateTime(row["FechaHora"]).Date < dtpDesde.Value.Date) continue;
+                if (dtpDesde.Checked && Convert.ToDateTime(row["FechaHora"]).Date < dtpDesde.Value.Date) continue; // convierto a DateTime y comparo solo la parte de la fecha (sin hora) para que el filtro incluya todo el día seleccionado
 
                 // Si el checkbox "Hasta" está tildado y la fecha es posterior, la salteo
-                if (dtpHasta.Checked && Convert.ToDateTime(row["FechaHora"]).Date > dtpHasta.Value.Date) continue;
+                if (dtpHasta.Checked && Convert.ToDateTime(row["FechaHora"]).Date > dtpHasta.Value.Date) continue; // convierto a DateTime y comparo solo la parte de la fecha (sin hora) para que el filtro incluya todo el día seleccionado
 
                 // Si llegó hasta acá, pasó todos los filtros: la agrego a la tabla filtrada
                 tablaFiltrada.ImportRow(row);

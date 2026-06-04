@@ -134,7 +134,8 @@ namespace pryZarateERP
             {
                 using (var conn = new OleDbConnection(ObtenerConnectionString()))
                 using (var da = new OleDbDataAdapter(
-                    "SELECT FechaHora, Usuario, Modulo, Accion, Exitoso, Detalle " +
+                    "SELECT FechaHora, Usuario, Modulo, Accion, " +
+                    "IIF(Exitoso, 'Exitoso', 'Fallido') AS Resultado, Detalle " +
                     "FROM AuditoriaSesion ORDER BY FechaHora DESC", conn))
                 {
                     da.Fill(tabla); // llena la DataTable con los resultados de la consulta

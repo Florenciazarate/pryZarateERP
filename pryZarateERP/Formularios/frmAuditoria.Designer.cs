@@ -121,6 +121,7 @@ namespace pryZarateERP
             this.cmbExitosoFiltro.Font = new System.Drawing.Font("Segoe UI", 9.5F);
             this.cmbExitosoFiltro.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(241)))), ((int)(((byte)(245)))), ((int)(((byte)(249)))));
             this.cmbExitosoFiltro.ItemHeight = 26;
+            this.cmbExitosoFiltro.Items.AddRange(new object[] { "Todos", "Exitoso", "Fallido" });
             this.cmbExitosoFiltro.Location = new System.Drawing.Point(240, 74);
             this.cmbExitosoFiltro.Name = "cmbExitosoFiltro";
             this.cmbExitosoFiltro.Size = new System.Drawing.Size(180, 34);
