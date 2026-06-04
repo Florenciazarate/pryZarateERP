@@ -45,6 +45,8 @@ namespace pryZarateERP
             this.lblTitRedes = new System.Windows.Forms.Label();
             this.lblTipo = new System.Windows.Forms.Label();
             this.cmbTipo = new Guna.UI2.WinForms.Guna2ComboBox();
+            this.lblRed = new System.Windows.Forms.Label();
+            this.cmbRed = new Guna.UI2.WinForms.Guna2ComboBox();
             this.lblValor = new System.Windows.Forms.Label();
             this.txtValor = new Guna.UI2.WinForms.Guna2TextBox();
             this.btnAgregarCont = new Guna.UI2.WinForms.Guna2Button();
@@ -162,6 +164,8 @@ namespace pryZarateERP
             this.pnlDetalle.Controls.Add(this.lblTitRedes);
             this.pnlDetalle.Controls.Add(this.lblTipo);
             this.pnlDetalle.Controls.Add(this.cmbTipo);
+            this.pnlDetalle.Controls.Add(this.lblRed);
+            this.pnlDetalle.Controls.Add(this.cmbRed);
             this.pnlDetalle.Controls.Add(this.lblValor);
             this.pnlDetalle.Controls.Add(this.txtValor);
             this.pnlDetalle.Controls.Add(this.btnAgregarCont);
@@ -540,27 +544,49 @@ namespace pryZarateERP
             this.cmbTipo.Font = new System.Drawing.Font("Segoe UI", 9.5F);
             this.cmbTipo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(241)))), ((int)(((byte)(245)))), ((int)(((byte)(249)))));
             this.cmbTipo.ItemHeight = 30;
-            this.cmbTipo.Items.AddRange(new object[] {
-            "Email",
-            "Teléfono",
-            "Correo",
-            "Instagram",
-            "Facebook",
-            "Twitter / X",
-            "LinkedIn",
-            "TikTok",
-            "WhatsApp"});
+            this.cmbTipo.Items.AddRange(new object[] { "Email", "Teléfono", "Red social" });
             this.cmbTipo.Location = new System.Drawing.Point(336, 198);
             this.cmbTipo.Name = "cmbTipo";
             this.cmbTipo.Size = new System.Drawing.Size(304, 36);
             this.cmbTipo.TabIndex = 16;
+            //
+            // lblRed
+            //
+            this.lblRed.AutoSize = true;
+            this.lblRed.Font = new System.Drawing.Font("Segoe UI Semibold", 9F, System.Drawing.FontStyle.Bold);
+            this.lblRed.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(148)))), ((int)(((byte)(163)))), ((int)(((byte)(184)))));
+            this.lblRed.Location = new System.Drawing.Point(336, 242);
+            this.lblRed.Name = "lblRed";
+            this.lblRed.Size = new System.Drawing.Size(60, 15);
+            this.lblRed.TabIndex = 0;
+            this.lblRed.Text = "Red social";
+            //
+            // cmbRed
+            //
+            this.cmbRed.BackColor = System.Drawing.Color.Transparent;
+            this.cmbRed.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(116)))), ((int)(((byte)(139)))));
+            this.cmbRed.BorderRadius = 8;
+            this.cmbRed.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
+            this.cmbRed.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbRed.Enabled = false;
+            this.cmbRed.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(30)))), ((int)(((byte)(41)))), ((int)(((byte)(59)))));
+            this.cmbRed.FocusedColor = System.Drawing.Color.FromArgb(((int)(((byte)(167)))), ((int)(((byte)(139)))), ((int)(((byte)(250)))));
+            this.cmbRed.FocusedState.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(167)))), ((int)(((byte)(139)))), ((int)(((byte)(250)))));
+            this.cmbRed.Font = new System.Drawing.Font("Segoe UI", 9.5F);
+            this.cmbRed.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(241)))), ((int)(((byte)(245)))), ((int)(((byte)(249)))));
+            this.cmbRed.ItemHeight = 30;
+            this.cmbRed.Items.AddRange(new object[] { "Instagram", "Facebook", "Twitter / X", "LinkedIn", "TikTok", "WhatsApp" });
+            this.cmbRed.Location = new System.Drawing.Point(336, 260);
+            this.cmbRed.Name = "cmbRed";
+            this.cmbRed.Size = new System.Drawing.Size(304, 36);
+            this.cmbRed.TabIndex = 17;
             //
             // lblValor
             //
             this.lblValor.AutoSize = true;
             this.lblValor.Font = new System.Drawing.Font("Segoe UI Semibold", 9F, System.Drawing.FontStyle.Bold);
             this.lblValor.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(148)))), ((int)(((byte)(163)))), ((int)(((byte)(184)))));
-            this.lblValor.Location = new System.Drawing.Point(336, 242);
+            this.lblValor.Location = new System.Drawing.Point(336, 304);
             this.lblValor.Name = "lblValor";
             this.lblValor.Size = new System.Drawing.Size(33, 15);
             this.lblValor.TabIndex = 0;
@@ -576,7 +602,7 @@ namespace pryZarateERP
             this.txtValor.FocusedState.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(167)))), ((int)(((byte)(139)))), ((int)(((byte)(250)))));
             this.txtValor.Font = new System.Drawing.Font("Segoe UI", 9.5F);
             this.txtValor.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(241)))), ((int)(((byte)(245)))), ((int)(((byte)(249)))));
-            this.txtValor.Location = new System.Drawing.Point(336, 260);
+            this.txtValor.Location = new System.Drawing.Point(336, 322);
             this.txtValor.Name = "txtValor";
             this.txtValor.PlaceholderText = "";
             this.txtValor.SelectedText = "";
@@ -591,7 +617,7 @@ namespace pryZarateERP
             this.btnAgregarCont.Font = new System.Drawing.Font("Segoe UI Semibold", 9.5F, System.Drawing.FontStyle.Bold);
             this.btnAgregarCont.ForeColor = System.Drawing.Color.White;
             this.btnAgregarCont.HoverState.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(167)))), ((int)(((byte)(139)))), ((int)(((byte)(250)))));
-            this.btnAgregarCont.Location = new System.Drawing.Point(336, 322);
+            this.btnAgregarCont.Location = new System.Drawing.Point(336, 374);
             this.btnAgregarCont.Name = "btnAgregarCont";
             this.btnAgregarCont.Size = new System.Drawing.Size(304, 36);
             this.btnAgregarCont.TabIndex = 19;
@@ -608,9 +634,9 @@ namespace pryZarateERP
             this.lstCont.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(226)))), ((int)(((byte)(232)))), ((int)(((byte)(240)))));
             this.lstCont.IntegralHeight = false;
             this.lstCont.ItemHeight = 17;
-            this.lstCont.Location = new System.Drawing.Point(336, 370);
+            this.lstCont.Location = new System.Drawing.Point(336, 420);
             this.lstCont.Name = "lstCont";
-            this.lstCont.Size = new System.Drawing.Size(304, 276);
+            this.lstCont.Size = new System.Drawing.Size(304, 272);
             this.lstCont.TabIndex = 20;
             // 
             // btnQuitarCont
@@ -684,6 +710,8 @@ namespace pryZarateERP
         private System.Windows.Forms.Label lblTitRedes;
         private System.Windows.Forms.Label lblTipo;
         private Guna.UI2.WinForms.Guna2ComboBox cmbTipo;
+        private System.Windows.Forms.Label lblRed;
+        private Guna.UI2.WinForms.Guna2ComboBox cmbRed;
         private System.Windows.Forms.Label lblValor;
         private Guna.UI2.WinForms.Guna2TextBox txtValor;
         private Guna.UI2.WinForms.Guna2Button btnAgregarCont;

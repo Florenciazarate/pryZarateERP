@@ -11,26 +11,24 @@ namespace pryZarateERP
         private DataTable _tabla;              // todos los registros de Personal traídos de la BD
 
         // Clases auxiliares para guardar el ID junto al texto que muestra el ListBox
-        private class PersonaItem { public int Id; public string Texto; public override string ToString() => Texto; }
+        private class PersonaItem { public int Id; public string Texto; public override string ToString() => Texto; } //molde para mostrar el nombre de la persona en el ListBox y tener a la vez su ID guardado para usarlo luego
         private class DomItem     { public int Id; public string T;     public override string ToString() => T; }
         private class ContItem    { public int Id; public string T;     public override string ToString() => T; }
 
         public frmPersonalizarPerfil()
         {
             InitializeComponent();
-            txtDni.KeyPress += (s, e) => { if (!char.IsDigit(e.KeyChar) && !char.IsControl(e.KeyChar)) e.Handled = true; };
+            txtDni.KeyPress += (s, e) => { if (!char.IsDigit(e.KeyChar) && !char.IsControl(e.KeyChar)) e.Handled = true; };  // el campo DNI solo acepta números
         }
 
         private void frmPersonalizarPerfil_Load(object sender, EventArgs e)
         {
+            cmbTipo.SelectedIndexChanged += cmbTipo_SelectedIndexChanged;
             CargarProvincias();
             CargarLista();
             SetModo(false);
         }
 
-        // ─────────────────────────────────────────────────────────────────
-        // ESTADO
-        // ─────────────────────────────────────────────────────────────────
 
         // edicion = true: hay una persona seleccionada → habilita domicilios y contactos
         // edicion = false: modo alta → solo DNI, nombre y apellido disponibles
@@ -48,15 +46,13 @@ namespace pryZarateERP
             btnQuitarDom.Enabled   = edicion;
             btnVerMapa.Enabled     = edicion;
             cmbTipo.Enabled        = edicion;
+            cmbRed.Enabled         = false; // cmbRed solo se habilita si se elige "Red social"
             txtValor.Enabled       = edicion;
             btnAgregarCont.Enabled = edicion;
             btnQuitarCont.Enabled  = edicion;
 
         }
 
-        // ─────────────────────────────────────────────────────────────────
-        // LISTA IZQUIERDA
-        // ─────────────────────────────────────────────────────────────────
 
         private void CargarLista()
         {
@@ -120,9 +116,6 @@ namespace pryZarateERP
             }
         }
 
-        // ─────────────────────────────────────────────────────────────────
-        // COMBOS
-        // ─────────────────────────────────────────────────────────────────
 
         private void CargarProvincias()
         {
@@ -156,9 +149,13 @@ namespace pryZarateERP
             }
         }
 
-        // ─────────────────────────────────────────────────────────────────
-        // NUEVA / GUARDAR / DESACTIVAR
-        // ─────────────────────────────────────────────────────────────────
+        // habilita cmbRed solo cuando el tipo elegido es "Red social"
+        private void cmbTipo_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            bool esRed = cmbTipo.SelectedIndex >= 0 && cmbTipo.Text == "Red social";
+            cmbRed.Enabled = esRed;
+            if (!esRed) cmbRed.SelectedIndex = -1;
+        }
 
         private void btnNueva_Click(object sender, EventArgs e)
         {
@@ -242,24 +239,21 @@ namespace pryZarateERP
             cmbProvincia.SelectedIndex = -1;
             cmbLocalidad.DataSource = null; cmbLocalidad.Items.Clear(); cmbLocalidad.Enabled = true;
             cmbTipo.SelectedIndex = -1;
+            cmbRed.SelectedIndex  = -1; cmbRed.Enabled = false;
             txtValor.Clear();
             lstDom.Items.Clear(); lstCont.Items.Clear();
         }
-
-        // ─────────────────────────────────────────────────────────────────
-        // DOMICILIOS
-        // ─────────────────────────────────────────────────────────────────
 
         private void CargarDomicilios()
         {
             lstDom.Items.Clear();
             if (idSeleccionado == -1) return;
 
-            foreach (DataRow row in clsBaseDatos.ObtenerDomicilios(idSeleccionado).Rows)
+            foreach (DataRow row in clsBaseDatos.ObtenerDomicilios(idSeleccionado).Rows) // el ID de la persona ya lo tengo guardado en idSeleccionado
             {
                 string t = row["Direccion"].ToString();
-                if (!string.IsNullOrEmpty(row["Provincia"].ToString())) t += "  —  " + row["Provincia"];
-                if (!string.IsNullOrEmpty(row["Localidad"].ToString()))  t += ", "    + row["Localidad"];
+                if (!string.IsNullOrEmpty(row["Provincia"].ToString())) t += "  —  " + row["Provincia"]; // si hay provincia, la muestro separada por "—"
+                if (!string.IsNullOrEmpty(row["Localidad"].ToString()))  t += ", "    + row["Localidad"]; // si hay localidad, la muestro después de la provincia separada por coma
                 lstDom.Items.Add(new DomItem { Id = Convert.ToInt32(row["IdDomicilio"]), T = t });
             }
         }
@@ -286,7 +280,7 @@ namespace pryZarateERP
         private void btnQuitarDom_Click(object sender, EventArgs e)
         {
             if (lstDom.SelectedItem == null) { Aviso("Seleccioná un domicilio para quitarlo."); return; }
-            try { clsBaseDatos.EliminarDomicilio(((DomItem)lstDom.SelectedItem).Id); CargarDomicilios(); }
+            try { clsBaseDatos.EliminarDomicilio(((DomItem)lstDom.SelectedItem).Id); CargarDomicilios(); } // que el ID del domicilio a eliminar lo tengo guardado en el ListBox gracias a la clase DomItem
             catch (Exception ex) { Err(ex); }
         }
 
@@ -297,21 +291,17 @@ namespace pryZarateERP
             if (string.IsNullOrEmpty(t)) { Aviso("Completá el campo Geo."); return; }
 
             string url = t.StartsWith("http", StringComparison.OrdinalIgnoreCase)
-                ? t : "https://www.google.com/maps?q=" + Uri.EscapeDataString(t);
+                ? t : "https://www.google.com/maps?q=" + Uri.EscapeDataString(t); // si el texto empieza con "http" lo trato como URL, sino como búsqueda en Google Maps
 
-            Process.Start(new ProcessStartInfo { FileName = url, UseShellExecute = true });
+            Process.Start(new ProcessStartInfo { FileName = url, UseShellExecute = true }); //process.start con UseShellExecute = true abre el navegador predeterminado con la URL dada
         }
-
-        // ─────────────────────────────────────────────────────────────────
-        // CONTACTOS
-        // ─────────────────────────────────────────────────────────────────
 
         private void CargarContactos()
         {
             lstCont.Items.Clear();
             if (idSeleccionado == -1) return;
 
-            foreach (DataRow row in clsBaseDatos.ObtenerContactos(idSeleccionado).Rows)
+            foreach (DataRow row in clsBaseDatos.ObtenerContactos(idSeleccionado).Rows) // el ID de la persona ya lo tengo guardado en idSeleccionado
                 lstCont.Items.Add(new ContItem
                     { Id = Convert.ToInt32(row["IdContacto"]), T = $"{row["Tipo"]}:  {row["Valor"]}" });
         }
@@ -321,12 +311,18 @@ namespace pryZarateERP
             if (idSeleccionado == -1) return;
             if (cmbTipo.SelectedIndex < 0) { Aviso("Elegí el tipo."); return; }
 
+            // si eligió "Red social", verifico que haya elegido la red específica
+            if (cmbTipo.Text == "Red social" && cmbRed.SelectedIndex < 0) { Aviso("Elegí la red social."); return; }
             if (string.IsNullOrWhiteSpace(txtValor.Text)) { Aviso("Completá el dato."); return; }
+
+            // lo que se guarda como tipo es la red específica (ej: "Instagram"), no "Red social"
+            string tipo = cmbTipo.Text == "Red social" ? cmbRed.Text : cmbTipo.Text;
 
             try
             {
-                clsBaseDatos.InsertarContacto(idSeleccionado, cmbTipo.Text, txtValor.Text.Trim());
+                clsBaseDatos.InsertarContacto(idSeleccionado, tipo, txtValor.Text.Trim()); // el ID de la persona ya lo tengo guardado en idSeleccionado
                 cmbTipo.SelectedIndex = -1;
+                cmbRed.SelectedIndex  = -1; cmbRed.Enabled = false;
                 txtValor.Clear();
                 CargarContactos();
             }
@@ -336,13 +332,10 @@ namespace pryZarateERP
         private void btnQuitarCont_Click(object sender, EventArgs e)
         {
             if (lstCont.SelectedItem == null) { Aviso("Seleccioná un contacto para quitarlo."); return; }
-            try { clsBaseDatos.EliminarContacto(((ContItem)lstCont.SelectedItem).Id); CargarContactos(); }
+            try { clsBaseDatos.EliminarContacto(((ContItem)lstCont.SelectedItem).Id); CargarContactos(); } //que el ID del contacto a eliminar lo tengo guardado en el ListBox gracias a la clase ContItem
             catch (Exception ex) { Err(ex); }
         }
 
-        // ─────────────────────────────────────────────────────────────────
-        // HELPERS
-        // ─────────────────────────────────────────────────────────────────
 
         private void Aviso(string msg) => MessageBox.Show(msg, "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Warning);
         private void Err(Exception ex) => MessageBox.Show("Error: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
