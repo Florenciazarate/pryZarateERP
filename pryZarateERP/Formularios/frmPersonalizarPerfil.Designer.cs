@@ -173,6 +173,7 @@ namespace pryZarateERP
             this.pnlDetalle.Controls.Add(this.btnAgregarCont);
             this.pnlDetalle.Controls.Add(this.lstCont);
             this.pnlDetalle.Controls.Add(this.btnQuitarCont);
+            this.pnlDetalle.AutoScroll = true;
             this.pnlDetalle.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pnlDetalle.Location = new System.Drawing.Point(220, 0);
             this.pnlDetalle.Name = "pnlDetalle";
@@ -181,8 +182,7 @@ namespace pryZarateERP
             // 
             // label1
             // 
-            this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)));
             this.label1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(51)))), ((int)(((byte)(65)))), ((int)(((byte)(85)))));
             this.label1.Location = new System.Drawing.Point(327, 139);
             this.label1.Name = "label1";
@@ -493,8 +493,7 @@ namespace pryZarateERP
             // 
             // lstDom
             // 
-            this.lstDom.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left)));
+            this.lstDom.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)));
             this.lstDom.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(30)))), ((int)(((byte)(41)))), ((int)(((byte)(59)))));
             this.lstDom.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.lstDom.Font = new System.Drawing.Font("Segoe UI", 9.5F);
@@ -508,7 +507,7 @@ namespace pryZarateERP
             // 
             // btnQuitarDom
             // 
-            this.btnQuitarDom.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.btnQuitarDom.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)));
             this.btnQuitarDom.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(116)))), ((int)(((byte)(139)))));
             this.btnQuitarDom.BorderRadius = 8;
             this.btnQuitarDom.BorderThickness = 1;
@@ -651,22 +650,21 @@ namespace pryZarateERP
             // 
             // lstCont
             // 
-            this.lstCont.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left)));
+            this.lstCont.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)));
             this.lstCont.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(30)))), ((int)(((byte)(41)))), ((int)(((byte)(59)))));
             this.lstCont.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.lstCont.Font = new System.Drawing.Font("Segoe UI", 9.5F);
             this.lstCont.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(226)))), ((int)(((byte)(232)))), ((int)(((byte)(240)))));
             this.lstCont.IntegralHeight = false;
             this.lstCont.ItemHeight = 17;
-            this.lstCont.Location = new System.Drawing.Point(336, 420);
+            this.lstCont.Location = new System.Drawing.Point(336, 416);
             this.lstCont.Name = "lstCont";
-            this.lstCont.Size = new System.Drawing.Size(304, 272);
+            this.lstCont.Size = new System.Drawing.Size(304, 276);
             this.lstCont.TabIndex = 20;
             // 
             // btnQuitarCont
             // 
-            this.btnQuitarCont.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.btnQuitarCont.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)));
             this.btnQuitarCont.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(116)))), ((int)(((byte)(139)))));
             this.btnQuitarCont.BorderRadius = 8;
             this.btnQuitarCont.BorderThickness = 1;
