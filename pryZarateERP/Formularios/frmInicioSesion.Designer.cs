@@ -62,14 +62,14 @@
             this.pnlContenedor.Location = new System.Drawing.Point(11, 10);
             this.pnlContenedor.Name = "pnlContenedor";
             this.pnlContenedor.Padding = new System.Windows.Forms.Padding(30);
-            this.pnlContenedor.Size = new System.Drawing.Size(403, 375);
+            this.pnlContenedor.Size = new System.Drawing.Size(402, 375);
             this.pnlContenedor.TabIndex = 1;
             // 
             // lblError
             // 
             this.lblError.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.lblError.ForeColor = System.Drawing.Color.IndianRed;
-            this.lblError.Location = new System.Drawing.Point(34, 313);
+            this.lblError.Location = new System.Drawing.Point(30, 313);
             this.lblError.Name = "lblError";
             this.lblError.Size = new System.Drawing.Size(336, 32);
             this.lblError.TabIndex = 7;
@@ -189,7 +189,6 @@
             this.Name = "frmInicioSesion";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Inicio Sesión";
-            this.Load += new System.EventHandler(this.frmInicioSesion_Load);
             this.pnlContenedor.ResumeLayout(false);
             this.pnlContenedor.PerformLayout();
             this.ResumeLayout(false);

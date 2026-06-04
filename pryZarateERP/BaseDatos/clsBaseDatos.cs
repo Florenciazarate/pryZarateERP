@@ -262,26 +262,21 @@ namespace pryZarateERP
             return tabla;
         }
 
-        // Inserta un domicilio nuevo para una persona.
-        // Latitud y longitud son opcionales (null si no se pudieron parsear del campo Geo).
-        public static void InsertarDomicilio(int idPersonal, string direccion, string geo,
-            string provincia, string localidad, double? latitud = null, double? longitud = null)
+        // Inserta un domicilio nuevo para una persona
+        public static void InsertarDomicilio(int idPersonal, string direccion, string geo, string provincia, string localidad)
         {
             using (var conn = new OleDbConnection(ObtenerConnectionString()))
             {
                 conn.Open();
                 using (var cmd = new OleDbCommand(
-                    "INSERT INTO PersonalDomicilios (IdPersonal, Direccion, Geo, Provincia, Localidad, Latitud, Longitud) " +
-                    "VALUES (?, ?, ?, ?, ?, ?, ?)", conn))
+                    "INSERT INTO PersonalDomicilios (IdPersonal, Direccion, Geo, Provincia, Localidad) " +
+                    "VALUES (?, ?, ?, ?, ?)", conn))
                 {
                     cmd.Parameters.AddWithValue("?", idPersonal);
                     cmd.Parameters.AddWithValue("?", direccion);
                     cmd.Parameters.AddWithValue("?", geo);
                     cmd.Parameters.AddWithValue("?", provincia);
                     cmd.Parameters.AddWithValue("?", localidad);
-                    // Si latitud/longitud tienen valor, los paso; si no, paso DBNull para guardar NULL en la BD
-                    cmd.Parameters.AddWithValue("?", latitud.HasValue  ? (object)latitud.Value  : DBNull.Value);
-                    cmd.Parameters.AddWithValue("?", longitud.HasValue ? (object)longitud.Value : DBNull.Value);
                     cmd.ExecuteNonQuery();
                 }
             }

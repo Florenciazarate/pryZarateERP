@@ -1,5 +1,4 @@
 using System;
-using System.Drawing;
 using System.Windows.Forms;
 
 namespace pryZarateERP
@@ -17,12 +16,6 @@ namespace pryZarateERP
             lblError.Text = string.Empty;       // arranca sin mensaje de error visible
             btnAceptar.Enabled = false;         // el botón empieza deshabilitado hasta que se escriba algo
             this.AcceptButton = btnAceptar;     // presionar Enter equivale a hacer clic en "Ingresar"
-            this.Resize += (s, e) => CentrarPanel(); // cada vez que cambia el tamaño de la ventana, recentra el panel
-        }
-
-        private void frmInicioSesion_Load(object sender, EventArgs e)
-        {
-            CentrarPanel(); // centra el panel de login cuando se carga el formulario
         }
 
         // Se ejecuta cada vez que el usuario escribe en el campo de mail o de contraseña.
@@ -32,14 +25,6 @@ namespace pryZarateERP
             if (intentosFallidos >= MaxIntentos) return; // si ya está bloqueado, no hace nada
             btnAceptar.Enabled = txtMail.Text.Trim().Length > 0 && txtContraseña.Text.Length > 0;
             lblError.Text = string.Empty;
-        }
-
-        // Calcula la posición del panel central para que quede en el medio de la ventana
-        private void CentrarPanel()
-        {
-            pnlContenedor.Location = new Point(
-                Math.Max(0, (this.ClientSize.Width  - pnlContenedor.Width)  / 2),
-                Math.Max(0, (this.ClientSize.Height - pnlContenedor.Height) / 2));
         }
 
         // Se ejecuta cuando el usuario hace clic en "Ingresar" (o presiona Enter)
@@ -86,10 +71,8 @@ namespace pryZarateERP
 
             if (ok)
             {
-                intentosFallidos = 0; // reinicio el contador de fallos
-
                 // Guardo los datos del usuario en la sesión global para que los usen los demás formularios
-                SessionInfo.Usuario = string.IsNullOrEmpty(nombreUsuario) ? usuario : nombreUsuario;
+                SessionInfo.Usuario = nombreUsuario;
                 SessionInfo.Rol     = rol;
 
                 this.Hide(); // oculto el login mientras el principal está abierto
@@ -123,8 +106,9 @@ namespace pryZarateERP
 
                 if (intentosFallidos >= MaxIntentos)
                 {
-                    lblError.Text         = "Cuenta bloqueada tras 3 intentos fallidos.";
-                    btnAceptar.Enabled    = false; // deshabilito el botón definitivamente
+                    btnAceptar.Enabled = false; // deshabilito el botón definitivamente
+                    MessageBox.Show("Cuenta bloqueada tras 3 intentos fallidos.", "Acceso bloqueado",
+                        MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
                 else
                 {
