@@ -4,147 +4,132 @@ using System.Windows.Forms;
 
 namespace pryZarateERP
 {
+    // Formulario de inicio de sesión: pide usuario y contraseña,
+    // valida contra la base de datos y abre el formulario principal si es correcto.
     public partial class frmInicioSesion : Form
     {
-        private int intentosFallidos = 0;
-        private const int MaxIntentos = 3;
-
-        // Guardar valores originales
-        private Padding _origPadding;
-        private bool _origAutoSize;
-        private Size _origPanelSize;
+        private int intentosFallidos = 0;   // contador de veces que el usuario ingresó mal las credenciales
+        private const int MaxIntentos = 3;  // cantidad máxima de intentos antes de bloquear
 
         public frmInicioSesion()
         {
-            InitializeComponent();
-            lblError.Text = string.Empty;
-            btnAceptar.Enabled = false;
-            this.AcceptButton = btnAceptar; // Habilitar el botón Aceptar al presionar Enter
-
-            // suscribirse a resize para centrar/ajustar el panel
-            this.Resize += FrmInicioSesion_Resize;
-        }
-
-        private void ValidarCampos(object sender, EventArgs e)
-        {
-            if (intentosFallidos >= MaxIntentos) return;
-            btnAceptar.Enabled = txtMail.Text.Trim().Length > 0 && txtContraseña.Text.Length > 0;
+            InitializeComponent();              // crea todos los controles del Designer
+            lblError.Text = string.Empty;       // arranca sin mensaje de error visible
+            btnAceptar.Enabled = false;         // el botón empieza deshabilitado hasta que se escriba algo
+            this.AcceptButton = btnAceptar;     // presionar Enter equivale a hacer clic en "Ingresar"
+            this.Resize += (s, e) => CentrarPanel(); // cada vez que cambia el tamaño de la ventana, recentra el panel
         }
 
         private void frmInicioSesion_Load(object sender, EventArgs e)
         {
-            // Cargo los perfiles de la BD en el combo
-            var tablaPerfiles = clsBaseDatos.ObtenerPerfiles();
-            cmbPerfil.DataSource = tablaPerfiles;
-            cmbPerfil.DisplayMember = "Perfil";   // La columna que se MUESTRA en el combo
-            cmbPerfil.ValueMember = "Perfil";      // La columna que se USA como valor
-            cmbPerfil.SelectedIndex = -1;          // Que arranque sin nada seleccionado
-
-            // Guardar valores iniciales del panel
-            _origPadding = pnlContenedor.Padding;
-            _origAutoSize = pnlContenedor.AutoSize;
-            _origPanelSize = pnlContenedor.Size;
-
-            // Evitar que el panel se haga más pequeño que su tamaño original (previene superposición)
-            pnlContenedor.MinimumSize = _origPanelSize;
-
-            // Centrarlo al iniciar
-            CentrarPanel();
+            CentrarPanel(); // centra el panel de login cuando se carga el formulario
         }
 
-        private void FrmInicioSesion_Resize(object sender, EventArgs e)
+        // Se ejecuta cada vez que el usuario escribe en el campo de mail o de contraseña.
+        // Habilita el botón solo si ambos campos tienen algo escrito, y borra el error anterior.
+        private void ValidarCampos(object sender, EventArgs e)
         {
-            CentrarPanel();
+            if (intentosFallidos >= MaxIntentos) return; // si ya está bloqueado, no hace nada
+            btnAceptar.Enabled = txtMail.Text.Trim().Length > 0 && txtContraseña.Text.Length > 0;
+            lblError.Text = string.Empty;
         }
 
-        // Centra pnlContenedor dentro del cliente del formulario y ajusta su tamaño cuando el form es pequeño o grande
+        // Calcula la posición del panel central para que quede en el medio de la ventana
         private void CentrarPanel()
         {
-            // Si el Form está maximizado, hacemos que el panel ocupe un porcentaje razonable del ancho
-            if (this.WindowState == FormWindowState.Maximized)
-            {
-                pnlContenedor.AutoSize = false;
-
-                // Calcular ancho objetivo pero nunca menor que el ancho original del panel
-                int candidateWidth = (int)(this.ClientSize.Width * 0.5); // 50% del ancho
-                int width = Math.Max(_origPanelSize.Width, Math.Min(candidateWidth, this.ClientSize.Width - 40));
-
-                // Mantener la altura original para evitar que los controles internos se superpongan
-                int height = _origPanelSize.Height;
-
-                pnlContenedor.Size = new Size(width, height);
-                pnlContenedor.Padding = new Padding(40);
-            }
-            else
-            {
-                pnlContenedor.AutoSize = _origAutoSize;
-                pnlContenedor.Size = _origPanelSize;
-                pnlContenedor.Padding = _origPadding;
-            }
-
-            // Calcular posición centrada
-            int left = Math.Max(0, (this.ClientSize.Width - pnlContenedor.Width) / 2);
-            int top = Math.Max(0, (this.ClientSize.Height - pnlContenedor.Height) / 2);
-            pnlContenedor.Location = new Point(left, top);
+            pnlContenedor.Location = new Point(
+                Math.Max(0, (this.ClientSize.Width  - pnlContenedor.Width)  / 2),
+                Math.Max(0, (this.ClientSize.Height - pnlContenedor.Height) / 2));
         }
 
+        // Se ejecuta cuando el usuario hace clic en "Ingresar" (o presiona Enter)
         private void btnAceptar_Click(object sender, EventArgs e)
         {
-            string usuario = txtMail.Text.Trim(); // Asumo que el mail es el usuario
-            string password = txtContraseña.Text; 
-            string perfilElegido = cmbPerfil.Text; // Obtengo el perfil seleccionado como texto
+            string usuario  = txtMail.Text.Trim();
+            string password = txtContraseña.Text;
 
-            if (string.IsNullOrEmpty(perfilElegido))
+            // Validaciones básicas: verifico que ambos campos tengan algo
+            if (usuario.Length == 0)
             {
-                lblError.Text = "Seleccioná un perfil.";
+                lblError.Text = "Ingresá tu usuario (o tu mail).";
+                txtMail.Focus();
+                return;
+            }
+            if (password.Length == 0)
+            {
+                lblError.Text = "Ingresá tu contraseña.";
+                txtContraseña.Focus();
                 return;
             }
 
-            string nombreUsuario, rol; // Variables para recibir el nombre y rol desde la validación
-            bool ok = clsBaseDatos.ValidarUsuario(usuario, password, perfilElegido, out nombreUsuario, out rol); // Ahora también valida el perfil
+            // Llamo a la base de datos para validar: devuelve true si las credenciales son correctas,
+            // y por parámetros "out" devuelve el nombre real, el rol y un motivo de bloqueo (si corresponde)
+            string nombreUsuario, rol, motivoBloqueo;
+            bool ok = clsBaseDatos.ValidarUsuario(usuario, password, out nombreUsuario, out rol, out motivoBloqueo);
+
+            // Caso especial: el usuario existe pero el personal vinculado está inactivo.
+            // No cuenta como intento fallido, solo muestro el mensaje.
+            if (!ok && !string.IsNullOrEmpty(motivoBloqueo))
+            {
+                lblError.Text = motivoBloqueo;
+                clsBaseDatos.RegistrarAuditoria(usuario, "Inicio de Sesión", "Bloqueado", motivoBloqueo, false);
+                return;
+            }
+
+            // Registro en la auditoría si el intento fue exitoso o fallido
             clsBaseDatos.RegistrarAuditoria(
                 usuario,
                 "Inicio de Sesión",
                 ok ? "Inicio exitoso" : "Intento fallido",
-                $"Perfil: {perfilElegido}",
+                ok ? $"Rol: {rol}" : "Usuario o contraseña incorrectos",
                 ok);
 
             if (ok)
             {
-                // Guardar usuario en sesión
+                intentosFallidos = 0; // reinicio el contador de fallos
+
+                // Guardo los datos del usuario en la sesión global para que los usen los demás formularios
                 SessionInfo.Usuario = string.IsNullOrEmpty(nombreUsuario) ? usuario : nombreUsuario;
+                SessionInfo.Rol     = rol;
 
-                this.Hide();
+                this.Hide(); // oculto el login mientras el principal está abierto
 
-                if (perfilElegido == "Administrador")
+                bool cerroSesion;
+                using (var principal = new frmPrincipal(SessionInfo.Usuario, rol))
                 {
-                    using (var principal = new frmPrincipal(nombreUsuario, rol, DateTime.Now)) // Paso el nombre, rol y fecha al frmPrincipal
-                    {
-                        principal.ShowDialog();
-                    }
-                }
-                else if (perfilElegido == "Recursos Humanos")
-                {
-                    using (var perfil = new frmPersonalizarPerfil()) 
-                    {
-                        perfil.ShowDialog();
-                    }
+                    principal.ShowDialog();                  // abro el formulario principal y espero a que se cierre
+                    cerroSesion = principal.CerrarSesion;   // consulto si se cerró por "Cerrar sesión" o por la X
                 }
 
-                this.Close();
+                if (cerroSesion)
+                {
+                    // El usuario eligió "Cerrar sesión": limpio los campos y vuelvo a mostrar el login
+                    txtMail.Text       = "";
+                    txtContraseña.Text = "";
+                    lblError.Text      = "";
+                    btnAceptar.Enabled = false;
+                    this.Show();
+                    txtMail.Focus();
+                }
+                else
+                {
+                    this.Close(); // cerró con la X => cierro todo
+                }
             }
             else
             {
+                // Credenciales incorrectas: sumo un intento y muestro cuántos quedan
                 intentosFallidos++;
 
                 if (intentosFallidos >= MaxIntentos)
                 {
-                    lblError.Text = "Cuenta bloqueada tras 3 intentos fallidos.";
-                    btnAceptar.Enabled = false;
+                    lblError.Text         = "Cuenta bloqueada tras 3 intentos fallidos.";
+                    btnAceptar.Enabled    = false; // deshabilito el botón definitivamente
                 }
                 else
                 {
-                    lblError.Text = "Usuario, contraseña o perfil incorrecto.";
+                    int restantes = MaxIntentos - intentosFallidos;
+                    lblError.Text = $"Usuario o contraseña incorrectos. Te queda(n) {restantes} intento(s).";
                 }
             }
         }

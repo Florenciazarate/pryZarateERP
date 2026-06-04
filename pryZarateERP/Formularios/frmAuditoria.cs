@@ -4,46 +4,61 @@ using System.Windows.Forms;
 
 namespace pryZarateERP
 {
+    // Formulario de auditoría: muestra un registro de todos los inicios de sesión,
+    // y permite filtrar por usuario, resultado y rango de fechas.
     public partial class frmAuditoria : Form
     {
-        private DataTable tablaOriginal; // variable que guarda la tabla completa sin filtrar
+        private DataTable tablaOriginal; // guarda la tabla completa sin filtrar, para poder restablecer los datos
 
         public frmAuditoria()
         {
             InitializeComponent(); // crea todos los controles visuales definidos en el Designer
         }
 
+        // Se ejecuta cuando el formulario termina de cargarse
         private void frmAuditoria_Load(object sender, EventArgs e)
         {
-            cmbExitosoFiltro.Items.Clear(); // limpio los items del combo por si tiene algo
-            cmbExitosoFiltro.Items.Add("Todos"); // agrego la opción "Todos"
-            cmbExitosoFiltro.Items.Add("Inicio Exitoso");
-            cmbExitosoFiltro.Items.Add("Intento Fallido");
-            cmbExitosoFiltro.SelectedIndex = 0; // selecciono el primer item ("Todos") por defecto
+            // Cargo las opciones fijas del combo "Resultado"
+            cmbExitosoFiltro.Items.Clear();
+            cmbExitosoFiltro.Items.AddRange(new object[] { "Todos", "Inicio Exitoso", "Intento Fallido" });
+            cmbExitosoFiltro.SelectedIndex = 0; // selecciono "Todos" por defecto
 
-            CargarAuditoria(); // cargo los datos de la base de datos en la grilla
+            CargarAuditoria(); // traigo los datos de la base de datos
+
+            // Cargo el combo de usuarios con todos los usuarios únicos que aparecen en la auditoría
+            cmbUsuarioFiltro.Items.Clear();
+            cmbUsuarioFiltro.Items.Add("Todos los usuarios");
+            var vistos = new System.Collections.Generic.HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            foreach (DataRow row in tablaOriginal.Rows)
+            {
+                string u = row["Usuario"].ToString();
+                if (!string.IsNullOrEmpty(u) && vistos.Add(u)) // vistos.Add devuelve false si ya estaba
+                    cmbUsuarioFiltro.Items.Add(u);
+            }
+            cmbUsuarioFiltro.SelectedIndex = 0; // selecciono "Todos los usuarios" por defecto
         }
 
+        // Trae los datos de la tabla AuditoriaSesion de la base de datos
+        // y los convierte a un formato más amigable para mostrar en la grilla
         private void CargarAuditoria()
         {
-            var tablaBD = clsBaseDatos.ObtenerAuditoria(); // traigo la tabla AuditoriaSesion de la base de datos
+            var tablaBD = clsBaseDatos.ObtenerAuditoria(); // traigo todos los registros de la BD
 
-            tablaOriginal = new DataTable(); // creo una DataTable nueva vacía
-            tablaOriginal.Columns.Add("FechaHora", typeof(DateTime)); // le agrego la columna FechaHora de tipo DateTime
-            tablaOriginal.Columns.Add("Usuario", typeof(string));
-            tablaOriginal.Columns.Add("Accion", typeof(string));
+            // Creo una DataTable nueva con las columnas que quiero mostrar en la grilla
+            tablaOriginal = new DataTable();
+            tablaOriginal.Columns.Add("FechaHora", typeof(DateTime));
+            tablaOriginal.Columns.Add("Usuario",   typeof(string));
+            tablaOriginal.Columns.Add("Accion",    typeof(string));
             tablaOriginal.Columns.Add("Resultado", typeof(string));
-            tablaOriginal.Columns.Add("Detalle", typeof(string));
+            tablaOriginal.Columns.Add("Detalle",   typeof(string));
 
-            foreach (DataRow row in tablaBD.Rows) // por cada fila (DataRow) en las filas de tablaBD
+            // Por cada fila que vino de la BD, la transformo y la agrego a tablaOriginal
+            foreach (DataRow row in tablaBD.Rows)
             {
-                string resultado; // declaro la variable resultado
-                if (Convert.ToBoolean(row["Exitoso"])) // si el valor de la columna Exitoso es true
-                    resultado = "Exitoso";
-                else
-                    resultado = "Fallido";
+                // Convierto el booleano "Exitoso" (true/false) a texto legible
+                string resultado = Convert.ToBoolean(row["Exitoso"]) ? "Exitoso" : "Fallido";
 
-                tablaOriginal.Rows.Add( // agrego una fila nueva a tablaOriginal con estos valores
+                tablaOriginal.Rows.Add(
                     row["FechaHora"],
                     row["Usuario"],
                     row["Accion"],
@@ -51,53 +66,57 @@ namespace pryZarateERP
                     row["Detalle"]);
             }
 
-            dgvAuditoria.DataSource = tablaOriginal; // asigno la tabla como fuente de datos de la grilla
+            dgvAuditoria.DataSource        = tablaOriginal;                            // conecto la tabla a la grilla
+            dgvAuditoria.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;   // las columnas llenan el ancho disponible
+
+            // Renombro los encabezados de columna para que se vean más prolijos
+            if (dgvAuditoria.Columns.Contains("FechaHora")) dgvAuditoria.Columns["FechaHora"].HeaderText = "Fecha y hora";
+            if (dgvAuditoria.Columns.Contains("Accion"))    dgvAuditoria.Columns["Accion"].HeaderText    = "Acción";
         }
 
+        // Se ejecuta cuando el usuario hace clic en "Filtrar"
         private void btnFiltrar_Click(object sender, EventArgs e)
         {
-            if (tablaOriginal == null) return; // si no hay datos cargados, salgo del método
+            if (tablaOriginal == null) return; // si todavía no hay datos, no hago nada
 
-            string usuario = txtUsuarioFiltro.Text.Trim(); // obtengo el texto del filtro de usuario, sin espacios
-            string seleccion = cmbExitosoFiltro.SelectedItem.ToString(); // obtengo el item seleccionado del combo
+            // Si está en "Todos los usuarios" (índice 0) no filtro por usuario; si no, filtro por el seleccionado
+            string usuario   = (cmbUsuarioFiltro.SelectedIndex <= 0) ? "" : cmbUsuarioFiltro.SelectedItem.ToString();
+            string seleccion = cmbExitosoFiltro.SelectedItem.ToString(); // resultado elegido en el combo
 
-            DataTable tablaFiltrada = tablaOriginal.Clone(); // creo una tabla vacía con las mismas columnas que tablaOriginal
+            DataTable tablaFiltrada = tablaOriginal.Clone(); // creo una tabla vacía con las mismas columnas
 
-            foreach (DataRow row in tablaOriginal.Rows) // por cada fila en la tabla original
+            foreach (DataRow row in tablaOriginal.Rows) // recorro cada fila de la tabla original
             {
-                // filtro por usuario: si el campo no está vacío, verifico que la columna Usuario contenga el texto
+                // Si hay un usuario seleccionado y esta fila no es de ese usuario, la salteo
                 if (usuario != "" && row["Usuario"].ToString().ToUpper().IndexOf(usuario.ToUpper()) < 0)
-                    continue; // si no coincide, salto a la siguiente fila
-
-                // filtro por resultado: si eligió "Inicio Exitoso", solo acepto filas con Resultado "Exitoso"
-                if (seleccion == "Inicio Exitoso" && row["Resultado"].ToString() != "Exitoso")
                     continue;
 
-                // filtro por resultado: si eligió "Intento Fallido", solo acepto filas con Resultado "Fallido"
-                if (seleccion == "Intento Fallido" && row["Resultado"].ToString() != "Fallido")
-                    continue;
+                // Si eligió "Inicio Exitoso" y esta fila es Fallido, la salteo
+                if (seleccion == "Inicio Exitoso"  && row["Resultado"].ToString() != "Exitoso") continue;
 
-                // filtro por fecha desde: si está tildado, solo acepto filas con fecha mayor o igual
-                if (dtpDesde.Checked && Convert.ToDateTime(row["FechaHora"]).Date < dtpDesde.Value.Date)
-                    continue;
+                // Si eligió "Intento Fallido" y esta fila es Exitoso, la salteo
+                if (seleccion == "Intento Fallido" && row["Resultado"].ToString() != "Fallido") continue;
 
-                // filtro por fecha hasta: si está tildado, solo acepto filas con fecha menor o igual
-                if (dtpHasta.Checked && Convert.ToDateTime(row["FechaHora"]).Date > dtpHasta.Value.Date)
-                    continue;
+                // Si el checkbox "Desde" está tildado y la fecha es anterior, la salteo
+                if (dtpDesde.Checked && Convert.ToDateTime(row["FechaHora"]).Date < dtpDesde.Value.Date) continue;
 
-                // si pasó todos los filtros, agrego la fila a la tabla filtrada
+                // Si el checkbox "Hasta" está tildado y la fecha es posterior, la salteo
+                if (dtpHasta.Checked && Convert.ToDateTime(row["FechaHora"]).Date > dtpHasta.Value.Date) continue;
+
+                // Si llegó hasta acá, pasó todos los filtros: la agrego a la tabla filtrada
                 tablaFiltrada.ImportRow(row);
             }
 
             dgvAuditoria.DataSource = tablaFiltrada; // muestro la tabla filtrada en la grilla
         }
 
+        // Se ejecuta cuando el usuario hace clic en "Limpiar": restablece todos los filtros
         private void btnLimpiar_Click(object sender, EventArgs e)
         {
-            txtUsuarioFiltro.Text = ""; // vacío el campo de texto del filtro de usuario
-            cmbExitosoFiltro.SelectedIndex = 0; // vuelvo el combo a "Todos"
-            dtpDesde.Checked = false; // destildo el filtro de fecha "Desde"
-            dtpHasta.Checked = false; // destildo el filtro de fecha "Hasta"
+            cmbUsuarioFiltro.SelectedIndex  = 0;     // vuelvo a "Todos los usuarios"
+            cmbExitosoFiltro.SelectedIndex  = 0;     // vuelvo a "Todos"
+            dtpDesde.Checked = false;                // destildo el filtro de fecha "Desde"
+            dtpHasta.Checked = false;                // destildo el filtro de fecha "Hasta"
             dgvAuditoria.DataSource = tablaOriginal; // vuelvo a mostrar la tabla completa sin filtros
         }
     }

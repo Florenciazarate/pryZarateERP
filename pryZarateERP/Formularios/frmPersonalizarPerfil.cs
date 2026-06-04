@@ -1,467 +1,474 @@
 using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 
 namespace pryZarateERP
 {
+    // Formulario de gestión de personal: permite crear, editar y desactivar personas,
+    // y agregar/quitar sus domicilios y contactos.
     public partial class frmPersonalizarPerfil : Form
     {
-        private int idSeleccionado = -1; // ID de la persona seleccionada en la grilla, -1 = ninguna
+        // Modo alta: estoy creando una persona nueva
+        // Modo edición: estoy viendo/editando una persona existente
+        private enum Modo { Alta, Edicion }
+        private Modo      _modo = Modo.Alta;
 
-        public frmPersonalizarPerfil()
-        {
-            InitializeComponent();
-        }
+        private int       idSeleccionado = -1; // ID de la persona seleccionada en la lista (-1 = ninguna)
+        private DataTable _tabla;              // tabla con todos los registros de Personal de la BD
 
+        // Clases auxiliares para mostrar objetos en los ListBox con un texto personalizado
+        private class PersonaItem { public int Id; public string Texto; public override string ToString() => Texto; }
+        private class DomItem     { public int Id; public string T;     public override string ToString() => T; }
+        private class ContItem    { public int Id; public string T;     public override string ToString() => T; }
+
+        public frmPersonalizarPerfil() { InitializeComponent(); }
+
+        // ─────────────────────────────────────────────────────────────────
+        // LOAD
+        // ─────────────────────────────────────────────────────────────────
+
+        // Se ejecuta cuando el formulario termina de cargarse
         private void frmPersonalizarPerfil_Load(object sender, EventArgs e)
         {
-            CargarProvincias();
-            CargarTiposContacto();
-            CargarGrilla();
+            CargarProvincias(); // lleno el combo de provincias
+            CargarTipos();      // lleno el combo de tipos de contacto
+            CargarLista();      // lleno la lista de personas
+            SetModo(Modo.Alta); // arranco en modo "nueva persona"
         }
 
-        // ══════════════════════════════════
-        // CARGA INICIAL DE COMBOS
-        // ══════════════════════════════════
+        // ─────────────────────────────────────────────────────────────────
+        // ESTADO
+        // ─────────────────────────────────────────────────────────────────
 
+        // Cambia el texto de los botones y habilita/deshabilita controles
+        // según si estoy creando (Alta) o editando (Edicion) una persona.
+        private void SetModo(Modo m)
+        {
+            _modo = m;
+            bool hay = m == Modo.Edicion; // "hay" = hay una persona seleccionada
+
+            // Cambio el texto del título y del botón guardar según el modo
+            if (m == Modo.Alta)
+            {
+                lblTitDatos.Text = "Nueva persona";
+                btnGuardar.Text  = "Guardar";
+            }
+            else
+            {
+                btnGuardar.Text = "Actualizar";
+            }
+
+            // Los controles de domicilios y contactos solo se habilitan cuando hay una persona seleccionada
+            // (porque necesitan el ID de la persona para guardar en la BD)
+            btnDesactivar.Enabled  = hay;
+            cmbProvincia.Enabled   = hay;
+            cmbLocalidad.Enabled   = hay;
+            txtDireccion.Enabled   = hay;
+            txtGeo.Enabled         = hay;
+            btnAgregarDom.Enabled  = hay;
+            btnQuitarDom.Enabled   = hay;
+            btnVerMapa.Enabled     = hay;
+            cmbTipo.Enabled        = hay;
+            txtValor.Enabled       = hay;
+            btnAgregarCont.Enabled = hay;
+            btnQuitarCont.Enabled  = hay;
+        }
+
+        // ─────────────────────────────────────────────────────────────────
+        // LISTA IZQUIERDA
+        // ─────────────────────────────────────────────────────────────────
+
+        // Trae todos los registros de Personal de la BD y guarda en _tabla, luego filtra
+        private void CargarLista()
+        {
+            _tabla = clsBaseDatos.ObtenerPersonal();
+            FiltrarLista();
+        }
+
+        // Muestra en el ListBox solo las personas que coinciden con el texto del buscador
+        private void FiltrarLista()
+        {
+            lstPersonas.Items.Clear();
+            if (_tabla == null) return;
+
+            string f = txtBuscar.Text.Trim().ToUpperInvariant(); // texto a buscar, en mayúsculas
+
+            foreach (DataRow row in _tabla.Rows)
+            {
+                string dni = row["DNI"].ToString();
+                string nom = row["Nombre"].ToString();
+                string ape = row["Apellido"].ToString();
+                bool   act = Convert.ToBoolean(row["Activo"]);
+
+                // Si hay texto en el buscador y la fila no coincide ni por apellido, nombre ni DNI, la salteo
+                if (f.Length > 0 &&
+                    !ape.ToUpperInvariant().Contains(f) &&
+                    !nom.ToUpperInvariant().Contains(f) &&
+                    !dni.Contains(f)) continue;
+
+                // Agrego la persona al ListBox con el texto formateado
+                lstPersonas.Items.Add(new PersonaItem
+                {
+                    Id    = Convert.ToInt32(row["IdPersonal"]),
+                    Texto = act ? $"{ape}, {nom}" : $"[inact.]  {ape}, {nom}" // los inactivos se marcan con [inact.]
+                });
+            }
+        }
+
+        // Se ejecuta cada vez que el usuario escribe algo en el buscador
+        private void txtBuscar_TextChanged(object sender, EventArgs e) => FiltrarLista();
+
+        // Se ejecuta cuando el usuario selecciona una persona en la lista
+        private void lstPersonas_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (lstPersonas.SelectedItem == null) return;
+
+            int id = ((PersonaItem)lstPersonas.SelectedItem).Id; // obtengo el ID de la persona seleccionada
+
+            // Busco la fila correspondiente en _tabla para mostrar sus datos
+            foreach (DataRow row in _tabla.Rows)
+            {
+                if (Convert.ToInt32(row["IdPersonal"]) != id) continue;
+
+                idSeleccionado   = id;
+                txtDni.Text      = row["DNI"].ToString();
+                txtNombre.Text   = row["Nombre"].ToString();
+                txtApellido.Text = row["Apellido"].ToString();
+
+                bool act = Convert.ToBoolean(row["Activo"]);
+                lblTitDatos.Text   = $"{row["Apellido"]}, {row["Nombre"]}  ·  {(act ? "Activo" : "Inactivo")}";
+                btnDesactivar.Text = act ? "Desactivar" : "Reactivar"; // el botón dice lo contrario del estado actual
+
+                SetModo(Modo.Edicion); // cambio a modo edición
+                CargarDomicilios();    // cargo los domicilios de esta persona
+                CargarContactos();     // cargo los contactos de esta persona
+                break;                 // encontré la fila, no sigo buscando
+            }
+        }
+
+        // ─────────────────────────────────────────────────────────────────
+        // COMBOS
+        // ─────────────────────────────────────────────────────────────────
+
+        // Llena el combo de provincias con los datos de la BD
         private void CargarProvincias()
         {
-            var tabla = clsBaseDatos.ObtenerProvincias(); // traigo las provincias de la BD
-            cmbLocalidad.DataSource = tabla; // las cargo como fuente de datos del combo
-            cmbLocalidad.DisplayMember = "Provincias"; // lo que se muestra en el combo
-            cmbLocalidad.ValueMember = "ID_Provincias"; // el valor interno de cada item
-            cmbLocalidad.SelectedIndex = -1; // que arranque sin nada seleccionado
-
-            // cuando el usuario seleccione o escriba una provincia, intento cargar sus localidades
-            cmbLocalidad.SelectedIndexChanged += cmbProvincia_SelectedIndexChanged; // evento para cuando selecciona una provincia del combo
-            cmbLocalidad.TextChanged += cmbProvincia_TextChanged; // evento para cuando escribe algo en el combo (si borra el texto, también se limpia el combo de localidades)
-
-            // habilito que el combo sugiera opciones mientras el usuario escribe
-            try
-            {
-                cmbLocalidad.AutoCompleteMode = AutoCompleteMode.SuggestAppend; // el combo sugiere y completa automáticamente mientras el usuario escribe
-                cmbLocalidad.AutoCompleteSource = AutoCompleteSource.ListItems; // las sugerencias se basan en los items del combo (las provincias que cargué de la BD)
-            }
-            catch { } // si el autocompletado no funciona por alguna razón, no hago nada para que el combo siga funcionando aunque sin esa función
+            cmbProvincia.DataSource    = clsBaseDatos.ObtenerProvincias();
+            cmbProvincia.DisplayMember = "Provincias";       // columna a mostrar
+            cmbProvincia.ValueMember   = "ID_Provincias";    // columna que representa el valor
+            cmbProvincia.SelectedIndex = -1;                 // arranca sin ninguna provincia seleccionada
         }
 
-        private void CargarTiposContacto()
+        // Se ejecuta cuando el usuario cambia la provincia seleccionada.
+        // Solo carga localidades si la provincia es Córdoba (las demás no tienen datos en la BD).
+        private void cmbProvincia_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            cmbLocalidad.DataSource = null;
+            cmbLocalidad.Items.Clear();
+
+            if (cmbProvincia.SelectedIndex < 0) { cmbLocalidad.Enabled = true; return; }
+
+            bool esCba = cmbProvincia.Text.IndexOf("doba", StringComparison.OrdinalIgnoreCase) >= 0; // detecta "Córdoba"
+
+            if (esCba)
+            {
+                // Cargo las localidades de Córdoba desde la BD
+                cmbLocalidad.DataSource    = clsBaseDatos.ObtenerLocalidadesCordoba();
+                cmbLocalidad.DisplayMember = "LocalidadesCordoba";
+                cmbLocalidad.ValueMember   = "ID_Localidades";
+                cmbLocalidad.Enabled       = true;
+            }
+            else
+            {
+                // Para el resto de las provincias no hay datos de localidades
+                cmbLocalidad.Items.Add("(Solo disponible para Córdoba)");
+                cmbLocalidad.SelectedIndex = 0;
+                cmbLocalidad.Enabled       = false;
+            }
+
+            if (cmbLocalidad.Enabled) cmbLocalidad.SelectedIndex = -1;
+        }
+
+        // Llena el combo de tipos de contacto con las opciones fijas
+        private void CargarTipos()
         {
             cmbTipo.Items.Clear();
-            cmbTipo.Items.AddRange(new object[] // agrego los tipos de contacto posibles al combo, podrían ser más o menos según lo que necesites
-            {
-                "Email", "Telefono", "Instagram", "Facebook", "Twitter", "LinkedIn"
-            });
+            cmbTipo.Items.AddRange(new object[]
+                { "Email", "Teléfono", "WhatsApp", "Instagram", "Facebook", "Twitter / X", "LinkedIn", "TikTok" });
             cmbTipo.SelectedIndex = -1;
         }
 
-        // ══════════════════════════════════
-        // LOCALIDADES (depende de la provincia)
-        // ══════════════════════════════════
+        // ─────────────────────────────────────────────────────────────────
+        // NUEVA / GUARDAR / DESACTIVAR
+        // ─────────────────────────────────────────────────────────────────
 
-        private void cmbProvincia_TextChanged(object sender, EventArgs e)
+        // Se ejecuta cuando el usuario hace clic en "+ Nueva persona"
+        private void btnNueva_Click(object sender, EventArgs e)
         {
-            CargarLocalidades(cmbLocalidad.Text.Trim());
+            lstPersonas.ClearSelected(); // deselecciono la persona de la lista
+            LimpiarFormulario();         // borro todos los campos del formulario
+            SetModo(Modo.Alta);          // cambio a modo alta
+            txtDni.Focus();              // pongo el foco en el campo DNI para que el usuario empiece a escribir
         }
 
-        private void cmbProvincia_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            CargarLocalidades(cmbLocalidad.Text.Trim());
-        }
-
-        private void CargarLocalidades(string provincia)
-        {
-            // si no escribió nada, limpio el combo de localidades y salgo
-            if (string.IsNullOrEmpty(provincia))
-            {
-                cmbProvincia.DataSource = null;
-                cmbProvincia.Items.Clear();
-                return;
-            }
-
-            // solo cargo localidades si la provincia contiene "Cord" (acepta Córdoba, Cordoba, etc.)
-            if (provincia.IndexOf("Cord", StringComparison.OrdinalIgnoreCase) < 0) // si la provincia no contiene "Cord" (en cualquier combinación de mayúsculas/minúsculas), limpio el combo de localidades y salgo, porque solo tengo localidades de Córdoba cargadas en la BD
-            {
-                cmbProvincia.DataSource = null; // limpio el combo de localidades porque la provincia seleccionada no es Córdoba, y solo tengo localidades de Córdoba en la BD, así evito mostrar localidades que no corresponden a la provincia seleccionada
-                cmbProvincia.Items.Clear(); // limpio los items del combo de localidades para que quede vacío
-                return;
-            }
-
-            var tabla = clsBaseDatos.ObtenerLocalidadesCordoba(); // traigo las localidades de Córdoba de la BD, porque la provincia seleccionada es Córdoba (o algo que contiene "Cord"), y las voy a mostrar en el combo de localidades
-
-            if (tabla == null || tabla.Rows.Count == 0) // si no hay localidades para mostrar, limpio el combo de localidades y salgo
-            {
-                cmbProvincia.DataSource = null; // limpio la fuente de datos del combo de localidades para que quede vacío
-                cmbProvincia.Items.Clear(); 
-                return;
-            }
-
-            // cargo las localidades en el combo
-            cmbProvincia.DataSource = tabla;
-            cmbProvincia.DisplayMember = "LocalidadesCordoba"; // columna que se muestra
-            cmbProvincia.ValueMember = "ID_Localidades"; // columna del ID
-            cmbProvincia.SelectedIndex = -1;
-
-            // habilito autocompletado en el combo de localidades
-            try
-            {
-                cmbProvincia.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
-                cmbProvincia.AutoCompleteSource = AutoCompleteSource.ListItems;
-            }
-            catch { }
-        }
-
-        // ══════════════════════════════════
-        // GRILLA PRINCIPAL DE PERSONAL
-        // ══════════════════════════════════
-
-        private void CargarGrilla()
-        {
-            dgvPersonal.DataSource = clsBaseDatos.ObtenerPersonal(); // traigo el listado de personal desde la BD y lo muestro en la grilla
-
-            try
-            {
-                dgvPersonal.ReadOnly = false; // permito edición para el checkbox de Activo
-
-                if (dgvPersonal.Columns.Contains("Activo")) // si la grilla tiene la columna Activo, verifico que sea un checkbox para permitir marcar/desmarcar directamente desde la grilla, y si no es un checkbox, la reemplazo por una columna de tipo checkbox para que el usuario pueda interactuar con ella correctamente desde la grilla, así hago más fácil y rápido activar o desactivar a una persona desde la lista sin tener que modificar toda la persona, pero si por alguna razón esa columna no es un checkbox (por ejemplo, si viene como string "True"/"False" desde la BD), entonces la reemplazo por una columna de tipo checkbox para que se muestre correctamente en la grilla y el usuario pueda interactuar con ella
-                {
-                    var col = dgvPersonal.Columns["Activo"]; // tomo la columna Activo para verificar si es del tipo checkbox, porque necesito que sea un checkbox para que el usuario pueda marcar/desmarcar el estado Activo directamente desde la grilla, sin tener que modificar toda la persona, así hago más fácil y rápido activar o desactivar a una persona desde la lista, pero si por alguna razón esa columna no es un checkbox (por ejemplo, si viene como string "True"/"False" desde la BD), entonces la reemplazo por una columna de tipo checkbox para que el usuario pueda interactuar con ella correctamente desde la grilla
-
-                    // si la columna Activo no es un checkbox, la reemplazo por una que sí lo sea
-                    if (!(col is DataGridViewCheckBoxColumn))
-                    {
-                        int idx = col.Index; // guardo la posición original
-                        dgvPersonal.Columns.Remove(col); // la saco
-                        var chkCol = new DataGridViewCheckBoxColumn // creo una nueva columna de tipo checkbox para el campo Activo, con las mismas propiedades de nombre y data property name para que se vincule correctamente con el campo Activo del origen de datos, y con TrueValue/FalseValue para que se guarde como booleano en la BD
-                        {
-                            Name = "Activo", // el nombre de la columna debe ser el mismo que el campo en la BD para que se vincule correctamente, y también para que pueda identificarla fácilmente al manejar los eventos de la grilla
-                            HeaderText = "Activo",
-                            DataPropertyName = "Activo",
-                            ReadOnly = false,
-                            TrueValue = true,
-                            FalseValue = false
-                        };
-                        dgvPersonal.Columns.Insert(idx, chkCol); // la inserto en la misma posición
-                    }
-
-                    // todas las columnas en solo lectura, excepto Activo
-                    foreach (DataGridViewColumn c in dgvPersonal.Columns) // recorro todas las columnas de la grilla para configurar cuáles son editables y cuáles no, porque solo quiero que el usuario pueda editar el checkbox de Activo directamente desde la grilla, y para modificar cualquier otro dato de la persona (como DNI, nombre o apellido), que tenga que seleccionar la persona y usar los campos del formulario para modificarla, así evito que se modifiquen datos importantes directamente desde la grilla sin querer, y también guío al usuario a usar el formulario para hacer modificaciones completas de la persona, pero dejo el checkbox de Activo editable directamente desde la grilla para que sea más fácil y rápido activar o desactivar a una persona sin tener que modificar toda la persona
-                    { 
-                        c.ReadOnly = (c.Name != "Activo"); // si la columna no es Activo, la dejo como solo lectura para que no se pueda editar directamente desde la grilla, y así evito modificaciones accidentales de datos importantes como DNI, nombre o apellido directamente desde la grilla sin querer, y guío al usuario a usar el formulario para hacer modificaciones completas de la persona, pero dejo el checkbox de Activo editable directamente desde la grilla para que sea más fácil y rápido activar o desactivar a una persona sin tener que modificar toda la persona
-                    }
-
-                    // conecto los eventos del checkbox para que se guarde al hacer click
-                    dgvPersonal.CellContentClick -= dgvPersonal_CellContentClick; // me aseguro de desconectar el evento antes de volver a conectarlo para evitar que se conecte varias veces si se recarga la grilla varias veces, así evito que el mismo evento se ejecute varias veces por cada recarga de la grilla, lo que podría causar problemas como que se guarde varias veces o que se ejecute código duplicado al hacer click en el checkbox, y así me aseguro de que el evento esté conectado solo una vez y funcione correctamente sin importar cuántas veces se recargue la grilla
-                    dgvPersonal.CellContentClick += dgvPersonal_CellContentClick;
-                    dgvPersonal.CellValueChanged -= dgvPersonal_CellValueChanged;
-                    dgvPersonal.CellValueChanged += dgvPersonal_CellValueChanged;
-                }
-
-                // oculto la columna del ID porque no le sirve al usuario verla
-                if (dgvPersonal.Columns.Contains("IdPersonal"))
-                    dgvPersonal.Columns["IdPersonal"].Visible = false;
-            }
-            catch { }
-        }
-
-        // cuando hacen click en el checkbox de Activo, fuerzo que se confirme el cambio
-        private void dgvPersonal_CellContentClick(object sender, DataGridViewCellEventArgs e) // este evento se dispara cuando hacen click en el checkbox, pero el valor del checkbox todavía no cambió en la grilla, así que aquí lo confirmo para que se actualice el valor del checkbox antes de que se dispare el evento CellValueChanged donde hago la actualización en la BD, así me aseguro de que el nuevo estado del checkbox se refleje correctamente en la BD cuando el usuario haga click sobre él
-        { 
-            if (e.RowIndex < 0) return; // si hacen click en el encabezado de la grilla, no hago nada
-            if (dgvPersonal.Columns[e.ColumnIndex].Name == "Activo") // solo si hicieron click en la columna del checkbox de Activo, confirmo el cambio para que se actualice el valor del checkbox antes de que se dispare el evento CellValueChanged donde hago la actualización en la BD, así me aseguro de que el nuevo estado del checkbox se refleje correctamente en la BD cuando el usuario haga click sobre él
-                dgvPersonal.CommitEdit(DataGridViewDataErrorContexts.Commit);
-        }
-
-        // cuando cambia el valor del checkbox, actualizo en la BD
-        private void dgvPersonal_CellValueChanged(object sender, DataGridViewCellEventArgs e) // este evento se dispara después de que el valor del checkbox cambió y se confirmó, así que aquí hago la actualización en la BD para guardar el nuevo estado Activo de esa persona
-        {
-            if (e.RowIndex < 0) return; 
-            if (dgvPersonal.Columns[e.ColumnIndex].Name != "Activo") return;
-
-            try
-            {
-                var row = dgvPersonal.Rows[e.RowIndex]; // tomo la fila que cambió
-                int id = Convert.ToInt32(row.Cells["IdPersonal"].Value); // tomo el ID de esa persona para actualizarla en la BD
-                string dni = row.Cells["DNI"].Value.ToString(); // tomo el DNI, nombre y apellido de esa fila para actualizar la persona completa en la BD, porque el método de actualización requiere todos esos datos, aunque solo haya cambiado el checkbox de Activo, así me aseguro de no perder los datos que ya tenía esa persona al actualizar solo el estado Activo
-                string nombre = row.Cells["Nombre"].Value.ToString();
-                string apellido = row.Cells["Apellido"].Value.ToString();
-
-                bool activo = false; // por defecto lo dejo como false, pero si el checkbox está marcado, lo voy a actualizar a true, así me aseguro de guardar el estado correcto aunque haya algún problema al leer el valor del checkbox
-                var cell = row.Cells["Activo"].Value;
-                if (cell != null && cell != DBNull.Value) // si el valor del checkbox no es nulo, intento convertirlo a booleano para guardar el estado correcto en la BD, así me aseguro de que aunque haya algún problema al leer el valor del checkbox (por ejemplo, si viene como string "True" o "False" en lugar de un booleano), igual se guarde el estado correcto en la BD
-                    bool.TryParse(cell.ToString(), out activo); // intento convertir el valor del checkbox a booleano, si no se puede convertir, dejo el estado como false para evitar guardar un valor incorrecto en la BD
-
-                clsBaseDatos.ActualizarPersonal(id, dni, nombre, apellido, activo); //  actualizo la persona en la BD con el nuevo estado Activo, junto con el DNI, nombre y apellido que ya tenía esa persona para asegurarme de no perder esos datos al actualizar solo el estado Activo, aunque en este caso solo cambió el checkbox de Activo, así me aseguro de que se refleje el nuevo estado en la BD correctamente
-                CargarGrilla(); // recargo la grilla para mostrar el cambio actualizado, aunque solo cambió el checkbox de Activo, así me aseguro de que se refleje el nuevo estado en la grilla después de actualizarlo en la BD
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("No se pudo actualizar el estado Activo: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-        }
-
-        // cuando hacen click en una fila de la grilla, cargo sus datos en los campos del formulario
-        private void dgvPersonal_CellClick(object sender, DataGridViewCellEventArgs e) // este evento se dispara cuando hacen click en cualquier parte de la fila, no solo en el checkbox, así que cargo los datos para que se puedan modificar o ver los domicilios/contactos de esa persona, y también para que se muestre el estado del checkbox aunque no hagan click directo sobre él
-        {
-            if (e.RowIndex < 0) return; // si hacen click en el encabezado de la grilla, no hago nada
-
-            DataGridViewRow fila = dgvPersonal.Rows[e.RowIndex]; // tomo la fila que hicieron click
-            idSeleccionado = Convert.ToInt32(fila.Cells["IdPersonal"].Value); // guardo el ID de la persona seleccionada para usarlo en otras operaciones como cargar domicilios/contactos, modificar o eliminar
-
-            txtDni.Text = fila.Cells["DNI"].Value.ToString(); // cargo el DNI en el campo de texto correspondiente
-            txtNombre.Text = fila.Cells["Nombre"].Value.ToString();
-            txtApellido.Text = fila.Cells["Apellido"].Value.ToString();
-            chkActivar.Checked = Convert.ToBoolean(fila.Cells["Activo"].Value);
-
-            CargarDomicilios(); // cargo los domicilios de esa persona
-            CargarContactos(); // cargo los contactos de esa persona
-        }
-
-        // ══════════════════════════════════
-        // DOMICILIOS
-        // ══════════════════════════════════
-
-        private void CargarDomicilios() // cargo los domicilios de la persona seleccionada en la grilla, y los muestro en la grilla de domicilios, si no hay persona seleccionada, limpio la grilla de domicilios para que quede vacía y el usuario sepa que no hay domicilios cargados hasta que seleccione una persona de la lista
-        {
-            if (idSeleccionado == -1) // si no hay persona seleccionada, limpio la grilla
-            {
-                dgvDomicilios.DataSource = null; // limpio la grilla de domicilios porque no hay persona seleccionada, así evito mostrar domicilios que no corresponden a ninguna persona, y dejo la grilla vacía para que el usuario sepa que no hay domicilios cargados hasta que seleccione una persona de la lista, y así también evito posibles confusiones o errores al mostrar domicilios que no corresponden a la persona seleccionada
-                return;
-            }
-
-            dgvDomicilios.DataSource = clsBaseDatos.ObtenerDomicilios(idSeleccionado); // traigo los domicilios de la persona seleccionada y los muestro en la grilla
-        }
-
-        private void btnAgregarDom_Click(object sender, EventArgs e) // agrego un nuevo domicilio para la persona seleccionada, con los datos de dirección, geolocalización, provincia y localidad que el usuario completó en los campos correspondientes del formulario
-        {
-            // valido que haya una persona seleccionada y que la dirección no esté vacía
-            if (idSeleccionado == -1 || string.IsNullOrWhiteSpace(txtDireccion.Text))
-            {
-                MessageBox.Show("Guarda la persona primero y completa la direccion.",
-                    "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
-            }
-
-            // tomo provincia y localidad del combo, si hay algo seleccionado
-            string provincia = cmbLocalidad.SelectedIndex >= 0 ? cmbLocalidad.Text : ""; // si no hay nada seleccionado, dejo vacío para que se guarde como NULL en la BD
-            string localidad = (cmbProvincia.DataSource != null && cmbProvincia.SelectedIndex >= 0) // solo tomo la localidad si el combo tiene datos y hay algo seleccionado, sino dejo vacío para que se guarde como NULL en la BD
-                                ? cmbProvincia.Text : ""; // si no hay nada seleccionado, dejo vacío para que se guarde como NULL en la BD
-
-            try
-            {
-                clsBaseDatos.InsertarDomicilio(idSeleccionado, txtDireccion.Text.Trim(), txtGeo.Text.Trim(), provincia, localidad);
-
-                // limpio los campos después de agregar
-                txtDireccion.Text = "";
-                txtGeo.Text = "";
-                cmbLocalidad.SelectedIndex = -1;
-                cmbProvincia.DataSource = null;
-
-                CargarDomicilios();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Error: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-        }
-
-        private void btnVerMapa_Click(object sender, EventArgs e) // abro la dirección en Google Maps, usando el campo de texto de geolocalización
-        {
-            string texto = txtGeo.Text.Trim(); // tomo el texto del campo de geolocalización
-            if (string.IsNullOrEmpty(texto)) return; // si el campo está vacío, no hago nada
-
-            // si ya es una URL la abro directo, si no armo una búsqueda en Google Maps
-            string url = texto.StartsWith("http", StringComparison.OrdinalIgnoreCase)
-                ? texto // si el texto ya es una URL, la uso tal cual
-                : "https://www.google.com/maps?q=" + Uri.EscapeDataString(texto); // si no es una URL, armo una búsqueda en Google Maps con el texto
-
-            Process.Start(new ProcessStartInfo { FileName = url, UseShellExecute = true }); // abro la URL en el navegador predeterminado del sistema
-        }
-
-        private void btnEliminarDom_Click(object sender, EventArgs e)
-        {
-            if (dgvDomicilios.CurrentRow == null) return; // si no hay fila seleccionada, no hago nada
-
-            int idDom = Convert.ToInt32(dgvDomicilios.CurrentRow.Cells["IdDomicilio"].Value);
-
-            try
-            {
-                clsBaseDatos.EliminarDomicilio(idDom);
-                CargarDomicilios();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Error: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-        }
-
-        // ══════════════════════════════════
-        // CONTACTOS
-        // ══════════════════════════════════
-
-        private void CargarContactos()
-        {
-            if (idSeleccionado == -1)
-            {
-                dgvContactos.DataSource = null;
-                return;
-            }
-
-            dgvContactos.DataSource = clsBaseDatos.ObtenerContactos(idSeleccionado);
-        }
-
-        private void btnAgregarCont_Click(object sender, EventArgs e)
-        {
-            // valido que haya persona seleccionada, tipo elegido y valor completado
-            if (idSeleccionado == -1 || cmbTipo.SelectedIndex < 0 || string.IsNullOrWhiteSpace(txtValor.Text))
-            {
-                MessageBox.Show("Guarda la persona primero, selecciona un tipo y completa el valor.",
-                    "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return; // si no se cumple alguna de esas condiciones, no hago nada y muestro un mensaje para que el usuario sepa qué falta completar
-            }
-
-            try
-            {
-                clsBaseDatos.InsertarContacto(idSeleccionado, cmbTipo.Text, txtValor.Text.Trim()); // inserto el nuevo contacto en la BD
-
-                cmbTipo.SelectedIndex = -1;
-                txtValor.Text = "";
-
-                CargarContactos();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Error: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-        }
-
-        private void btnEliminarCont_Click(object sender, EventArgs e) // elimino el contacto seleccionado en la grilla de contactos
-        {
-            if (dgvContactos.CurrentRow == null) return; // si no hay fila seleccionada, no hago nada
-
-            int idCont = Convert.ToInt32(dgvContactos.CurrentRow.Cells["IdContacto"].Value);
-
-            try
-            {
-                clsBaseDatos.EliminarContacto(idCont);
-                CargarContactos();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Error: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-        }
-
-        // ══════════════════════════════════
-        // PERSONA: GUARDAR / MODIFICAR / ELIMINAR / LIMPIAR
-        // ══════════════════════════════════
-
+        // Se ejecuta cuando el usuario hace clic en "Guardar" o "Actualizar"
         private void btnGuardar_Click(object sender, EventArgs e)
         {
-            // valido que los campos obligatorios estén completos
-            if (string.IsNullOrWhiteSpace(txtDni.Text) ||
-                string.IsNullOrWhiteSpace(txtNombre.Text) ||
-                string.IsNullOrWhiteSpace(txtApellido.Text))
-            {
-                MessageBox.Show("Completa DNI, Nombre y Apellido.",
-                    "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
-            }
+            // Validación: verifico que los campos obligatorios estén completos
+            var faltantes = new List<string>();
+            if (string.IsNullOrWhiteSpace(txtDni.Text))      faltantes.Add("DNI");
+            if (string.IsNullOrWhiteSpace(txtNombre.Text))   faltantes.Add("Nombre");
+            if (string.IsNullOrWhiteSpace(txtApellido.Text)) faltantes.Add("Apellido");
+            if (faltantes.Count > 0) { Aviso("Completá: " + string.Join(", ", faltantes) + "."); return; }
 
-            // verifico que no exista otra persona con el mismo DNI
-            if (clsBaseDatos.ExisteDni(txtDni.Text.Trim(), idSeleccionado))
+            if (_modo == Modo.Alta)
             {
-                MessageBox.Show("Ya existe una persona con ese DNI.",
-                    "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
-            }
+                // Verifico que no exista ya una persona con ese DNI
+                if (clsBaseDatos.ExisteDni(txtDni.Text.Trim()))
+                { Aviso("Ya existe una persona con el DNI " + txtDni.Text.Trim() + "."); txtDni.Focus(); return; }
 
-            try
-            {
-                if (idSeleccionado == -1) // si no hay persona seleccionada, es un alta nueva
+                try
                 {
+                    // Inserto la persona en la BD y guardo el ID que le asignó la base
                     idSeleccionado = clsBaseDatos.InsertarPersonal(
-                        txtDni.Text.Trim(), txtNombre.Text.Trim(), txtApellido.Text.Trim(), chkActivar.Checked);
+                        txtDni.Text.Trim(), txtNombre.Text.Trim(), txtApellido.Text.Trim(), true);
+
+                    CargarLista(); // recargo la lista para que aparezca la persona nueva
+                    SetModo(Modo.Edicion); // paso a modo edición para que pueda agregar domicilios y contactos
+                    lblTitDatos.Text   = $"{txtApellido.Text.Trim()}, {txtNombre.Text.Trim()}  ·  Activo";
+                    btnDesactivar.Text = "Desactivar";
+                    CargarDomicilios();
+                    CargarContactos();
                 }
-                else // si hay persona seleccionada, es una modificación
+                catch (Exception ex) { Err(ex); }
+            }
+            else
+            {
+                // Verifico que no exista otra persona con ese DNI (excluyendo a la persona que estoy editando)
+                if (clsBaseDatos.ExisteDni(txtDni.Text.Trim(), idSeleccionado))
+                { Aviso("Ya existe otra persona con ese DNI."); txtDni.Focus(); return; }
+
+                try
                 {
-                    clsBaseDatos.ActualizarPersonal(
-                        idSeleccionado, txtDni.Text.Trim(), txtNombre.Text.Trim(), txtApellido.Text.Trim(), chkActivar.Checked);
+                    bool act = GetActivo(idSeleccionado, _tabla); // obtengo el estado activo/inactivo actual
+                    clsBaseDatos.ActualizarPersonal(idSeleccionado,
+                        txtDni.Text.Trim(), txtNombre.Text.Trim(), txtApellido.Text.Trim(), act);
+
+                    CargarLista(); // recargo la lista para reflejar los cambios
+                    lblTitDatos.Text = $"{txtApellido.Text.Trim()}, {txtNombre.Text.Trim()}  ·  {(act ? "Activo" : "Inactivo")}";
+                    MessageBox.Show("Datos actualizados.", "Listo", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
-
-                CargarGrilla();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Error: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                catch (Exception ex) { Err(ex); }
             }
         }
 
-        private void btnModificar_Click(object sender, EventArgs e)
-        {
-            if (idSeleccionado == -1)
-            {
-                MessageBox.Show("Seleccioná una persona de la lista para modificar.", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
-            }
-
-            if (string.IsNullOrWhiteSpace(txtDni.Text) || string.IsNullOrWhiteSpace(txtNombre.Text) || string.IsNullOrWhiteSpace(txtApellido.Text))
-            {
-                MessageBox.Show("Completa DNI, Nombre y Apellido.", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
-            }
-
-            try // intento actualizar la persona con los datos del formulario
-            {
-                clsBaseDatos.ActualizarPersonal(idSeleccionado, txtDni.Text.Trim(), txtNombre.Text.Trim(), txtApellido.Text.Trim(), chkActivar.Checked); // actualizo en la BD
-                CargarGrilla(); // recargo la grilla para mostrar los cambios
-                MessageBox.Show("Persona modificada correctamente.", "OK", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            }
-            catch (Exception ex) // si hay error, muestro un mensaje con el detalle para que el usuario sepa qué pasó
-            {
-                MessageBox.Show("Error al modificar: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-        }
-
-        private void btnEliminar_Click(object sender, EventArgs e)
+        // Se ejecuta cuando el usuario hace clic en "Desactivar" o "Reactivar"
+        private void btnDesactivar_Click(object sender, EventArgs e)
         {
             if (idSeleccionado == -1) return;
 
+            bool esDesac = btnDesactivar.Text == "Desactivar"; // true si voy a desactivar, false si voy a reactivar
+
+            // Pido confirmación antes de cambiar el estado
+            if (MessageBox.Show($"¿{(esDesac ? "Desactivar" : "Reactivar")} a {txtNombre.Text} {txtApellido.Text}?",
+                    "Confirmar", MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes) return;
+
             try
             {
-                clsBaseDatos.EliminarPersonal(idSeleccionado);
-                CargarGrilla();
-                LimpiarFormulario();
+                bool act  = GetActivo(idSeleccionado, _tabla); // obtengo el estado actual
+                bool nuevo = !act;                              // el nuevo estado es el opuesto
+
+                clsBaseDatos.ActualizarPersonal(idSeleccionado,
+                    txtDni.Text.Trim(), txtNombre.Text.Trim(), txtApellido.Text.Trim(), nuevo);
+
+                CargarLista(); // recargo la lista para que refleje el cambio de estado
+                lblTitDatos.Text   = $"{txtApellido.Text.Trim()}, {txtNombre.Text.Trim()}  ·  {(nuevo ? "Activo" : "Inactivo")}";
+                btnDesactivar.Text = nuevo ? "Desactivar" : "Reactivar"; // actualizo el texto del botón
             }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Error: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
+            catch (Exception ex) { Err(ex); }
         }
 
-        private void btnLimpiar_Click(object sender, EventArgs e)
-        {
-            LimpiarFormulario();
-        }
-
+        // Borra el contenido de todos los campos del formulario y resetea el ID seleccionado
         private void LimpiarFormulario()
         {
-            idSeleccionado = -1; // desselecciono la persona
-            txtDni.Text = "";
-            txtNombre.Text = "";
-            txtApellido.Text = "";
-            chkActivar.Checked = true;
-            txtDireccion.Text = "";
-            txtGeo.Text = "";
-            cmbLocalidad.SelectedIndex = -1;
-            cmbProvincia.DataSource = null;
-            cmbProvincia.Items.Clear();
-            cmbTipo.SelectedIndex = -1;
-            txtValor.Text = "";
-            dgvDomicilios.DataSource = null;
-            dgvContactos.DataSource = null;
-            dgvPersonal.ClearSelection();
+            idSeleccionado = -1;
+            txtDni.Clear(); txtNombre.Clear(); txtApellido.Clear();
+            txtDireccion.Clear(); txtGeo.Clear();
+            cmbProvincia.SelectedIndex = -1;
+            cmbLocalidad.DataSource = null; cmbLocalidad.Items.Clear(); cmbLocalidad.Enabled = true;
+            cmbTipo.SelectedIndex = -1; txtValor.Clear();
+            lstDom.Items.Clear(); lstCont.Items.Clear();
         }
+
+        // ─────────────────────────────────────────────────────────────────
+        // DOMICILIOS
+        // ─────────────────────────────────────────────────────────────────
+
+        // Trae los domicilios de la persona seleccionada y los muestra en el ListBox
+        private void CargarDomicilios()
+        {
+            lstDom.Items.Clear();
+            if (idSeleccionado == -1) return;
+
+            foreach (DataRow row in clsBaseDatos.ObtenerDomicilios(idSeleccionado).Rows)
+            {
+                // Armo el texto a mostrar: "Dirección  —  Provincia, Localidad" (si tienen esos datos)
+                string t = row["Direccion"].ToString();
+                if (!string.IsNullOrEmpty(row["Provincia"].ToString())) t += "  —  " + row["Provincia"];
+                if (!string.IsNullOrEmpty(row["Localidad"].ToString()))  t += ", " + row["Localidad"];
+
+                lstDom.Items.Add(new DomItem { Id = Convert.ToInt32(row["IdDomicilio"]), T = t });
+            }
+        }
+
+        // Se ejecuta cuando el usuario hace clic en "Agregar domicilio"
+        private void btnAgregarDom_Click(object sender, EventArgs e)
+        {
+            if (idSeleccionado == -1) return;
+            if (string.IsNullOrWhiteSpace(txtDireccion.Text)) { Aviso("Completá la dirección."); return; }
+
+            // Obtengo los valores opcionales
+            string prov = cmbProvincia.SelectedIndex >= 0 ? cmbProvincia.Text : "";
+            string loc  = (cmbLocalidad.DataSource != null && cmbLocalidad.SelectedIndex >= 0) ? cmbLocalidad.Text : "";
+            string geo  = txtGeo.Text.Trim();
+
+            // Intento parsear el campo Geo como coordenadas lat, lng
+            double lat, lng;
+            bool coords = TryParsear(geo, out lat, out lng);
+
+            try
+            {
+                // Inserto el domicilio en la BD; si se parsearon coordenadas las guardo, si no, guardo null
+                clsBaseDatos.InsertarDomicilio(idSeleccionado, txtDireccion.Text.Trim(), geo, prov, loc,
+                    coords ? lat : (double?)null, coords ? lng : (double?)null);
+
+                // Limpio los campos del formulario de domicilio
+                txtDireccion.Clear(); txtGeo.Clear();
+                cmbProvincia.SelectedIndex = -1;
+                cmbLocalidad.DataSource = null; cmbLocalidad.Items.Clear(); cmbLocalidad.Enabled = true;
+
+                CargarDomicilios(); // recargo la lista para mostrar el nuevo domicilio
+            }
+            catch (Exception ex) { Err(ex); }
+        }
+
+        // Se ejecuta cuando el usuario hace clic en "Quitar domicilio seleccionado"
+        private void btnQuitarDom_Click(object sender, EventArgs e)
+        {
+            if (lstDom.SelectedItem == null) { Aviso("Seleccioná un domicilio para quitarlo."); return; }
+            try
+            {
+                clsBaseDatos.EliminarDomicilio(((DomItem)lstDom.SelectedItem).Id); // elimino por ID
+                CargarDomicilios(); // recargo la lista
+            }
+            catch (Exception ex) { Err(ex); }
+        }
+
+        // Se ejecuta cuando el usuario hace clic en "Ver mapa"
+        // Abre el link de Google Maps en el navegador predeterminado
+        private void btnVerMapa_Click(object sender, EventArgs e)
+        {
+            string t = txtGeo.Text.Trim();
+            if (string.IsNullOrEmpty(t)) { Aviso("Completá el campo Geo."); return; }
+
+            // Si el campo Geo ya es una URL la uso directamente; si no, la armo como búsqueda en Google Maps
+            string url = t.StartsWith("http", StringComparison.OrdinalIgnoreCase)
+                ? t : "https://www.google.com/maps?q=" + Uri.EscapeDataString(t);
+
+            Process.Start(new ProcessStartInfo { FileName = url, UseShellExecute = true });
+        }
+
+        // ─────────────────────────────────────────────────────────────────
+        // REDES / CONTACTOS
+        // ─────────────────────────────────────────────────────────────────
+
+        // Trae los contactos de la persona seleccionada y los muestra en el ListBox
+        private void CargarContactos()
+        {
+            lstCont.Items.Clear();
+            if (idSeleccionado == -1) return;
+
+            foreach (DataRow row in clsBaseDatos.ObtenerContactos(idSeleccionado).Rows)
+                lstCont.Items.Add(new ContItem
+                    { Id = Convert.ToInt32(row["IdContacto"]), T = $"{row["Tipo"]}:  {row["Valor"]}" });
+        }
+
+        // Se ejecuta cuando el usuario hace clic en "Agregar contacto"
+        private void btnAgregarCont_Click(object sender, EventArgs e)
+        {
+            if (idSeleccionado == -1) return;
+            if (cmbTipo.SelectedIndex < 0)             { Aviso("Elegí el tipo."); return; }
+            if (string.IsNullOrWhiteSpace(txtValor.Text)) { Aviso("Completá el dato."); return; }
+
+            try
+            {
+                clsBaseDatos.InsertarContacto(idSeleccionado, cmbTipo.Text, txtValor.Text.Trim());
+                cmbTipo.SelectedIndex = -1; txtValor.Clear(); // limpio los campos
+                CargarContactos(); // recargo la lista
+            }
+            catch (Exception ex) { Err(ex); }
+        }
+
+        // Se ejecuta cuando el usuario hace clic en "Quitar contacto seleccionado"
+        private void btnQuitarCont_Click(object sender, EventArgs e)
+        {
+            if (lstCont.SelectedItem == null) { Aviso("Seleccioná un contacto para quitarlo."); return; }
+            try
+            {
+                clsBaseDatos.EliminarContacto(((ContItem)lstCont.SelectedItem).Id); // elimino por ID
+                CargarContactos(); // recargo la lista
+            }
+            catch (Exception ex) { Err(ex); }
+        }
+
+        // ─────────────────────────────────────────────────────────────────
+        // HELPERS
+        // ─────────────────────────────────────────────────────────────────
+
+        // Intenta parsear el texto del campo Geo como coordenadas (lat, lng).
+        // Acepta links de Google Maps o texto directo en formato "-31.4, -64.1".
+        // Devuelve true si pudo parsear, y los valores en los parámetros out.
+        private static bool TryParsear(string texto, out double lat, out double lng)
+        {
+            lat = lng = 0;
+            if (string.IsNullOrWhiteSpace(texto)) return false;
+
+            var inv = System.Globalization.CultureInfo.InvariantCulture;
+            var ns  = System.Globalization.NumberStyles.Float;
+
+            // Pruebo tres patrones de regex: link de Google Maps con @, link con ?q=, y texto plano "lat,lng"
+            foreach (string patron in new[] {
+                @"/@(-?\d+\.?\d+),\s*(-?\d+\.?\d+)",
+                @"[?&]q=(-?\d+\.?\d+)[,+]\s*(-?\d+\.?\d+)",
+                @"^(-?\d+\.?\d+)\s*,\s*(-?\d+\.?\d+)\s*$" })
+            {
+                var m = Regex.Match(texto, patron);
+                if (!m.Success) continue;
+
+                double a, b;
+                if (double.TryParse(m.Groups[1].Value, ns, inv, out a) &&
+                    double.TryParse(m.Groups[2].Value, ns, inv, out b) &&
+                    a >= -90 && a <= 90 && b >= -180 && b <= 180) // valido que estén en rango de coordenadas válidas
+                { lat = a; lng = b; return true; }
+            }
+            return false;
+        }
+
+        // Busca en _tabla si la persona con el ID dado está activa o no
+        private static bool GetActivo(int id, DataTable t)
+        {
+            foreach (DataRow r in t.Rows)
+                if (Convert.ToInt32(r["IdPersonal"]) == id) return Convert.ToBoolean(r["Activo"]);
+            return true; // si no la encuentra, asumo activa (no debería pasar)
+        }
+
+        // Muestra un mensaje de advertencia al usuario
+        private void Aviso(string msg) => MessageBox.Show(msg, "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
+        // Muestra un mensaje de error con el detalle de la excepción
+        private void Err(Exception ex) => MessageBox.Show("Error: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
     }
 }
