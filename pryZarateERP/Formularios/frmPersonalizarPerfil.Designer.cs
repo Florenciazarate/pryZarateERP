@@ -19,6 +19,7 @@ namespace pryZarateERP
             this.lstPersonas = new System.Windows.Forms.ListBox();
             this.btnNueva = new Guna.UI2.WinForms.Guna2Button();
             this.pnlDetalle = new System.Windows.Forms.Panel();
+            this.label1 = new System.Windows.Forms.Label();
             this.lblTitDatos = new System.Windows.Forms.Label();
             this.btnDesactivar = new Guna.UI2.WinForms.Guna2Button();
             this.lblDni = new System.Windows.Forms.Label();
@@ -138,6 +139,7 @@ namespace pryZarateERP
             // pnlDetalle
             // 
             this.pnlDetalle.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(15)))), ((int)(((byte)(23)))), ((int)(((byte)(42)))));
+            this.pnlDetalle.Controls.Add(this.label1);
             this.pnlDetalle.Controls.Add(this.lblTitDatos);
             this.pnlDetalle.Controls.Add(this.btnDesactivar);
             this.pnlDetalle.Controls.Add(this.lblDni);
@@ -176,6 +178,16 @@ namespace pryZarateERP
             this.pnlDetalle.Name = "pnlDetalle";
             this.pnlDetalle.Size = new System.Drawing.Size(672, 760);
             this.pnlDetalle.TabIndex = 1;
+            // 
+            // label1
+            // 
+            this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.label1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(51)))), ((int)(((byte)(65)))), ((int)(((byte)(85)))));
+            this.label1.Location = new System.Drawing.Point(327, 139);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(1, 601);
+            this.label1.TabIndex = 22;
             // 
             // lblTitDatos
             // 
@@ -344,12 +356,14 @@ namespace pryZarateERP
             this.cmbProvincia.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(116)))), ((int)(((byte)(139)))));
             this.cmbProvincia.BorderRadius = 8;
             this.cmbProvincia.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
+            this.cmbProvincia.DropDownHeight = 100;
             this.cmbProvincia.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbProvincia.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(30)))), ((int)(((byte)(41)))), ((int)(((byte)(59)))));
             this.cmbProvincia.FocusedColor = System.Drawing.Color.FromArgb(((int)(((byte)(167)))), ((int)(((byte)(139)))), ((int)(((byte)(250)))));
             this.cmbProvincia.FocusedState.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(167)))), ((int)(((byte)(139)))), ((int)(((byte)(250)))));
             this.cmbProvincia.Font = new System.Drawing.Font("Segoe UI", 9.5F);
             this.cmbProvincia.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(241)))), ((int)(((byte)(245)))), ((int)(((byte)(249)))));
+            this.cmbProvincia.IntegralHeight = false;
             this.cmbProvincia.ItemHeight = 30;
             this.cmbProvincia.Location = new System.Drawing.Point(16, 198);
             this.cmbProvincia.Name = "cmbProvincia";
@@ -374,12 +388,14 @@ namespace pryZarateERP
             this.cmbLocalidad.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(116)))), ((int)(((byte)(139)))));
             this.cmbLocalidad.BorderRadius = 8;
             this.cmbLocalidad.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
+            this.cmbLocalidad.DropDownHeight = 100;
             this.cmbLocalidad.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbLocalidad.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(30)))), ((int)(((byte)(41)))), ((int)(((byte)(59)))));
             this.cmbLocalidad.FocusedColor = System.Drawing.Color.FromArgb(((int)(((byte)(167)))), ((int)(((byte)(139)))), ((int)(((byte)(250)))));
             this.cmbLocalidad.FocusedState.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(167)))), ((int)(((byte)(139)))), ((int)(((byte)(250)))));
             this.cmbLocalidad.Font = new System.Drawing.Font("Segoe UI", 9.5F);
             this.cmbLocalidad.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(241)))), ((int)(((byte)(245)))), ((int)(((byte)(249)))));
+            this.cmbLocalidad.IntegralHeight = false;
             this.cmbLocalidad.ItemHeight = 30;
             this.cmbLocalidad.Location = new System.Drawing.Point(16, 260);
             this.cmbLocalidad.Name = "cmbLocalidad";
@@ -544,14 +560,17 @@ namespace pryZarateERP
             this.cmbTipo.Font = new System.Drawing.Font("Segoe UI", 9.5F);
             this.cmbTipo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(241)))), ((int)(((byte)(245)))), ((int)(((byte)(249)))));
             this.cmbTipo.ItemHeight = 30;
-            this.cmbTipo.Items.AddRange(new object[] { "Email", "Teléfono", "Red social" });
+            this.cmbTipo.Items.AddRange(new object[] {
+            "Email",
+            "Teléfono",
+            "Red social"});
             this.cmbTipo.Location = new System.Drawing.Point(336, 198);
             this.cmbTipo.Name = "cmbTipo";
             this.cmbTipo.Size = new System.Drawing.Size(304, 36);
             this.cmbTipo.TabIndex = 16;
-            //
+            // 
             // lblRed
-            //
+            // 
             this.lblRed.AutoSize = true;
             this.lblRed.Font = new System.Drawing.Font("Segoe UI Semibold", 9F, System.Drawing.FontStyle.Bold);
             this.lblRed.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(148)))), ((int)(((byte)(163)))), ((int)(((byte)(184)))));
@@ -560,9 +579,9 @@ namespace pryZarateERP
             this.lblRed.Size = new System.Drawing.Size(60, 15);
             this.lblRed.TabIndex = 0;
             this.lblRed.Text = "Red social";
-            //
+            // 
             // cmbRed
-            //
+            // 
             this.cmbRed.BackColor = System.Drawing.Color.Transparent;
             this.cmbRed.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(116)))), ((int)(((byte)(139)))));
             this.cmbRed.BorderRadius = 8;
@@ -575,14 +594,20 @@ namespace pryZarateERP
             this.cmbRed.Font = new System.Drawing.Font("Segoe UI", 9.5F);
             this.cmbRed.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(241)))), ((int)(((byte)(245)))), ((int)(((byte)(249)))));
             this.cmbRed.ItemHeight = 30;
-            this.cmbRed.Items.AddRange(new object[] { "Instagram", "Facebook", "Twitter / X", "LinkedIn", "TikTok", "WhatsApp" });
+            this.cmbRed.Items.AddRange(new object[] {
+            "Instagram",
+            "Facebook",
+            "Twitter / X",
+            "LinkedIn",
+            "TikTok",
+            "WhatsApp"});
             this.cmbRed.Location = new System.Drawing.Point(336, 260);
             this.cmbRed.Name = "cmbRed";
             this.cmbRed.Size = new System.Drawing.Size(304, 36);
             this.cmbRed.TabIndex = 17;
-            //
+            // 
             // lblValor
-            //
+            // 
             this.lblValor.AutoSize = true;
             this.lblValor.Font = new System.Drawing.Font("Segoe UI Semibold", 9F, System.Drawing.FontStyle.Bold);
             this.lblValor.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(148)))), ((int)(((byte)(163)))), ((int)(((byte)(184)))));
@@ -717,5 +742,6 @@ namespace pryZarateERP
         private Guna.UI2.WinForms.Guna2Button btnAgregarCont;
         private System.Windows.Forms.ListBox lstCont;
         private Guna.UI2.WinForms.Guna2Button btnQuitarCont;
+        private System.Windows.Forms.Label label1;
     }
 }

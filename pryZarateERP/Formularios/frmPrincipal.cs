@@ -26,8 +26,8 @@ namespace pryZarateERP
             lblConectado.Text = $"●  {usuario}  |  {rol}  |  Conectado a las {DateTime.Now:HH:mm}";
 
             // Pantalla de bienvenida: mensajes centrados que ve cualquier rol al entrar
-            lblBienvenida.Text    = "¡Hola, " + usuario + "!";
-            lblBienvenidaSub.Text = "Ingresaste como " + rol + ". Elegí una sección arriba para empezar.";
+            lblBienvenida.Text    = "¡Bienvenido, " + usuario + "!";
+            lblBienvenidaSub.Text = "Ingresaste como " + rol + ".";
 
             AplicarPermisos(rol); // muestra u oculta pestañas según el rol
 
