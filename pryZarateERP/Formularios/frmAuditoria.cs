@@ -15,6 +15,20 @@ namespace pryZarateERP
             InitializeComponent(); // crea todos los controles visuales definidos en el Designer
         }
 
+        // Se ejecuta cuando cambia la selección del combo de usuario: aplico el mismo filtro automáticamente
+        private void cmbUsuarioFiltro_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            // Reutilizo la lógica del botón Filtrar para mantener un único lugar con la implementación
+            btnFiltrar_Click(sender, e);
+        }
+
+        // Se ejecuta cuando cambia la selección del combo de resultado: aplico el mismo filtro automáticamente
+        private void cmbExitosoFiltro_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            // Reutilizo la lógica del botón Filtrar para mantener un único lugar con la implementación
+            btnFiltrar_Click(sender, e);
+        }
+
         // Se ejecuta cuando el formulario termina de cargarse
         private void frmAuditoria_Load(object sender, EventArgs e)
         {

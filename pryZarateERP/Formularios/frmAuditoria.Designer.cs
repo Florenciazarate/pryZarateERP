@@ -95,6 +95,7 @@ namespace pryZarateERP
             this.cmbUsuarioFiltro.Name = "cmbUsuarioFiltro";
             this.cmbUsuarioFiltro.Size = new System.Drawing.Size(200, 34);
             this.cmbUsuarioFiltro.TabIndex = 2;
+            this.cmbUsuarioFiltro.SelectedIndexChanged += new System.EventHandler(this.cmbUsuarioFiltro_SelectedIndexChanged);
             // 
             // lblResultado
             // 
@@ -128,6 +129,7 @@ namespace pryZarateERP
             this.cmbExitosoFiltro.Name = "cmbExitosoFiltro";
             this.cmbExitosoFiltro.Size = new System.Drawing.Size(180, 32);
             this.cmbExitosoFiltro.TabIndex = 4;
+            this.cmbExitosoFiltro.SelectedIndexChanged += new System.EventHandler(this.cmbExitosoFiltro_SelectedIndexChanged);
             // 
             // lblDesde
             // 
@@ -257,13 +259,13 @@ namespace pryZarateERP
             dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
             this.dgvAuditoria.DefaultCellStyle = dataGridViewCellStyle3;
             this.dgvAuditoria.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(51)))), ((int)(((byte)(65)))), ((int)(((byte)(85)))));
-            this.dgvAuditoria.Location = new System.Drawing.Point(20, 31);
+            this.dgvAuditoria.Location = new System.Drawing.Point(23, 28);
             this.dgvAuditoria.MultiSelect = false;
             this.dgvAuditoria.Name = "dgvAuditoria";
             this.dgvAuditoria.ReadOnly = true;
             this.dgvAuditoria.RowHeadersVisible = false;
             this.dgvAuditoria.RowTemplate.Height = 30;
-            this.dgvAuditoria.Size = new System.Drawing.Size(1578, 497);
+            this.dgvAuditoria.Size = new System.Drawing.Size(1242, 386);
             this.dgvAuditoria.TabIndex = 0;
             this.dgvAuditoria.ThemeStyle.AlternatingRowsStyle.BackColor = System.Drawing.Color.White;
             this.dgvAuditoria.ThemeStyle.AlternatingRowsStyle.Font = null;
