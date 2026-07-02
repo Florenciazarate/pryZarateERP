@@ -105,7 +105,7 @@
             this.txtContraseña.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.txtContraseña.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(241)))), ((int)(((byte)(245)))), ((int)(((byte)(249)))));
             this.txtContraseña.HoverState.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(148)))), ((int)(((byte)(163)))), ((int)(((byte)(184)))));
-            this.txtContraseña.Location = new System.Drawing.Point(32, 207);
+            this.txtContraseña.Location = new System.Drawing.Point(32, 203);
             this.txtContraseña.Name = "txtContraseña";
             this.txtContraseña.PasswordChar = '●';
             this.txtContraseña.PlaceholderForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(116)))), ((int)(((byte)(139)))));
@@ -122,7 +122,7 @@
             this.chkMostrar.BackColor = System.Drawing.Color.Transparent;
             this.chkMostrar.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.chkMostrar.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(148)))), ((int)(((byte)(163)))), ((int)(((byte)(184)))));
-            this.chkMostrar.Location = new System.Drawing.Point(32, 251);
+            this.chkMostrar.Location = new System.Drawing.Point(32, 248);
             this.chkMostrar.Name = "chkMostrar";
             this.chkMostrar.Size = new System.Drawing.Size(128, 19);
             this.chkMostrar.TabIndex = 8;
@@ -135,7 +135,7 @@
             this.lblContraseña.AutoSize = true;
             this.lblContraseña.Font = new System.Drawing.Font("Segoe UI Semibold", 9F, System.Drawing.FontStyle.Bold);
             this.lblContraseña.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(226)))), ((int)(((byte)(232)))), ((int)(((byte)(240)))));
-            this.lblContraseña.Location = new System.Drawing.Point(32, 186);
+            this.lblContraseña.Location = new System.Drawing.Point(32, 182);
             this.lblContraseña.Name = "lblContraseña";
             this.lblContraseña.Size = new System.Drawing.Size(66, 15);
             this.lblContraseña.TabIndex = 4;

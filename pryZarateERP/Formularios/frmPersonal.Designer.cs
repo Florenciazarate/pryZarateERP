@@ -193,7 +193,7 @@ namespace pryZarateERP
             this.txtValor.FocusedState.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(167)))), ((int)(((byte)(139)))), ((int)(((byte)(250)))));
             this.txtValor.Font = new System.Drawing.Font("Segoe UI", 9.5F);
             this.txtValor.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(241)))), ((int)(((byte)(245)))), ((int)(((byte)(249)))));
-            this.txtValor.Location = new System.Drawing.Point(470, 654);
+            this.txtValor.Location = new System.Drawing.Point(466, 654);
             this.txtValor.MaxLength = 10;
             this.txtValor.Name = "txtValor";
             this.txtValor.PlaceholderText = "";
@@ -206,7 +206,7 @@ namespace pryZarateERP
             this.lblValor.AutoSize = true;
             this.lblValor.Font = new System.Drawing.Font("Segoe UI Semibold", 9F, System.Drawing.FontStyle.Bold);
             this.lblValor.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(148)))), ((int)(((byte)(163)))), ((int)(((byte)(184)))));
-            this.lblValor.Location = new System.Drawing.Point(470, 636);
+            this.lblValor.Location = new System.Drawing.Point(466, 636);
             this.lblValor.Name = "lblValor";
             this.lblValor.Size = new System.Drawing.Size(47, 15);
             this.lblValor.TabIndex = 0;
@@ -235,7 +235,7 @@ namespace pryZarateERP
             "LinkedIn",
             "TikTok",
             "WhatsApp"});
-            this.cmbRed.Location = new System.Drawing.Point(257, 654);
+            this.cmbRed.Location = new System.Drawing.Point(255, 654);
             this.cmbRed.Name = "cmbRed";
             this.cmbRed.Size = new System.Drawing.Size(179, 36);
             this.cmbRed.TabIndex = 17;
@@ -245,7 +245,7 @@ namespace pryZarateERP
             this.lblRed.AutoSize = true;
             this.lblRed.Font = new System.Drawing.Font("Segoe UI Semibold", 9F, System.Drawing.FontStyle.Bold);
             this.lblRed.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(148)))), ((int)(((byte)(163)))), ((int)(((byte)(184)))));
-            this.lblRed.Location = new System.Drawing.Point(254, 636);
+            this.lblRed.Location = new System.Drawing.Point(252, 636);
             this.lblRed.Name = "lblRed";
             this.lblRed.Size = new System.Drawing.Size(120, 15);
             this.lblRed.TabIndex = 0;
@@ -536,7 +536,7 @@ namespace pryZarateERP
             this.btnGuardar.Font = new System.Drawing.Font("Segoe UI Semibold", 9.5F, System.Drawing.FontStyle.Bold);
             this.btnGuardar.ForeColor = System.Drawing.Color.White;
             this.btnGuardar.HoverState.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(167)))), ((int)(((byte)(139)))), ((int)(((byte)(250)))));
-            this.btnGuardar.Location = new System.Drawing.Point(462, 139);
+            this.btnGuardar.Location = new System.Drawing.Point(460, 139);
             this.btnGuardar.Name = "btnGuardar";
             this.btnGuardar.Size = new System.Drawing.Size(102, 33);
             this.btnGuardar.TabIndex = 4;
@@ -553,7 +553,7 @@ namespace pryZarateERP
             this.txtApellido.FocusedState.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(167)))), ((int)(((byte)(139)))), ((int)(((byte)(250)))));
             this.txtApellido.Font = new System.Drawing.Font("Segoe UI", 9.5F);
             this.txtApellido.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(241)))), ((int)(((byte)(245)))), ((int)(((byte)(249)))));
-            this.txtApellido.Location = new System.Drawing.Point(414, 91);
+            this.txtApellido.Location = new System.Drawing.Point(412, 91);
             this.txtApellido.MaxLength = 30;
             this.txtApellido.Name = "txtApellido";
             this.txtApellido.PlaceholderText = "";
@@ -566,7 +566,7 @@ namespace pryZarateERP
             this.lblApellido.AutoSize = true;
             this.lblApellido.Font = new System.Drawing.Font("Segoe UI Semibold", 9F, System.Drawing.FontStyle.Bold);
             this.lblApellido.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(148)))), ((int)(((byte)(163)))), ((int)(((byte)(184)))));
-            this.lblApellido.Location = new System.Drawing.Point(414, 73);
+            this.lblApellido.Location = new System.Drawing.Point(412, 73);
             this.lblApellido.Name = "lblApellido";
             this.lblApellido.Size = new System.Drawing.Size(51, 15);
             this.lblApellido.TabIndex = 0;
@@ -582,7 +582,7 @@ namespace pryZarateERP
             this.txtNombre.FocusedState.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(167)))), ((int)(((byte)(139)))), ((int)(((byte)(250)))));
             this.txtNombre.Font = new System.Drawing.Font("Segoe UI", 9.5F);
             this.txtNombre.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(241)))), ((int)(((byte)(245)))), ((int)(((byte)(249)))));
-            this.txtNombre.Location = new System.Drawing.Point(208, 91);
+            this.txtNombre.Location = new System.Drawing.Point(206, 91);
             this.txtNombre.MaxLength = 30;
             this.txtNombre.Name = "txtNombre";
             this.txtNombre.PlaceholderText = "";
@@ -595,7 +595,7 @@ namespace pryZarateERP
             this.lblNombre.AutoSize = true;
             this.lblNombre.Font = new System.Drawing.Font("Segoe UI Semibold", 9F, System.Drawing.FontStyle.Bold);
             this.lblNombre.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(148)))), ((int)(((byte)(163)))), ((int)(((byte)(184)))));
-            this.lblNombre.Location = new System.Drawing.Point(208, 73);
+            this.lblNombre.Location = new System.Drawing.Point(206, 73);
             this.lblNombre.Name = "lblNombre";
             this.lblNombre.Size = new System.Drawing.Size(105, 15);
             this.lblNombre.TabIndex = 0;
@@ -659,7 +659,7 @@ namespace pryZarateERP
             this.btnDesactivar.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(148)))), ((int)(((byte)(163)))), ((int)(((byte)(184)))));
             this.btnDesactivar.HoverState.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(51)))), ((int)(((byte)(65)))), ((int)(((byte)(85)))));
             this.btnDesactivar.HoverState.ForeColor = System.Drawing.Color.White;
-            this.btnDesactivar.Location = new System.Drawing.Point(330, 139);
+            this.btnDesactivar.Location = new System.Drawing.Point(328, 139);
             this.btnDesactivar.Name = "btnDesactivar";
             this.btnDesactivar.Size = new System.Drawing.Size(126, 34);
             this.btnDesactivar.TabIndex = 7;
