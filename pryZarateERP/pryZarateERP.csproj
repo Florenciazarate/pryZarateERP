@@ -62,11 +62,11 @@
     <Compile Include="Formularios\frmInicioSesion.Designer.cs">
       <DependentUpon>frmInicioSesion.cs</DependentUpon>
     </Compile>
-    <Compile Include="Formularios\frmPersonalizarPerfil.cs">
+    <Compile Include="Formularios\frmPersonal.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Formularios\frmPersonalizarPerfil.Designer.cs">
-      <DependentUpon>frmPersonalizarPerfil.cs</DependentUpon>
+    <Compile Include="Formularios\frmPersonal.Designer.cs">
+      <DependentUpon>frmPersonal.cs</DependentUpon>
     </Compile>
     <Compile Include="Formularios\frmAuditoria.cs">
       <SubType>Form</SubType>
@@ -89,8 +89,8 @@
     <EmbeddedResource Include="Formularios\frmInicioSesion.resx">
       <DependentUpon>frmInicioSesion.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Formularios\frmPersonalizarPerfil.resx">
-      <DependentUpon>frmPersonalizarPerfil.cs</DependentUpon>
+    <EmbeddedResource Include="Formularios\frmPersonal.resx">
+      <DependentUpon>frmPersonal.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Formularios\frmPrincipal.resx">
       <DependentUpon>frmPrincipal.cs</DependentUpon>

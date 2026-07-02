@@ -5,23 +5,29 @@ using System.Windows.Forms;
 
 namespace pryZarateERP
 {
-    public partial class frmPersonalizarPerfil : Form
+    public partial class frmPersonal : Form
     {
-        private int       idSeleccionado = -1; // ID de la persona seleccionada (-1 = ninguna / modo alta)
+        private int idSeleccionado = -1; // ID de la persona seleccionada (-1 = ninguna / modo alta)
+        private bool _activoSeleccionado;      // estado activo/inactivo real de la persona seleccionada
         private DataTable _tabla;              // todos los registros de Personal traídos de la BD
 
         // Clases auxiliares para guardar el ID junto al texto que muestra el ListBox
         private class PersonaItem { public int Id; public string Texto; public override string ToString() => Texto; } //molde para mostrar el nombre de la persona en el ListBox y tener a la vez su ID guardado para usarlo luego
-        private class DomItem     { public int Id; public string T;     public override string ToString() => T; }
-        private class ContItem    { public int Id; public string T;     public override string ToString() => T; }
+        private class DomItem { public int Id; public string T; public override string ToString() => T; }
+        private class ContItem { public int Id; public string T; public override string ToString() => T; }
 
-        public frmPersonalizarPerfil()
+        public frmPersonal()
         {
             InitializeComponent();
             txtDni.KeyPress += (s, e) => { if (!char.IsDigit(e.KeyChar) && !char.IsControl(e.KeyChar)) e.Handled = true; };  // el campo DNI solo acepta números
+            // Nombre y Apellido NO aceptan números (dejan letras, espacios, acentos, etc.)
+            txtNombre.KeyPress   += (s, e) => { if (char.IsDigit(e.KeyChar)) e.Handled = true; };
+            txtApellido.KeyPress += (s, e) => { if (char.IsDigit(e.KeyChar)) e.Handled = true; };
+            // Si el tipo de contacto elegido es "Teléfono", el dato solo acepta números
+            txtValor.KeyPress += (s, e) => { if (cmbTipo.Text == "Teléfono" && !char.IsDigit(e.KeyChar) && !char.IsControl(e.KeyChar)) e.Handled = true; };
         }
 
-        private void frmPersonalizarPerfil_Load(object sender, EventArgs e)
+        private void frmPersonal_Load(object sender, EventArgs e)
         {
             cmbTipo.SelectedIndexChanged += cmbTipo_SelectedIndexChanged;
             CargarProvincias();
@@ -34,30 +40,35 @@ namespace pryZarateERP
         // edicion = false: modo alta → solo DNI, nombre y apellido disponibles
         private void SetModo(bool edicion)
         {
-            lblTitDatos.Text = edicion ? "" : "Nueva persona";
-            btnGuardar.Text  = edicion ? "Actualizar" : "Guardar";
+            if (!edicion) lblTitDatos.Text = "Nueva persona";
+            btnGuardar.Text = edicion ? "Actualizar" : "Guardar";
+            btnGuardar.Enabled = !edicion || _activoSeleccionado;
 
-            btnDesactivar.Enabled  = edicion;
-            cmbProvincia.Enabled   = edicion;
-            cmbLocalidad.Enabled   = edicion;
-            txtDireccion.Enabled   = edicion;
-            txtGeo.Enabled         = edicion;
-            btnAgregarDom.Enabled  = edicion;
-            btnQuitarDom.Enabled   = edicion;
-            btnVerMapa.Enabled     = edicion;
-            cmbTipo.Enabled        = edicion;
-            cmbRed.Enabled         = false; // cmbRed solo se habilita si se elige "Red social"
-            txtValor.Enabled       = edicion;
+            btnDesactivar.Enabled = edicion;
+            cmbProvincia.Enabled = edicion;
+            cmbLocalidad.Enabled = false;
+            txtDireccion.Enabled = edicion;
+            txtGeo.Enabled = edicion;
+            btnAgregarDom.Enabled = edicion;
+            btnQuitarDom.Enabled = edicion;
+            btnVerMapa.Enabled = edicion;
+            cmbTipo.Enabled = edicion;
+            cmbRed.Enabled = false; // cmbRed solo se habilita si se elige "Red social"
+            txtValor.Enabled = edicion;
             btnAgregarCont.Enabled = edicion;
-            btnQuitarCont.Enabled  = edicion;
+            btnQuitarCont.Enabled = edicion;
 
         }
 
 
         private void CargarLista()
         {
-            _tabla = clsBaseDatos.ObtenerPersonal();
-            FiltrarLista();
+            try
+            {
+                _tabla = clsBaseDatos.ObtenerPersonal();
+                FiltrarLista();
+            }
+            catch (Exception ex) { Err(ex); }
         }
 
         // recorre _tabla y muestra solo las personas que coinciden con el buscador
@@ -73,7 +84,7 @@ namespace pryZarateERP
                 string dni = row["DNI"].ToString();
                 string nom = row["Nombre"].ToString();
                 string ape = row["Apellido"].ToString();
-                bool   act = Convert.ToBoolean(row["Activo"]);
+                bool act = Convert.ToBoolean(row["Activo"]);
 
                 if (f.Length > 0 &&
                     !ape.ToUpperInvariant().Contains(f) &&
@@ -82,13 +93,16 @@ namespace pryZarateERP
 
                 lstPersonas.Items.Add(new PersonaItem
                 {
-                    Id    = Convert.ToInt32(row["IdPersonal"]),
+                    Id = Convert.ToInt32(row["IdPersonal"]),
                     Texto = act ? $"{ape}, {nom}" : $"[inact.]  {ape}, {nom}"
                 });
             }
         }
 
         private void txtBuscar_TextChanged(object sender, EventArgs e) => FiltrarLista();
+
+        // el botón Buscar hace lo mismo que el filtro en tiempo real, pero da feedback visual de que "se buscó"
+        private void btnBuscar_Click(object sender, EventArgs e) => FiltrarLista();
 
         private void lstPersonas_SelectedIndexChanged(object sender, EventArgs e)
         {
@@ -100,13 +114,14 @@ namespace pryZarateERP
             {
                 if (Convert.ToInt32(row["IdPersonal"]) != id) continue;
 
-                idSeleccionado   = id;
-                txtDni.Text      = row["DNI"].ToString();
-                txtNombre.Text   = row["Nombre"].ToString();
+                idSeleccionado = id;
+                txtDni.Text = row["DNI"].ToString();
+                txtNombre.Text = row["Nombre"].ToString();
                 txtApellido.Text = row["Apellido"].ToString();
 
                 bool act = Convert.ToBoolean(row["Activo"]);
-                lblTitDatos.Text   = $"{row["Apellido"]}, {row["Nombre"]}  ·  {(act ? "Activo" : "Inactivo")}";
+                _activoSeleccionado = act; // guardo el estado real en vez de deducirlo del texto del botón
+                lblTitDatos.Text = $"{row["Apellido"]}, {row["Nombre"]}  ·  {(act ? "Activo" : "Inactivo")}";
                 btnDesactivar.Text = act ? "Desactivar" : "Reactivar";
 
                 SetModo(true);
@@ -119,10 +134,14 @@ namespace pryZarateERP
 
         private void CargarProvincias()
         {
-            cmbProvincia.DataSource    = clsBaseDatos.ObtenerProvincias();
-            cmbProvincia.DisplayMember = "Provincias";
-            cmbProvincia.ValueMember   = "ID_Provincias";
-            cmbProvincia.SelectedIndex = -1;
+            try
+            {
+                cmbProvincia.DataSource = clsBaseDatos.ObtenerProvincias();
+                cmbProvincia.DisplayMember = "Provincias";
+                cmbProvincia.ValueMember = "ID_Provincias";
+                cmbProvincia.SelectedIndex = -1;
+            }
+            catch (Exception ex) { Err(ex); }
         }
 
         // solo carga localidades si la provincia es Córdoba (las demás no tienen datos en la BD)
@@ -131,21 +150,25 @@ namespace pryZarateERP
             cmbLocalidad.DataSource = null;
             cmbLocalidad.Items.Clear();
 
-            if (cmbProvincia.SelectedIndex < 0) { cmbLocalidad.Enabled = true; return; }
+            if (cmbProvincia.SelectedIndex < 0) { cmbLocalidad.Enabled = false; return; }
 
             if (cmbProvincia.Text.IndexOf("doba", StringComparison.OrdinalIgnoreCase) >= 0)
             {
-                cmbLocalidad.DataSource    = clsBaseDatos.ObtenerLocalidadesCordoba();
-                cmbLocalidad.DisplayMember = "LocalidadesCordoba";
-                cmbLocalidad.ValueMember   = "ID_Localidades";
-                cmbLocalidad.Enabled       = true;
-                cmbLocalidad.SelectedIndex = -1;
+                try
+                {
+                    cmbLocalidad.DataSource = clsBaseDatos.ObtenerLocalidadesCordoba();
+                    cmbLocalidad.DisplayMember = "LocalidadesCordoba";
+                    cmbLocalidad.ValueMember = "ID_Localidades";
+                    cmbLocalidad.Enabled = true;
+                    cmbLocalidad.SelectedIndex = -1;
+                }
+                catch (Exception ex) { Err(ex); }
             }
             else
             {
                 cmbLocalidad.Items.Add("(Solo disponible para Córdoba)");
                 cmbLocalidad.SelectedIndex = 0;
-                cmbLocalidad.Enabled       = false;
+                cmbLocalidad.Enabled = false;
             }
         }
 
@@ -167,53 +190,58 @@ namespace pryZarateERP
 
         private void btnGuardar_Click(object sender, EventArgs e)
         {
-            if (string.IsNullOrWhiteSpace(txtDni.Text))      { Aviso("Completá el DNI.");      return; }
-            if (string.IsNullOrWhiteSpace(txtNombre.Text))   { Aviso("Completá el nombre.");   return; }
-            if (string.IsNullOrWhiteSpace(txtApellido.Text)) { Aviso("Completá el apellido."); return; }
+            if (string.IsNullOrWhiteSpace(txtDni.Text)) { Aviso("Completá el DNI."); txtDni.Focus(); return; }
+            if (txtDni.Text.Trim().Length < 7) { Aviso("El DNI debe tener entre 7 y 8 dígitos."); txtDni.Focus(); return; } // MaxLength=8 ya impide más de 8
+            if (string.IsNullOrWhiteSpace(txtNombre.Text)) { Aviso("Completá el nombre."); txtNombre.Focus(); return; }
+            if (string.IsNullOrWhiteSpace(txtApellido.Text)) { Aviso("Completá el apellido."); txtApellido.Focus(); return; }
 
-            if (idSeleccionado == -1) // modo alta
+            try
             {
-                if (clsBaseDatos.ExisteDni(txtDni.Text.Trim()))
-                { Aviso("Ya existe una persona con el DNI " + txtDni.Text.Trim() + "."); txtDni.Focus(); return; }
-
-                try
+                if (idSeleccionado == -1) // modo alta
                 {
+                    if (clsBaseDatos.ExisteDni(txtDni.Text.Trim()))
+                    { Aviso("Ya existe una persona con el DNI " + txtDni.Text.Trim() + "."); txtDni.Focus(); return; }
+
                     idSeleccionado = clsBaseDatos.InsertarPersonal(
                         txtDni.Text.Trim(), txtNombre.Text.Trim(), txtApellido.Text.Trim(), true);
+                    _activoSeleccionado = true; // una persona recién dada de alta queda activa
 
+                    clsBaseDatos.RegistrarAuditoria(SessionInfo.Usuario, "Personal", "Alta",
+                        $"{txtApellido.Text.Trim()}, {txtNombre.Text.Trim()} — DNI: {txtDni.Text.Trim()}", true);
                     CargarLista();
                     SetModo(true);
-                    lblTitDatos.Text   = $"{txtApellido.Text.Trim()}, {txtNombre.Text.Trim()}  ·  Activo";
+                    lblTitDatos.Text = $"{txtApellido.Text.Trim()}, {txtNombre.Text.Trim()}  ·  Activo";
                     btnDesactivar.Text = "Desactivar";
                     CargarDomicilios();
                     CargarContactos();
-                }
-                catch (Exception ex) { Err(ex); }
-            }
-            else // modo edición
-            {
-                if (clsBaseDatos.ExisteDni(txtDni.Text.Trim(), idSeleccionado))
-                { Aviso("Ya existe otra persona con ese DNI."); txtDni.Focus(); return; }
 
-                try
+                    MessageBox.Show("Agregaste a una nueva persona.", "Listo",
+                        MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+                else // modo edición
                 {
-                    bool activo = btnDesactivar.Text == "Desactivar";
+                    if (clsBaseDatos.ExisteDni(txtDni.Text.Trim(), idSeleccionado))
+                    { Aviso("Ya existe otra persona con ese DNI."); txtDni.Focus(); return; }
+
+                    bool activo = _activoSeleccionado; // estado real, no deducido del texto del botón
                     clsBaseDatos.ActualizarPersonal(idSeleccionado,
                         txtDni.Text.Trim(), txtNombre.Text.Trim(), txtApellido.Text.Trim(), activo);
 
+                    clsBaseDatos.RegistrarAuditoria(SessionInfo.Usuario, "Personal", "Modificación",
+                        $"{txtApellido.Text.Trim()}, {txtNombre.Text.Trim()} — DNI: {txtDni.Text.Trim()}", true);
                     CargarLista();
                     lblTitDatos.Text = $"{txtApellido.Text.Trim()}, {txtNombre.Text.Trim()}  ·  {(activo ? "Activo" : "Inactivo")}";
                     MessageBox.Show("Datos actualizados.", "Listo", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
-                catch (Exception ex) { Err(ex); }
             }
+            catch (Exception ex) { Err(ex); }
         }
 
         private void btnDesactivar_Click(object sender, EventArgs e)
         {
             if (idSeleccionado == -1) return;
 
-            bool desactivar = btnDesactivar.Text == "Desactivar";
+            bool desactivar = _activoSeleccionado; // si está activa, la acción es desactivar (y viceversa)
 
             if (MessageBox.Show($"¿{(desactivar ? "Desactivar" : "Reactivar")} a {txtNombre.Text} {txtApellido.Text}?",
                     "Confirmar", MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes) return;
@@ -223,10 +251,15 @@ namespace pryZarateERP
                 bool nuevoEstado = !desactivar;
                 clsBaseDatos.ActualizarPersonal(idSeleccionado,
                     txtDni.Text.Trim(), txtNombre.Text.Trim(), txtApellido.Text.Trim(), nuevoEstado);
+                _activoSeleccionado = nuevoEstado; // mantengo sincronizado el estado real
 
+                clsBaseDatos.RegistrarAuditoria(SessionInfo.Usuario, "Personal",
+                    desactivar ? "Desactivar" : "Reactivar",
+                    $"{txtApellido.Text.Trim()}, {txtNombre.Text.Trim()}", true);
                 CargarLista();
-                lblTitDatos.Text   = $"{txtApellido.Text.Trim()}, {txtNombre.Text.Trim()}  ·  {(nuevoEstado ? "Activo" : "Inactivo")}";
+                lblTitDatos.Text = $"{txtApellido.Text.Trim()}, {txtNombre.Text.Trim()}  ·  {(nuevoEstado ? "Activo" : "Inactivo")}";
                 btnDesactivar.Text = nuevoEstado ? "Desactivar" : "Reactivar";
+                btnGuardar.Enabled = nuevoEstado;
             }
             catch (Exception ex) { Err(ex); }
         }
@@ -234,12 +267,13 @@ namespace pryZarateERP
         private void LimpiarFormulario()
         {
             idSeleccionado = -1;
+            _activoSeleccionado = false;
             txtDni.Clear(); txtNombre.Clear(); txtApellido.Clear();
             txtDireccion.Clear(); txtGeo.Clear();
             cmbProvincia.SelectedIndex = -1;
-            cmbLocalidad.DataSource = null; cmbLocalidad.Items.Clear(); cmbLocalidad.Enabled = true;
+            cmbLocalidad.DataSource = null; cmbLocalidad.Items.Clear(); cmbLocalidad.Enabled = false;
             cmbTipo.SelectedIndex = -1;
-            cmbRed.SelectedIndex  = -1; cmbRed.Enabled = false;
+            cmbRed.SelectedIndex = -1; cmbRed.Enabled = false;
             txtValor.Clear();
             lstDom.Items.Clear(); lstCont.Items.Clear();
         }
@@ -249,13 +283,17 @@ namespace pryZarateERP
             lstDom.Items.Clear();
             if (idSeleccionado == -1) return;
 
-            foreach (DataRow row in clsBaseDatos.ObtenerDomicilios(idSeleccionado).Rows) // el ID de la persona ya lo tengo guardado en idSeleccionado
+            try
             {
-                string t = row["Direccion"].ToString();
-                if (!string.IsNullOrEmpty(row["Provincia"].ToString())) t += "  —  " + row["Provincia"]; // si hay provincia, la muestro separada por "—"
-                if (!string.IsNullOrEmpty(row["Localidad"].ToString()))  t += ", "    + row["Localidad"]; // si hay localidad, la muestro después de la provincia separada por coma
-                lstDom.Items.Add(new DomItem { Id = Convert.ToInt32(row["IdDomicilio"]), T = t });
+                foreach (DataRow row in clsBaseDatos.ObtenerDomicilios(idSeleccionado).Rows) // el ID de la persona ya lo tengo guardado en idSeleccionado
+                {
+                    string t = row["Direccion"].ToString();
+                    if (!string.IsNullOrEmpty(row["Provincia"].ToString())) t += "  —  " + row["Provincia"]; // si hay provincia, la muestro separada por "—"
+                    if (!string.IsNullOrEmpty(row["Localidad"].ToString())) t += ", " + row["Localidad"]; // si hay localidad, la muestro después de la provincia separada por coma
+                    lstDom.Items.Add(new DomItem { Id = Convert.ToInt32(row["IdDomicilio"]), T = t });
+                }
             }
+            catch (Exception ex) { Err(ex); }
         }
 
         private void btnAgregarDom_Click(object sender, EventArgs e)
@@ -264,14 +302,14 @@ namespace pryZarateERP
             if (string.IsNullOrWhiteSpace(txtDireccion.Text)) { Aviso("Completá la dirección."); return; }
 
             string prov = cmbProvincia.SelectedIndex >= 0 ? cmbProvincia.Text : "";
-            string loc  = (cmbLocalidad.DataSource != null && cmbLocalidad.SelectedIndex >= 0) ? cmbLocalidad.Text : "";
+            string loc = (cmbLocalidad.DataSource != null && cmbLocalidad.SelectedIndex >= 0) ? cmbLocalidad.Text : "";
 
             try
             {
                 clsBaseDatos.InsertarDomicilio(idSeleccionado, txtDireccion.Text.Trim(), txtGeo.Text.Trim(), prov, loc);
                 txtDireccion.Clear(); txtGeo.Clear();
                 cmbProvincia.SelectedIndex = -1;
-                cmbLocalidad.DataSource = null; cmbLocalidad.Items.Clear(); cmbLocalidad.Enabled = true;
+                cmbLocalidad.DataSource = null; cmbLocalidad.Items.Clear(); cmbLocalidad.Enabled = false;
                 CargarDomicilios();
             }
             catch (Exception ex) { Err(ex); }
@@ -301,9 +339,13 @@ namespace pryZarateERP
             lstCont.Items.Clear();
             if (idSeleccionado == -1) return;
 
-            foreach (DataRow row in clsBaseDatos.ObtenerContactos(idSeleccionado).Rows) // el ID de la persona ya lo tengo guardado en idSeleccionado
-                lstCont.Items.Add(new ContItem
+            try
+            {
+                foreach (DataRow row in clsBaseDatos.ObtenerContactos(idSeleccionado).Rows) // el ID de la persona ya lo tengo guardado en idSeleccionado
+                    lstCont.Items.Add(new ContItem
                     { Id = Convert.ToInt32(row["IdContacto"]), T = $"{row["Tipo"]}:  {row["Valor"]}" });
+            }
+            catch (Exception ex) { Err(ex); }
         }
 
         private void btnAgregarCont_Click(object sender, EventArgs e)
@@ -314,6 +356,25 @@ namespace pryZarateERP
             // si eligió "Red social", verifico que haya elegido la red específica
             if (cmbTipo.Text == "Red social" && cmbRed.SelectedIndex < 0) { Aviso("Elegí la red social."); return; }
             if (string.IsNullOrWhiteSpace(txtValor.Text)) { Aviso("Completá el dato."); return; }
+            if (txtValor.Text.Trim().Length <= 5) { Aviso("El dato debe tener entre 6 y 10 caracteres."); return; } // MaxLength=10 ya impide pasarse
+
+            // si es teléfono, verifico que sean solo números (por si pegó texto con Ctrl+V, que el KeyPress no filtra)
+            if (cmbTipo.Text == "Teléfono")
+                foreach (char c in txtValor.Text.Trim())
+                    if (!char.IsDigit(c)) { Aviso("El teléfono solo puede contener números."); return; }
+
+            // si es email, verifico un formato básico: algo@algo.algo
+            if (cmbTipo.Text == "Email")
+            {
+                string mail = txtValor.Text.Trim();
+                int arroba = mail.IndexOf('@');
+                bool formatoOk = arroba > 0                       // tiene @ y algo antes
+                    && arroba == mail.LastIndexOf('@')            // un solo @
+                    && arroba + 2 < mail.Length                   // hay al menos 2 caracteres después del @
+                    && mail.IndexOf('.', arroba + 2) > 0          // con un punto después (no pegado al @)
+                    && !mail.EndsWith(".");                       // y no termina en punto
+                if (!formatoOk) { Aviso("El email no tiene un formato válido (algo@algo.algo)."); return; }
+            }
 
             // lo que se guarda como tipo es la red específica (ej: "Instagram"), no "Red social"
             string tipo = cmbTipo.Text == "Red social" ? cmbRed.Text : cmbTipo.Text;
@@ -322,7 +383,7 @@ namespace pryZarateERP
             {
                 clsBaseDatos.InsertarContacto(idSeleccionado, tipo, txtValor.Text.Trim()); // el ID de la persona ya lo tengo guardado en idSeleccionado
                 cmbTipo.SelectedIndex = -1;
-                cmbRed.SelectedIndex  = -1; cmbRed.Enabled = false;
+                cmbRed.SelectedIndex = -1; cmbRed.Enabled = false;
                 txtValor.Clear();
                 CargarContactos();
             }
@@ -337,8 +398,16 @@ namespace pryZarateERP
         }
 
 
+        // Con AutoScroll activado, WinForms scrollea solo para "mostrar entero" el control que recibe
+        // el foco: al hacer clic en la lista de personas (más alta que el área visible), la pantalla
+        // saltaba hacia abajo. Devolver la posición actual anula ese salto automático;
+        // el usuario sigue pudiendo scrollear con la rueda o la barra.
+        protected override System.Drawing.Point ScrollToControl(Control activeControl)
+        {
+            return this.AutoScrollPosition;
+        }
+
         private void Aviso(string msg) => MessageBox.Show(msg, "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Warning);
         private void Err(Exception ex) => MessageBox.Show("Error: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-
     }
 }

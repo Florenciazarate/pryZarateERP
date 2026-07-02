@@ -41,7 +41,7 @@ namespace pryZarateERP
             this.pnlHeader.Dock = System.Windows.Forms.DockStyle.Top;
             this.pnlHeader.Location = new System.Drawing.Point(0, 0);
             this.pnlHeader.Name = "pnlHeader";
-            this.pnlHeader.Size = new System.Drawing.Size(900, 70);
+            this.pnlHeader.Size = new System.Drawing.Size(1904, 70);
             this.pnlHeader.TabIndex = 0;
             // 
             // btnCerrarSesion
@@ -55,7 +55,7 @@ namespace pryZarateERP
             this.btnCerrarSesion.Font = new System.Drawing.Font("Segoe UI Semibold", 9F, System.Drawing.FontStyle.Bold);
             this.btnCerrarSesion.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(226)))), ((int)(((byte)(232)))), ((int)(((byte)(240)))));
             this.btnCerrarSesion.HoverState.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(51)))), ((int)(((byte)(65)))), ((int)(((byte)(85)))));
-            this.btnCerrarSesion.Location = new System.Drawing.Point(755, 18);
+            this.btnCerrarSesion.Location = new System.Drawing.Point(1024, 24);
             this.btnCerrarSesion.Name = "btnCerrarSesion";
             this.btnCerrarSesion.Size = new System.Drawing.Size(123, 36);
             this.btnCerrarSesion.TabIndex = 2;
@@ -92,7 +92,7 @@ namespace pryZarateERP
             this.tabControl.Location = new System.Drawing.Point(0, 70);
             this.tabControl.Name = "tabControl";
             this.tabControl.SelectedIndex = 0;
-            this.tabControl.Size = new System.Drawing.Size(900, 804);
+            this.tabControl.Size = new System.Drawing.Size(1904, 905);
             this.tabControl.TabButtonHoverState.BorderColor = System.Drawing.Color.Empty;
             this.tabControl.TabButtonHoverState.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(51)))), ((int)(((byte)(65)))), ((int)(((byte)(85)))));
             this.tabControl.TabButtonHoverState.Font = new System.Drawing.Font("Segoe UI Semibold", 10F);
@@ -121,7 +121,7 @@ namespace pryZarateERP
             this.tabInicio.Controls.Add(this.lblBienvenidaSub);
             this.tabInicio.Location = new System.Drawing.Point(4, 40);
             this.tabInicio.Name = "tabInicio";
-            this.tabInicio.Size = new System.Drawing.Size(892, 760);
+            this.tabInicio.Size = new System.Drawing.Size(1896, 861);
             this.tabInicio.TabIndex = 2;
             this.tabInicio.Text = "Inicio";
             // 
@@ -170,9 +170,9 @@ namespace pryZarateERP
             this.pnlStatus.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(30)))), ((int)(((byte)(41)))), ((int)(((byte)(59)))));
             this.pnlStatus.Controls.Add(this.lblConectado);
             this.pnlStatus.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.pnlStatus.Location = new System.Drawing.Point(0, 874);
+            this.pnlStatus.Location = new System.Drawing.Point(0, 975);
             this.pnlStatus.Name = "pnlStatus";
-            this.pnlStatus.Size = new System.Drawing.Size(900, 26);
+            this.pnlStatus.Size = new System.Drawing.Size(1904, 26);
             this.pnlStatus.TabIndex = 2;
             // 
             // lblConectado
@@ -191,7 +191,7 @@ namespace pryZarateERP
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(15)))), ((int)(((byte)(23)))), ((int)(((byte)(42)))));
-            this.ClientSize = new System.Drawing.Size(900, 900);
+            this.ClientSize = new System.Drawing.Size(1904, 1001);
             this.Controls.Add(this.tabControl);
             this.Controls.Add(this.pnlStatus);
             this.Controls.Add(this.pnlHeader);
@@ -199,6 +199,7 @@ namespace pryZarateERP
             this.Name = "frmPrincipal";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "ERP";
+            this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             this.pnlHeader.ResumeLayout(false);
             this.pnlHeader.PerformLayout();
             this.tabControl.ResumeLayout(false);

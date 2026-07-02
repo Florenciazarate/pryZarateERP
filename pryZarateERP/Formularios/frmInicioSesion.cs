@@ -7,8 +7,8 @@ namespace pryZarateERP
     // valida contra la base de datos y abre el formulario principal si es correcto.
     public partial class frmInicioSesion : Form
     {
-        private int intentosFallidos = 0;   // contador de veces que el usuario ingresó mal las credenciales
-        private const int MaxIntentos = 3;  // cantidad máxima de intentos antes de bloquear
+        private int intentosFallidos = 0;   // intentos fallidos en esta corrida de la app
+        private const int MaxIntentos = 3;  // a los 3 intentos fallidos se cierra la aplicación
 
         public frmInicioSesion()
         {
@@ -18,11 +18,18 @@ namespace pryZarateERP
             this.AcceptButton = btnAceptar;     // presionar Enter equivale a hacer clic en "Ingresar"
         }
 
+        // Muestra u oculta la contraseña según el estado del checkbox
+        private void chkMostrar_CheckedChanged(object sender, EventArgs e)
+        {
+            bool mostrar = chkMostrar.Checked; // si está marcado, muestro la contraseña; si no, la oculto
+            txtContraseña.UseSystemPasswordChar = !mostrar;    // false = usa PasswordChar
+            txtContraseña.PasswordChar = mostrar ? '\0' : '●'; // '\0' = sin máscara; '●' = oculto
+        }
+
         // Se ejecuta cada vez que el usuario escribe en el campo de mail o de contraseña.
         // Habilita el botón solo si ambos campos tienen algo escrito, y borra el error anterior.
         private void ValidarCampos(object sender, EventArgs e)
         {
-            if (intentosFallidos >= MaxIntentos) return; // si ya está bloqueado, no hace nada
             btnAceptar.Enabled = txtMail.Text.Trim().Length > 0 && txtContraseña.Text.Length > 0;
             lblError.Text = string.Empty;
         }
@@ -47,74 +54,92 @@ namespace pryZarateERP
                 return;
             }
 
-            // Llamo a la base de datos para validar: devuelve true si las credenciales son correctas,
-            // y por parámetros "out" devuelve el nombre real, el rol y un motivo de bloqueo (si corresponde)
-            string nombreUsuario, rol, motivoBloqueo;
-            bool ok = clsBaseDatos.ValidarUsuario(usuario, password, out nombreUsuario, out rol, out motivoBloqueo);
-
-            // Caso especial: el usuario existe pero el personal vinculado está inactivo.
-            // No cuenta como intento fallido, solo muestro el mensaje.
-            if (!ok && !string.IsNullOrEmpty(motivoBloqueo))
+            // Llamo a la base de datos para validar. Devuelve un ResultadoLogin y, por parámetros "out",
+            // el nombre real y el rol (si fue Ok) o un mensaje para mostrar (si no lo fue).
+            string nombreUsuario, rol, mensaje;
+            ResultadoLogin resultado;
+            try
             {
-                lblError.Text = motivoBloqueo;
-                clsBaseDatos.RegistrarAuditoria(usuario, "Inicio de Sesión", "Bloqueado", motivoBloqueo, false);
+                resultado = clsBaseDatos.ValidarUsuario(usuario, password, out nombreUsuario, out rol, out mensaje);
+            }
+            catch (Exception ex)
+            {
+                // Error real de conexión/base: lo muestro como tal, NO como "credenciales incorrectas".
+                lblError.Text = "No se pudo conectar con la base de datos. " + ex.Message;
                 return;
             }
 
-            // Registro en la auditoría si el intento fue exitoso o fallido
-            clsBaseDatos.RegistrarAuditoria(
-                usuario,
-                "Inicio de Sesión",
-                ok ? "Inicio exitoso" : "Intento fallido",
-                ok ? $"Rol: {rol}" : "Usuario o contraseña incorrectos",
-                ok);
-
-            if (ok)
+            switch (resultado)
             {
-                // Guardo los datos del usuario en la sesión global para que los usen los demás formularios
-                SessionInfo.Usuario = nombreUsuario;
-                SessionInfo.Rol     = rol;
+                case ResultadoLogin.Ok:
+                    intentosFallidos = 0; // login correcto: reinicio el contador
+                    // Registro el nombre real del usuario (no lo que tipeó, que puede ser el mail),
+                    // para que el filtro por usuario de la auditoría encuentre también estos eventos.
+                    clsBaseDatos.RegistrarAuditoria(nombreUsuario, "Inicio de Sesión", "Inicio exitoso", $"Rol: {rol}", true);
+                    IngresarAlSistema(nombreUsuario, rol);
+                    break;
 
-                this.Hide(); // oculto el login mientras el principal está abierto
+                case ResultadoLogin.PersonalInactivo:
+                    // El usuario existe pero su empleado está inactivo: no cuenta como intento fallido.
+                    lblError.Text = mensaje;
+                    clsBaseDatos.RegistrarAuditoria(usuario, "Inicio de Sesión", "Bloqueado", mensaje, false);
+                    break;
 
-                bool cerroSesion;
-                using (var principal = new frmPrincipal(SessionInfo.Usuario, rol))
-                {
-                    principal.ShowDialog();                  // abro el formulario principal y espero a que se cierre
-                    cerroSesion = principal.CerrarSesion;   // consulto si se cerró por "Cerrar sesión" o por la X
-                }
+                default: // ResultadoLogin.Invalido: usuario o contraseña incorrectos
+                    intentosFallidos++;
+                    int restantes = MaxIntentos - intentosFallidos;
 
-                if (cerroSesion)
-                {
-                    // El usuario eligió "Cerrar sesión": limpio los campos y vuelvo a mostrar el login
-                    txtMail.Text       = "";
-                    txtContraseña.Text = "";
-                    lblError.Text      = "";
-                    btnAceptar.Enabled = false;
-                    this.Show();
-                    txtMail.Focus();
-                }
-                else
-                {
-                    this.Close(); // cerró con la X => cierro todo
-                }
+                    if (restantes > 0)
+                    {
+                        // Todavía le quedan intentos: se lo aviso claramente.
+                        lblError.Text = restantes == 1
+                            ? "Usuario o contraseña incorrectos. Te queda 1 intento."
+                            : $"Usuario o contraseña incorrectos. Te quedan {restantes} intentos.";
+                        clsBaseDatos.RegistrarAuditoria(usuario, "Inicio de Sesión", "Intento fallido",
+                            $"Intento {intentosFallidos} de {MaxIntentos}", false);
+                    }
+                    else
+                    {
+                        // Se agotaron los 3 intentos: aviso y cierro la aplicación.
+                        clsBaseDatos.RegistrarAuditoria(usuario, "Inicio de Sesión", "Bloqueo",
+                            "Se cerró la aplicación por 3 intentos fallidos.", false);
+                        MessageBox.Show("Demasiados intentos fallidos. Se cerrará la aplicación.",
+                            "Acceso bloqueado", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        this.Close(); // como es el formulario principal, cerrarlo cierra toda la aplicación
+                    }
+                    break;
+            }
+        }
+
+        // Abre el formulario principal y, al cerrarse, decide si volver al login o cerrar la app.
+        private void IngresarAlSistema(string nombreUsuario, string rol)
+        {
+            // Guardo los datos del usuario en la sesión global para que los usen los demás formularios
+            SessionInfo.Usuario = nombreUsuario;
+            SessionInfo.Rol     = rol;
+
+            this.Hide(); // oculto el login mientras el principal está abierto
+
+            bool cerroSesion;
+            using (var principal = new frmPrincipal(SessionInfo.Usuario, rol))
+            {
+                principal.ShowDialog();               // abro el formulario principal y espero a que se cierre
+                cerroSesion = principal.CerrarSesion;  // consulto si se cerró por "Cerrar sesión" o por la X
+            }
+
+            if (cerroSesion)
+            {
+                // El usuario eligió "Cerrar sesión": limpio los campos y vuelvo a mostrar el login
+                txtMail.Text       = "";
+                txtContraseña.Text = "";
+                lblError.Text      = "";
+                btnAceptar.Enabled = false;
+                this.Show();
+                txtMail.Focus();
             }
             else
             {
-                // Credenciales incorrectas: sumo un intento y muestro cuántos quedan
-                intentosFallidos++;
-
-                if (intentosFallidos >= MaxIntentos)
-                {
-                    btnAceptar.Enabled = false; // deshabilito el botón definitivamente
-                    MessageBox.Show("Cuenta bloqueada tras 3 intentos fallidos.", "Acceso bloqueado",
-                        MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
-                else
-                {
-                    int restantes = MaxIntentos - intentosFallidos;
-                    lblError.Text = $"Usuario o contraseña incorrectos. Te queda(n) {restantes} intento(s).";
-                }
+                this.Close(); // cerró con la X => cierro todo
             }
         }
     }

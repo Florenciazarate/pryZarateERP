@@ -2,10 +2,21 @@ using System;
 using System.Data;
 using System.Data.OleDb;
 using System.IO;
+using System.Security.Cryptography;
+using System.Text;
 using System.Windows.Forms;
 
 namespace pryZarateERP
 {
+    // Posibles resultados de un intento de login. La capa de datos los devuelve
+    // y el formulario decide qué mensaje mostrar para cada caso.
+    public enum ResultadoLogin
+    {
+        Ok,               // credenciales correctas
+        Invalido,         // usuario o contraseña incorrectos
+        PersonalInactivo  // el empleado vinculado a la cuenta está inactivo
+    }
+
     // Clase que maneja toda la comunicación con la base de datos Access (.accdb).
     // Todos los métodos son estáticos: se llaman directamente sin crear un objeto (ej: clsBaseDatos.ObtenerPersonal()).
     internal class clsBaseDatos
@@ -34,65 +45,96 @@ namespace pryZarateERP
                 }
                 catch { } // si ese provider no está instalado, pruebo el siguiente
             }
-            return null; // ningún provider funcionó (el driver ACE no está instalado)
+
+            // Ningún provider funcionó: tiro un error claro en vez de devolver null
+            // (devolver null haría fallar después con un mensaje confuso).
+            throw new Exception(
+                "No se encontró el driver de Access (Microsoft ACE OLEDB). " +
+                "Instalá 'Microsoft Access Database Engine' para poder usar el sistema.");
+        }
+
+        // Devuelve el hash SHA-256 (en hexadecimal) de un texto.
+        // Se usa para no guardar las contraseñas en texto plano: en la BD se guarda el hash,
+        // y al loguearse se compara el hash de lo que escribió el usuario contra el guardado.
+        private static string Hash(string texto)
+        {
+            using (var sha = SHA256.Create())
+            {
+                byte[] bytes = sha.ComputeHash(Encoding.UTF8.GetBytes(texto ?? ""));
+                var sb = new StringBuilder();
+                foreach (var b in bytes) sb.Append(b.ToString("X2"));
+                return sb.ToString();
+            }
         }
 
         // ══════════════════════════════════
         // LOGIN
         // ══════════════════════════════════
 
-        // Valida usuario y contraseña contra la BD.
-        // Si son correctos, devuelve true y rellena los parámetros "out" con el nombre y el rol.
-        // Si el personal vinculado está inactivo, devuelve false y rellena motivoBloqueo.
-        public static bool ValidarUsuario(string usuario, string password,
-            out string nombreUsuario, out string rol, out string motivoBloqueo)
+        // Valida usuario y contraseña contra la BD y devuelve el resultado del intento.
+        // - Si es Ok, rellena nombreUsuario y rol.
+        // - Si no es Ok, rellena "mensaje" con el texto a mostrarle al usuario.
+        // El conteo de intentos y el cierre de la app tras 3 fallos lo maneja el formulario de login.
+        // Si hay un error de conexión, lanza excepción (la maneja el formulario).
+        public static ResultadoLogin ValidarUsuario(string usuario, string password,
+            out string nombreUsuario, out string rol, out string mensaje)
         {
-            nombreUsuario = null; rol = null; motivoBloqueo = null;
+            nombreUsuario = null; rol = null; mensaje = null;
 
-            try
+            using (var conn = new OleDbConnection(ObtenerConnectionString()))
             {
-                using (var conn = new OleDbConnection(ObtenerConnectionString()))
+                conn.Open();
+
+                // Une Usuario → Relacion-Usuario-Perfil → Perfil para obtener el rol, y con LEFT JOIN
+                // trae el estado del empleado vinculado (si lo hay). Comparo el hash de la contraseña.
+                string sql =
+                    "SELECT U.[Nombre], P.[Perfil], Per.[Activo] AS PersonalActivo " +
+                    "FROM (([Usuario] U " +
+                    "INNER JOIN [Relacion-Usuario-Perfil] R ON U.[ID_Usuario] = R.[ID_Usuario]) " +
+                    "INNER JOIN [Perfil] P ON R.[ID_Perfil] = P.[ID_Perfil]) " +
+                    "LEFT JOIN [Personal] Per ON U.[IdPersonal] = Per.[IdPersonal] " +
+                    "WHERE (U.[Nombre] = ? OR U.[Mail] = ?) AND U.[Contraseña] = ?";
+
+                using (var cmd = new OleDbCommand(sql, conn))
                 {
-                    conn.Open();
+                    cmd.Parameters.AddWithValue("?", usuario);       // se compara contra Nombre
+                    cmd.Parameters.AddWithValue("?", usuario);       // y también contra Mail
+                    cmd.Parameters.AddWithValue("?", Hash(password)); // se compara el hash, no el texto plano
 
-                    // Une las tablas Usuario, Relacion-Usuario-Perfil, Perfil y Personal
-                    // para obtener el nombre, rol y estado del personal vinculado en una sola consulta.
-                    // El LEFT JOIN a Personal es opcional: un usuario puede no tener personal vinculado.
-                    string sql =
-                        "SELECT U.[Nombre], P.[Perfil], Per.[Activo] AS PersonalActivo " +
-                        "FROM (([Usuario] U " +
-                        "INNER JOIN [Relacion-Usuario-Perfil] R ON U.[ID_Usuario] = R.[ID_Usuario]) " +
-                        "INNER JOIN [Perfil] P ON R.[ID_Perfil] = P.[ID_Perfil]) " +
-                        "LEFT JOIN [Personal] Per ON U.[IdPersonal] = Per.[IdPersonal] " +
-                        "WHERE (U.[Nombre] = ? OR U.[Mail] = ?) AND U.[Contraseña] = ?";
-
-                    using (var cmd = new OleDbCommand(sql, conn))
+                    using (var reader = cmd.ExecuteReader())
                     {
-                        cmd.Parameters.AddWithValue("?", usuario);  // primer ? = nombre de usuario
-                        cmd.Parameters.AddWithValue("?", usuario);  // segundo ? = mail (puede loguearse con cualquiera)
-                        cmd.Parameters.AddWithValue("?", password);  // tercer ? = contraseña
-
-                        using (var reader = cmd.ExecuteReader())
+                        if (!reader.Read())
                         {
-                            if (!reader.Read()) return false; // no encontró ningún usuario con esas credenciales
-
-                            // Si hay personal vinculado y está inactivo, bloqueo el acceso
-                            var personalActivo = reader["PersonalActivo"];
-                            if (personalActivo != null && personalActivo != DBNull.Value &&
-                                !Convert.ToBoolean(personalActivo))
-                            {
-                                motivoBloqueo = "Tu acceso está bloqueado porque el personal vinculado a esta cuenta está inactivo. Contactá al administrador.";
-                                return false;
-                            }
-
-                            nombreUsuario = reader["Nombre"].ToString();
-                            rol           = reader["Perfil"].ToString();
-                            return true; // credenciales correctas y sin bloqueo
+                            mensaje = "Usuario o contraseña incorrectos.";
+                            return ResultadoLogin.Invalido;
                         }
+
+                        // Credenciales correctas: ¿el empleado vinculado a la cuenta está inactivo?
+                        var personalActivo = reader["PersonalActivo"];
+                        if (personalActivo != DBNull.Value && !Convert.ToBoolean(personalActivo))
+                        {
+                            mensaje = "Tu acceso está bloqueado porque el personal vinculado a esta cuenta está inactivo. Contactá al administrador.";
+                            return ResultadoLogin.PersonalInactivo;
+                        }
+
+                        nombreUsuario = reader["Nombre"].ToString();
+                        rol           = reader["Perfil"].ToString();
+                        return ResultadoLogin.Ok;
                     }
                 }
             }
-            catch { return false; } // si hay error de conexión, trato como credenciales inválidas
+        }
+
+        // Trae los nombres de los usuarios reales del sistema (para el filtro de la auditoría)
+        public static DataTable ObtenerUsuarios()
+        {
+            var tabla = new DataTable();
+            using (var conn = new OleDbConnection(ObtenerConnectionString()))
+            using (var da = new OleDbDataAdapter("SELECT Nombre FROM Usuario ORDER BY Nombre", conn))
+            {
+                da.Fill(tabla);
+            }
+            return tabla;
         }
 
         // ══════════════════════════════════
@@ -103,6 +145,8 @@ namespace pryZarateERP
         // Se llama desde cualquier parte de la app para registrar eventos importantes.
         public static void RegistrarAuditoria(string usuario, string modulo, string accion, string detalle, bool exitoso)
         {
+            // Esta es la única excepción a "no tragarse errores": si falla el registro de auditoría
+            // (algo secundario), no quiero cortar la operación principal que el usuario está haciendo.
             try
             {
                 using (var conn = new OleDbConnection(ObtenerConnectionString()))
@@ -130,18 +174,14 @@ namespace pryZarateERP
         public static DataTable ObtenerAuditoria()
         {
             var tabla = new DataTable();
-            try
+            using (var conn = new OleDbConnection(ObtenerConnectionString()))
+            using (var da = new OleDbDataAdapter(
+                "SELECT FechaHora, Usuario, Modulo, Accion, " +
+                "IIF(Exitoso, 'Exitoso', 'Fallido') AS Resultado, Detalle " +
+                "FROM AuditoriaSesion ORDER BY FechaHora DESC", conn))
             {
-                using (var conn = new OleDbConnection(ObtenerConnectionString()))
-                using (var da = new OleDbDataAdapter(
-                    "SELECT FechaHora, Usuario, Modulo, Accion, " +
-                    "IIF(Exitoso, 'Exitoso', 'Fallido') AS Resultado, Detalle " +
-                    "FROM AuditoriaSesion ORDER BY FechaHora DESC", conn))
-                {
-                    da.Fill(tabla); // llena la DataTable con los resultados de la consulta
-                }
+                da.Fill(tabla); // llena la DataTable con los resultados de la consulta
             }
-            catch { }
             return tabla;
         }
 
@@ -153,16 +193,12 @@ namespace pryZarateERP
         public static DataTable ObtenerPersonal()
         {
             var tabla = new DataTable();
-            try
+            using (var conn = new OleDbConnection(ObtenerConnectionString()))
+            using (var da = new OleDbDataAdapter(
+                "SELECT IdPersonal, DNI, Apellido, Nombre, Activo FROM Personal ORDER BY Apellido, Nombre", conn))
             {
-                using (var conn = new OleDbConnection(ObtenerConnectionString()))
-                using (var da = new OleDbDataAdapter(
-                    "SELECT IdPersonal, DNI, Apellido, Nombre, Activo FROM Personal ORDER BY Apellido, Nombre", conn))
-                {
-                    da.Fill(tabla);
-                }
+                da.Fill(tabla);
             }
-            catch { }
             return tabla;
         }
 
@@ -215,29 +251,25 @@ namespace pryZarateERP
         // -1 significa que no excluyo a nadie (modo alta).
         public static bool ExisteDni(string dni, int excluirId = -1)
         {
-            try
+            using (var conn = new OleDbConnection(ObtenerConnectionString()))
             {
-                using (var conn = new OleDbConnection(ObtenerConnectionString()))
+                conn.Open();
+
+                // Si excluirId es -1, busco cualquier coincidencia.
+                // Si no, excluyo la fila de la persona que estoy editando.
+                string sql = excluirId == -1
+                    ? "SELECT COUNT(*) FROM Personal WHERE DNI = ?"
+                    : "SELECT COUNT(*) FROM Personal WHERE DNI = ? AND IdPersonal <> ?";
+
+                using (var cmd = new OleDbCommand(sql, conn))
                 {
-                    conn.Open();
+                    cmd.Parameters.AddWithValue("?", dni);
+                    if (excluirId != -1)
+                        cmd.Parameters.AddWithValue("?", excluirId);
 
-                    // Si excluirId es -1, busco cualquier coincidencia.
-                    // Si no, excluyo la fila de la persona que estoy editando.
-                    string sql = excluirId == -1
-                        ? "SELECT COUNT(*) FROM Personal WHERE DNI = ?"
-                        : "SELECT COUNT(*) FROM Personal WHERE DNI = ? AND IdPersonal <> ?";
-
-                    using (var cmd = new OleDbCommand(sql, conn))
-                    {
-                        cmd.Parameters.AddWithValue("?", dni);
-                        if (excluirId != -1)
-                            cmd.Parameters.AddWithValue("?", excluirId);
-
-                        return Convert.ToInt32(cmd.ExecuteScalar()) > 0; // si COUNT > 0, ya existe
-                    }
+                    return Convert.ToInt32(cmd.ExecuteScalar()) > 0; // si COUNT > 0, ya existe
                 }
             }
-            catch { return false; }
         }
 
         // ══════════════════════════════════
@@ -248,18 +280,14 @@ namespace pryZarateERP
         public static DataTable ObtenerDomicilios(int idPersonal)
         {
             var tabla = new DataTable();
-            try
+            using (var conn = new OleDbConnection(ObtenerConnectionString()))
+            using (var da = new OleDbDataAdapter(
+                "SELECT IdDomicilio, Direccion, Geo, Provincia, Localidad " +
+                "FROM PersonalDomicilios WHERE IdPersonal=?", conn))
             {
-                using (var conn = new OleDbConnection(ObtenerConnectionString()))
-                using (var da = new OleDbDataAdapter(
-                    "SELECT IdDomicilio, Direccion, Geo, Provincia, Localidad, Latitud, Longitud " +
-                    "FROM PersonalDomicilios WHERE IdPersonal=?", conn))
-                {
-                    da.SelectCommand.Parameters.AddWithValue("?", idPersonal);
-                    da.Fill(tabla);
-                }
+                da.SelectCommand.Parameters.AddWithValue("?", idPersonal);
+                da.Fill(tabla);
             }
-            catch { }
             return tabla;
         }
 
@@ -305,17 +333,13 @@ namespace pryZarateERP
         public static DataTable ObtenerContactos(int idPersonal)
         {
             var tabla = new DataTable();
-            try
+            using (var conn = new OleDbConnection(ObtenerConnectionString()))
+            using (var da = new OleDbDataAdapter(
+                "SELECT IdContacto, Tipo, Valor FROM PersonalContactos WHERE IdPersonal=? ORDER BY Tipo", conn))
             {
-                using (var conn = new OleDbConnection(ObtenerConnectionString()))
-                using (var da = new OleDbDataAdapter(
-                    "SELECT IdContacto, Tipo, Valor FROM PersonalContactos WHERE IdPersonal=? ORDER BY Tipo", conn))
-                {
-                    da.SelectCommand.Parameters.AddWithValue("?", idPersonal);
-                    da.Fill(tabla);
-                }
+                da.SelectCommand.Parameters.AddWithValue("?", idPersonal);
+                da.Fill(tabla);
             }
-            catch { }
             return tabla;
         }
 
@@ -358,16 +382,12 @@ namespace pryZarateERP
         public static DataTable ObtenerProvincias()
         {
             var tabla = new DataTable();
-            try
+            using (var conn = new OleDbConnection(ObtenerConnectionString()))
+            using (var da = new OleDbDataAdapter(
+                "SELECT ID_Provincias, Provincias FROM Provincias ORDER BY Provincias", conn))
             {
-                using (var conn = new OleDbConnection(ObtenerConnectionString()))
-                using (var da = new OleDbDataAdapter(
-                    "SELECT ID_Provincias, Provincias FROM Provincias ORDER BY Provincias", conn))
-                {
-                    da.Fill(tabla);
-                }
+                da.Fill(tabla);
             }
-            catch { }
             return tabla;
         }
 
@@ -375,16 +395,12 @@ namespace pryZarateERP
         public static DataTable ObtenerLocalidadesCordoba()
         {
             var tabla = new DataTable();
-            try
+            using (var conn = new OleDbConnection(ObtenerConnectionString()))
+            using (var da = new OleDbDataAdapter(
+                "SELECT ID_Localidades, LocalidadesCordoba FROM LocalidadesCordoba ORDER BY LocalidadesCordoba", conn))
             {
-                using (var conn = new OleDbConnection(ObtenerConnectionString()))
-                using (var da = new OleDbDataAdapter(
-                    "SELECT ID_Localidades, LocalidadesCordoba FROM LocalidadesCordoba ORDER BY LocalidadesCordoba", conn))
-                {
-                    da.Fill(tabla);
-                }
+                da.Fill(tabla);
             }
-            catch { }
             return tabla;
         }
     }

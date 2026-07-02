@@ -73,8 +73,8 @@ namespace pryZarateERP
             // Si la pestaña ya tiene controles adentro, significa que ya fue cargada → no vuelvo a cargarla
             if (tab == tabPersonal && tab.Controls.Count == 0)
             {
-                CargarFormulario(tab, new frmPersonalizarPerfil());
-                clsBaseDatos.RegistrarAuditoria(SessionInfo.Usuario, "Navegación", "Abrir sección", "Personalizar Perfil", true);
+                CargarFormulario(tab, new frmPersonal());
+                clsBaseDatos.RegistrarAuditoria(SessionInfo.Usuario, "Navegación", "Abrir sección", "Personal", true);
             }
             else if (tab == tabAuditoria && tab.Controls.Count == 0)
             {

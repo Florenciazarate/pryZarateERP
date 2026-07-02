@@ -33,6 +33,7 @@
             this.lblError = new System.Windows.Forms.Label();
             this.btnAceptar = new Guna.UI2.WinForms.Guna2Button();
             this.txtContraseña = new Guna.UI2.WinForms.Guna2TextBox();
+            this.chkMostrar = new System.Windows.Forms.CheckBox();
             this.lblContraseña = new System.Windows.Forms.Label();
             this.txtMail = new Guna.UI2.WinForms.Guna2TextBox();
             this.lblMail = new System.Windows.Forms.Label();
@@ -54,6 +55,7 @@
             this.pnlContenedor.Controls.Add(this.lblError);
             this.pnlContenedor.Controls.Add(this.btnAceptar);
             this.pnlContenedor.Controls.Add(this.txtContraseña);
+            this.pnlContenedor.Controls.Add(this.chkMostrar);
             this.pnlContenedor.Controls.Add(this.lblContraseña);
             this.pnlContenedor.Controls.Add(this.txtMail);
             this.pnlContenedor.Controls.Add(this.lblMail);
@@ -62,14 +64,14 @@
             this.pnlContenedor.Location = new System.Drawing.Point(11, 10);
             this.pnlContenedor.Name = "pnlContenedor";
             this.pnlContenedor.Padding = new System.Windows.Forms.Padding(30);
-            this.pnlContenedor.Size = new System.Drawing.Size(402, 375);
+            this.pnlContenedor.Size = new System.Drawing.Size(402, 387);
             this.pnlContenedor.TabIndex = 1;
             // 
             // lblError
             // 
             this.lblError.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.lblError.ForeColor = System.Drawing.Color.IndianRed;
-            this.lblError.Location = new System.Drawing.Point(30, 313);
+            this.lblError.Location = new System.Drawing.Point(30, 325);
             this.lblError.Name = "lblError";
             this.lblError.Size = new System.Drawing.Size(336, 32);
             this.lblError.TabIndex = 7;
@@ -85,7 +87,7 @@
             this.btnAceptar.Font = new System.Drawing.Font("Segoe UI Semibold", 10F, System.Drawing.FontStyle.Bold);
             this.btnAceptar.ForeColor = System.Drawing.Color.White;
             this.btnAceptar.HoverState.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(167)))), ((int)(((byte)(139)))), ((int)(((byte)(250)))));
-            this.btnAceptar.Location = new System.Drawing.Point(33, 265);
+            this.btnAceptar.Location = new System.Drawing.Point(33, 284);
             this.btnAceptar.Name = "btnAceptar";
             this.btnAceptar.Size = new System.Drawing.Size(336, 42);
             this.btnAceptar.TabIndex = 3;
@@ -113,6 +115,20 @@
             this.txtContraseña.TabIndex = 2;
             this.txtContraseña.UseSystemPasswordChar = true;
             this.txtContraseña.TextChanged += new System.EventHandler(this.ValidarCampos);
+            // 
+            // chkMostrar
+            // 
+            this.chkMostrar.AutoSize = true;
+            this.chkMostrar.BackColor = System.Drawing.Color.Transparent;
+            this.chkMostrar.Font = new System.Drawing.Font("Segoe UI", 9F);
+            this.chkMostrar.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(148)))), ((int)(((byte)(163)))), ((int)(((byte)(184)))));
+            this.chkMostrar.Location = new System.Drawing.Point(32, 251);
+            this.chkMostrar.Name = "chkMostrar";
+            this.chkMostrar.Size = new System.Drawing.Size(128, 19);
+            this.chkMostrar.TabIndex = 8;
+            this.chkMostrar.Text = "Mostrar contraseña";
+            this.chkMostrar.UseVisualStyleBackColor = false;
+            this.chkMostrar.CheckedChanged += new System.EventHandler(this.chkMostrar_CheckedChanged);
             // 
             // lblContraseña
             // 
@@ -183,7 +199,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(15)))), ((int)(((byte)(23)))), ((int)(((byte)(42)))));
-            this.ClientSize = new System.Drawing.Size(426, 397);
+            this.ClientSize = new System.Drawing.Size(426, 409);
             this.Controls.Add(this.pnlContenedor);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "frmInicioSesion";
@@ -207,5 +223,6 @@
         private System.Windows.Forms.Label lblMail;
         private System.Windows.Forms.Label lblSubtitulo;
         private System.Windows.Forms.Label lblTitulo;
+        private System.Windows.Forms.CheckBox chkMostrar;
     }
 }

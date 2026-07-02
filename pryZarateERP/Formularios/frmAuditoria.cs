@@ -18,31 +18,42 @@ namespace pryZarateERP
         // Se ejecuta cuando el formulario termina de cargarse
         private void frmAuditoria_Load(object sender, EventArgs e)
         {
-            CargarAuditoria(); // traigo los datos de la base de datos
-
-            // cmbExitosoFiltro ya tiene sus ítems fijos en el Designer (Todos, Exitoso, Fallido)
-            cmbExitosoFiltro.SelectedIndex = 0;
-
-            // cmbUsuarioFiltro se carga dinámico con los usuarios únicos que aparecen en la auditoría
-            cmbUsuarioFiltro.Items.Clear();
-            cmbUsuarioFiltro.Items.Add("Todos los usuarios");
-            var vistos = new System.Collections.Generic.HashSet<string>(StringComparer.OrdinalIgnoreCase);
-            foreach (DataRow row in tablaOriginal.Rows)
+            try
             {
-                string u = row["Usuario"].ToString();
-                if (!string.IsNullOrEmpty(u) && vistos.Add(u))
-                    cmbUsuarioFiltro.Items.Add(u);
+                // registro que alguien entró a ver la auditoría, ANTES de cargar la tabla para que aparezca en el log
+                clsBaseDatos.RegistrarAuditoria(SessionInfo.Usuario, "Auditoría", "Consultar auditoría", "", true);
+                CargarAuditoria(); // traigo los datos de la base de datos (ya incluye el acceso que acabo de registrar)
+
+                // cmbExitosoFiltro ya tiene sus ítems fijos en el Designer (Todos, Exitoso, Fallido)
+                cmbExitosoFiltro.SelectedIndex = 0;
+
+                // cmbUsuarioFiltro se carga con los USUARIOS REALES del sistema (tabla Usuario),
+                // no con lo que se haya tipeado en la auditoría. Así el filtro no muestra typos ni
+                // usuarios inexistentes de intentos fallidos (que igual siguen visibles en la grilla).
+                cmbUsuarioFiltro.Items.Clear();
+                cmbUsuarioFiltro.Items.Add("Todos los usuarios");
+                foreach (DataRow row in clsBaseDatos.ObtenerUsuarios().Rows) // recorro cada fila de la tabla de usuarios
+                {
+                    string u = row["Nombre"].ToString(); // obtengo el nombre del usuario
+                    if (!string.IsNullOrEmpty(u)) // si el nombre no está vacío, lo agrego al combo
+                        cmbUsuarioFiltro.Items.Add(u); // agrego el nombre del usuario al combo
+                }
+                cmbUsuarioFiltro.SelectedIndex = 0; // selecciono "Todos los usuarios" por defecto
             }
-            cmbUsuarioFiltro.SelectedIndex = 0;
+            catch (Exception ex) // si hay algún error al cargar la auditoría, muestro un mensaje de error
+            {
+                MessageBox.Show("No se pudo cargar la auditoría: " + ex.Message, 
+                    "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
         // Trae los datos directamente de la BD — el IIF en la query ya devuelve "Exitoso"/"Fallido"
         private void CargarAuditoria()
         {
-            tablaOriginal = clsBaseDatos.ObtenerAuditoria();
+            tablaOriginal = clsBaseDatos.ObtenerAuditoria(); // guardo la tabla completa sin filtrar para poder restablecerla después
             dgvAuditoria.DataSource          = tablaOriginal; // muestro la tabla completa sin filtrar en la grilla
             dgvAuditoria.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill; // ajusto el ancho de las columnas para que ocupen todo el espacio disponible
-            if (dgvAuditoria.Columns.Contains("FechaHora")) dgvAuditoria.Columns["FechaHora"].HeaderText = "Fecha y hora"; 
+            if (dgvAuditoria.Columns.Contains("FechaHora")) dgvAuditoria.Columns["FechaHora"].HeaderText = "Fecha y hora";  // cambio el nombre de la columna "FechaHora" a "Fecha y hora"
             if (dgvAuditoria.Columns.Contains("Accion"))    dgvAuditoria.Columns["Accion"].HeaderText    = "Acción";
         }
 
@@ -51,8 +62,16 @@ namespace pryZarateERP
         {
             if (tablaOriginal == null) return; // si todavía no hay datos, no hago nada
 
+            // Valido que el rango de fechas tenga sentido: "Desde" no puede ser posterior a "Hasta"
+            if (dtpDesde.Checked && dtpHasta.Checked && dtpDesde.Value.Date > dtpHasta.Value.Date)
+            {
+                MessageBox.Show("La fecha 'Desde' no puede ser posterior a la fecha 'Hasta'.",
+                    "Fechas incorrectas", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
             // Si está en "Todos los usuarios" (índice 0) no filtro por usuario; si no, filtro por el seleccionado
-            string usuario   = (cmbUsuarioFiltro.SelectedIndex <= 0) ? "" : cmbUsuarioFiltro.SelectedItem.ToString();
+            string usuario   = (cmbUsuarioFiltro.SelectedIndex <= 0) ? "" : cmbUsuarioFiltro.SelectedItem.ToString(); // resultado elegido en el combo
             string seleccion = cmbExitosoFiltro.SelectedItem.ToString(); // resultado elegido en el combo
 
             DataTable tablaFiltrada = tablaOriginal.Clone(); // creo una tabla vacía con las mismas columnas
