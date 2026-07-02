@@ -1,6 +1,7 @@
 using System;
 using System.Data;
 using System.Diagnostics;
+using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
 namespace pryZarateERP
@@ -25,6 +26,11 @@ namespace pryZarateERP
             txtApellido.KeyPress += (s, e) => { if (char.IsDigit(e.KeyChar)) e.Handled = true; };
             // Si el tipo de contacto elegido es "Teléfono", el dato solo acepta números
             txtValor.KeyPress += (s, e) => { if (cmbTipo.Text == "Teléfono" && !char.IsDigit(e.KeyChar) && !char.IsControl(e.KeyChar)) e.Handled = true; };
+            // Las listas desplegables siempre abren hacia abajo (si hay lugar en la pantalla)
+            cmbProvincia.DropDown += ForzarAperturaAbajo;
+            cmbLocalidad.DropDown += ForzarAperturaAbajo;
+            cmbTipo.DropDown      += ForzarAperturaAbajo;
+            cmbRed.DropDown       += ForzarAperturaAbajo;
         }
 
         private void frmPersonal_Load(object sender, EventArgs e)
@@ -144,32 +150,25 @@ namespace pryZarateERP
             catch (Exception ex) { Err(ex); }
         }
 
-        // solo carga localidades si la provincia es Córdoba (las demás no tienen datos en la BD)
+        // carga las localidades de la provincia seleccionada
         private void cmbProvincia_SelectedIndexChanged(object sender, EventArgs e)
         {
             cmbLocalidad.DataSource = null;
             cmbLocalidad.Items.Clear();
 
-            if (cmbProvincia.SelectedIndex < 0) { cmbLocalidad.Enabled = false; return; }
+            // SelectedValue todavía no es un ID cuando el combo está en medio del binding
+            if (cmbProvincia.SelectedIndex < 0 || !(cmbProvincia.SelectedValue is int idProvincia))
+            { cmbLocalidad.Enabled = false; return; }
 
-            if (cmbProvincia.Text.IndexOf("doba", StringComparison.OrdinalIgnoreCase) >= 0)
+            try
             {
-                try
-                {
-                    cmbLocalidad.DataSource = clsBaseDatos.ObtenerLocalidadesCordoba();
-                    cmbLocalidad.DisplayMember = "LocalidadesCordoba";
-                    cmbLocalidad.ValueMember = "ID_Localidades";
-                    cmbLocalidad.Enabled = true;
-                    cmbLocalidad.SelectedIndex = -1;
-                }
-                catch (Exception ex) { Err(ex); }
+                cmbLocalidad.DataSource = clsBaseDatos.ObtenerLocalidades(idProvincia);
+                cmbLocalidad.DisplayMember = "Localidad";
+                cmbLocalidad.ValueMember = "ID_Localidades";
+                cmbLocalidad.Enabled = true;
+                cmbLocalidad.SelectedIndex = -1;
             }
-            else
-            {
-                cmbLocalidad.Items.Add("(Solo disponible para Córdoba)");
-                cmbLocalidad.SelectedIndex = 0;
-                cmbLocalidad.Enabled = false;
-            }
+            catch (Exception ex) { Err(ex); }
         }
 
         // habilita cmbRed solo cuando el tipo elegido es "Red social"
@@ -178,6 +177,8 @@ namespace pryZarateERP
             bool esRed = cmbTipo.SelectedIndex >= 0 && cmbTipo.Text == "Red social";
             cmbRed.Enabled = esRed;
             if (!esRed) cmbRed.SelectedIndex = -1;
+            txtValor.MaxLength = cmbTipo.Text == "Email" ? 20 : 10;
+            txtValor.Text = "";
         }
 
         private void btnNueva_Click(object sender, EventArgs e)
@@ -328,7 +329,7 @@ namespace pryZarateERP
             string t = txtGeo.Text.Trim();
             if (string.IsNullOrEmpty(t)) { Aviso("Completá el campo Geo."); return; }
 
-            string url = t.StartsWith("http", StringComparison.OrdinalIgnoreCase)
+            string url = t.StartsWith("http", StringComparison.OrdinalIgnoreCase) // si el texto empieza con "http" lo trato como URL, sino como búsqueda en Google Maps
                 ? t : "https://www.google.com/maps?q=" + Uri.EscapeDataString(t); // si el texto empieza con "http" lo trato como URL, sino como búsqueda en Google Maps
 
             Process.Start(new ProcessStartInfo { FileName = url, UseShellExecute = true }); //process.start con UseShellExecute = true abre el navegador predeterminado con la URL dada
@@ -336,14 +337,14 @@ namespace pryZarateERP
 
         private void CargarContactos()
         {
-            lstCont.Items.Clear();
-            if (idSeleccionado == -1) return;
+            lstCont.Items.Clear(); // limpio la lista de contactos antes de cargar los nuevos
+            if (idSeleccionado == -1) return; // si no hay persona seleccionada, no hago nada
 
             try
             {
                 foreach (DataRow row in clsBaseDatos.ObtenerContactos(idSeleccionado).Rows) // el ID de la persona ya lo tengo guardado en idSeleccionado
-                    lstCont.Items.Add(new ContItem
-                    { Id = Convert.ToInt32(row["IdContacto"]), T = $"{row["Tipo"]}:  {row["Valor"]}" });
+                    lstCont.Items.Add(new ContItem 
+                    { Id = Convert.ToInt32(row["IdContacto"]), T = $"{row["Tipo"]}:  {row["Valor"]}" }); // que el ID del contacto lo tengo guardado en el ListBox gracias a la clase ContItem, y el texto que se muestra es "Tipo: Valor"
             }
             catch (Exception ex) { Err(ex); }
         }
@@ -373,7 +374,7 @@ namespace pryZarateERP
                     && arroba + 2 < mail.Length                   // hay al menos 2 caracteres después del @
                     && mail.IndexOf('.', arroba + 2) > 0          // con un punto después (no pegado al @)
                     && !mail.EndsWith(".");                       // y no termina en punto
-                if (!formatoOk) { Aviso("El email no tiene un formato válido (algo@algo.algo)."); return; }
+                if (!formatoOk) { Aviso("El email no tiene un formato válido (correo@algo.algo)."); return; }
             }
 
             // lo que se guarda como tipo es la red específica (ej: "Instagram"), no "Red social"
@@ -402,12 +403,61 @@ namespace pryZarateERP
         // el foco: al hacer clic en la lista de personas (más alta que el área visible), la pantalla
         // saltaba hacia abajo. Devolver la posición actual anula ese salto automático;
         // el usuario sigue pudiendo scrollear con la rueda o la barra.
-        protected override System.Drawing.Point ScrollToControl(Control activeControl)
+        protected override System.Drawing.Point ScrollToControl(Control activeControl) // anula el scroll automático al hacer clic en un control
         {
-            return this.AutoScrollPosition;
+            return this.AutoScrollPosition; // devuelve la posición actual del scroll, anulando el salto automático
         }
 
-        private void Aviso(string msg) => MessageBox.Show(msg, "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-        private void Err(Exception ex) => MessageBox.Show("Error: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        // ─── Desplegables siempre hacia abajo ───
+        // La dirección en la que se abre la lista de un ComboBox la decide Windows solo
+        // (si cree que no hay lugar abajo, la abre hacia arriba). Estas funciones de Windows
+        // permiten ubicar la ventana de la lista a mano, debajo del combo.
+
+        [StructLayout(LayoutKind.Sequential)]
+        private struct RECT { public int Left, Top, Right, Bottom; }
+
+        [StructLayout(LayoutKind.Sequential)]
+        private struct COMBOBOXINFO
+        {
+            public int cbSize;
+            public RECT rcItem, rcButton;
+            public int stateButton;
+            public IntPtr hwndCombo, hwndItem, hwndList;
+        }
+
+        [DllImport("user32.dll")] private static extern bool GetComboBoxInfo(IntPtr hwnd, ref COMBOBOXINFO info);
+        [DllImport("user32.dll")] private static extern bool GetWindowRect(IntPtr hwnd, out RECT rect);
+        [DllImport("user32.dll")] private static extern bool MoveWindow(IntPtr hwnd, int x, int y, int ancho, int alto, bool repintar);
+
+        // Conectado al evento DropDown de los combos: mueve la lista debajo del combo.
+        // Si la lista es más alta que el lugar libre, la achica a filas enteras (queda con scroll).
+        // Solo si ni siquiera entran 3 filas, se deja donde la puso Windows.
+        private void ForzarAperturaAbajo(object sender, EventArgs e)
+        {
+            var cmb = (ComboBox)sender;
+            // BeginInvoke: corre justo después de que Windows ya mostró y ubicó la lista
+            BeginInvoke(new Action(() =>
+            {
+                var info = new COMBOBOXINFO();
+                info.cbSize = Marshal.SizeOf(info);
+                if (!GetComboBoxInfo(cmb.Handle, ref info)) return;
+                if (!GetWindowRect(info.hwndList, out RECT lista)) return;
+
+                var destino = cmb.PointToScreen(new System.Drawing.Point(0, cmb.Height));
+                int alto  = lista.Bottom - lista.Top;
+                int ancho = lista.Right  - lista.Left;
+                int lugar = Screen.FromControl(cmb).WorkingArea.Bottom - destino.Y; // espacio libre hasta abajo de la pantalla
+
+                if (lugar < cmb.ItemHeight * 3 + 2) return; // no entran ni 3 filas: que decida Windows
+
+                if (alto > lugar)
+                    alto = (lugar - 2) / cmb.ItemHeight * cmb.ItemHeight + 2; // achico a filas enteras
+
+                MoveWindow(info.hwndList, destino.X, destino.Y, ancho, alto, true);
+            }));
+        }
+
+        private void Aviso(string msg) => MessageBox.Show(msg, "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Warning); // mensaje de aviso al usuario (no es error, solo falta completar un campo o algo así)
+        private void Err(Exception ex) => MessageBox.Show("Error: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error); // mensaje de error al usuario (algo falló en la BD, etc.)
     }
 }

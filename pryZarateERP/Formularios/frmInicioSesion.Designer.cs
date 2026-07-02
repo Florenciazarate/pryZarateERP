@@ -135,7 +135,7 @@
             this.lblContraseña.AutoSize = true;
             this.lblContraseña.Font = new System.Drawing.Font("Segoe UI Semibold", 9F, System.Drawing.FontStyle.Bold);
             this.lblContraseña.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(226)))), ((int)(((byte)(232)))), ((int)(((byte)(240)))));
-            this.lblContraseña.Location = new System.Drawing.Point(32, 184);
+            this.lblContraseña.Location = new System.Drawing.Point(32, 186);
             this.lblContraseña.Name = "lblContraseña";
             this.lblContraseña.Size = new System.Drawing.Size(66, 15);
             this.lblContraseña.TabIndex = 4;
@@ -166,7 +166,7 @@
             this.lblMail.AutoSize = true;
             this.lblMail.Font = new System.Drawing.Font("Segoe UI Semibold", 9F, System.Drawing.FontStyle.Bold);
             this.lblMail.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(226)))), ((int)(((byte)(232)))), ((int)(((byte)(240)))));
-            this.lblMail.Location = new System.Drawing.Point(32, 106);
+            this.lblMail.Location = new System.Drawing.Point(32, 108);
             this.lblMail.Name = "lblMail";
             this.lblMail.Size = new System.Drawing.Size(47, 15);
             this.lblMail.TabIndex = 2;

@@ -391,14 +391,15 @@ namespace pryZarateERP
             return tabla;
         }
 
-        // Trae las localidades de Córdoba (única provincia con datos en la BD)
-        public static DataTable ObtenerLocalidadesCordoba()
+        // Trae las localidades de la provincia indicada, ordenadas alfabéticamente
+        public static DataTable ObtenerLocalidades(int idProvincia)
         {
             var tabla = new DataTable();
             using (var conn = new OleDbConnection(ObtenerConnectionString()))
             using (var da = new OleDbDataAdapter(
-                "SELECT ID_Localidades, LocalidadesCordoba FROM LocalidadesCordoba ORDER BY LocalidadesCordoba", conn))
+                "SELECT ID_Localidades, Localidad FROM Localidades WHERE ID_Provincias = ? ORDER BY Localidad", conn))
             {
+                da.SelectCommand.Parameters.AddWithValue("?", idProvincia);
                 da.Fill(tabla);
             }
             return tabla;

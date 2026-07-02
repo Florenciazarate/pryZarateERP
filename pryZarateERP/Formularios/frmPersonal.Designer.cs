@@ -68,7 +68,7 @@ namespace pryZarateERP
             this.pnlPersonas.Dock = System.Windows.Forms.DockStyle.Left;
             this.pnlPersonas.Location = new System.Drawing.Point(0, 0);
             this.pnlPersonas.Name = "pnlPersonas";
-            this.pnlPersonas.Size = new System.Drawing.Size(281, 890);
+            this.pnlPersonas.Size = new System.Drawing.Size(281, 928);
             this.pnlPersonas.TabIndex = 0;
             // 
             // lblPersonas
@@ -111,7 +111,7 @@ namespace pryZarateERP
             this.btnBuscar.HoverState.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(167)))), ((int)(((byte)(139)))), ((int)(((byte)(250)))));
             this.btnBuscar.Location = new System.Drawing.Point(200, 58);
             this.btnBuscar.Name = "btnBuscar";
-            this.btnBuscar.Size = new System.Drawing.Size(64, 36);
+            this.btnBuscar.Size = new System.Drawing.Size(64, 34);
             this.btnBuscar.TabIndex = 3;
             this.btnBuscar.Text = "Buscar";
             this.btnBuscar.Click += new System.EventHandler(this.btnBuscar_Click);
@@ -129,7 +129,7 @@ namespace pryZarateERP
             this.lstPersonas.ItemHeight = 17;
             this.lstPersonas.Location = new System.Drawing.Point(15, 104);
             this.lstPersonas.Name = "lstPersonas";
-            this.lstPersonas.Size = new System.Drawing.Size(249, 770);
+            this.lstPersonas.Size = new System.Drawing.Size(249, 808);
             this.lstPersonas.TabIndex = 1;
             this.lstPersonas.SelectedIndexChanged += new System.EventHandler(this.lstPersonas_SelectedIndexChanged);
             // 
@@ -144,9 +144,9 @@ namespace pryZarateERP
             this.btnQuitarCont.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(148)))), ((int)(((byte)(163)))), ((int)(((byte)(184)))));
             this.btnQuitarCont.HoverState.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(51)))), ((int)(((byte)(65)))), ((int)(((byte)(85)))));
             this.btnQuitarCont.HoverState.ForeColor = System.Drawing.Color.White;
-            this.btnQuitarCont.Location = new System.Drawing.Point(528, 826);
+            this.btnQuitarCont.Location = new System.Drawing.Point(509, 828);
             this.btnQuitarCont.Name = "btnQuitarCont";
-            this.btnQuitarCont.Size = new System.Drawing.Size(140, 36);
+            this.btnQuitarCont.Size = new System.Drawing.Size(140, 35);
             this.btnQuitarCont.TabIndex = 21;
             this.btnQuitarCont.Text = "Quitar contacto";
             this.btnQuitarCont.Click += new System.EventHandler(this.btnQuitarCont_Click);
@@ -161,7 +161,7 @@ namespace pryZarateERP
             this.lstCont.ItemHeight = 17;
             this.lstCont.Location = new System.Drawing.Point(41, 760);
             this.lstCont.Name = "lstCont";
-            this.lstCont.Size = new System.Drawing.Size(637, 60);
+            this.lstCont.Size = new System.Drawing.Size(608, 60);
             this.lstCont.TabIndex = 20;
             // 
             // btnAgregarCont
@@ -174,9 +174,9 @@ namespace pryZarateERP
             this.btnAgregarCont.Font = new System.Drawing.Font("Segoe UI Semibold", 9.5F, System.Drawing.FontStyle.Bold);
             this.btnAgregarCont.ForeColor = System.Drawing.Color.White;
             this.btnAgregarCont.HoverState.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(167)))), ((int)(((byte)(139)))), ((int)(((byte)(250)))));
-            this.btnAgregarCont.Location = new System.Drawing.Point(516, 710);
+            this.btnAgregarCont.Location = new System.Drawing.Point(497, 702);
             this.btnAgregarCont.Name = "btnAgregarCont";
-            this.btnAgregarCont.Size = new System.Drawing.Size(152, 30);
+            this.btnAgregarCont.Size = new System.Drawing.Size(152, 35);
             this.btnAgregarCont.TabIndex = 19;
             this.btnAgregarCont.Text = "Agregar contacto";
             this.btnAgregarCont.Click += new System.EventHandler(this.btnAgregarCont_Click);
@@ -208,9 +208,9 @@ namespace pryZarateERP
             this.lblValor.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(148)))), ((int)(((byte)(163)))), ((int)(((byte)(184)))));
             this.lblValor.Location = new System.Drawing.Point(470, 636);
             this.lblValor.Name = "lblValor";
-            this.lblValor.Size = new System.Drawing.Size(33, 15);
+            this.lblValor.Size = new System.Drawing.Size(47, 15);
             this.lblValor.TabIndex = 0;
-            this.lblValor.Text = "Dato";
+            this.lblValor.Text = "Usuario";
             // 
             // cmbRed
             // 
@@ -308,9 +308,9 @@ namespace pryZarateERP
             this.btnQuitarDom.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(148)))), ((int)(((byte)(163)))), ((int)(((byte)(184)))));
             this.btnQuitarDom.HoverState.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(51)))), ((int)(((byte)(65)))), ((int)(((byte)(85)))));
             this.btnQuitarDom.HoverState.ForeColor = System.Drawing.Color.White;
-            this.btnQuitarDom.Location = new System.Drawing.Point(526, 539);
+            this.btnQuitarDom.Location = new System.Drawing.Point(507, 541);
             this.btnQuitarDom.Name = "btnQuitarDom";
-            this.btnQuitarDom.Size = new System.Drawing.Size(142, 36);
+            this.btnQuitarDom.Size = new System.Drawing.Size(142, 35);
             this.btnQuitarDom.TabIndex = 15;
             this.btnQuitarDom.Text = "Quitar domicilio";
             this.btnQuitarDom.Click += new System.EventHandler(this.btnQuitarDom_Click);
@@ -325,7 +325,7 @@ namespace pryZarateERP
             this.lstDom.ItemHeight = 17;
             this.lstDom.Location = new System.Drawing.Point(41, 429);
             this.lstDom.Name = "lstDom";
-            this.lstDom.Size = new System.Drawing.Size(637, 104);
+            this.lstDom.Size = new System.Drawing.Size(608, 104);
             this.lstDom.TabIndex = 14;
             // 
             // btnVerMapa
@@ -340,7 +340,7 @@ namespace pryZarateERP
             this.btnVerMapa.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(148)))), ((int)(((byte)(163)))), ((int)(((byte)(184)))));
             this.btnVerMapa.HoverState.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(51)))), ((int)(((byte)(65)))), ((int)(((byte)(85)))));
             this.btnVerMapa.HoverState.ForeColor = System.Drawing.Color.White;
-            this.btnVerMapa.Location = new System.Drawing.Point(448, 328);
+            this.btnVerMapa.Location = new System.Drawing.Point(427, 328);
             this.btnVerMapa.Name = "btnVerMapa";
             this.btnVerMapa.Size = new System.Drawing.Size(86, 36);
             this.btnVerMapa.TabIndex = 13;
@@ -357,9 +357,9 @@ namespace pryZarateERP
             this.btnAgregarDom.Font = new System.Drawing.Font("Segoe UI Semibold", 9.5F, System.Drawing.FontStyle.Bold);
             this.btnAgregarDom.ForeColor = System.Drawing.Color.White;
             this.btnAgregarDom.HoverState.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(167)))), ((int)(((byte)(139)))), ((int)(((byte)(250)))));
-            this.btnAgregarDom.Location = new System.Drawing.Point(41, 370);
+            this.btnAgregarDom.Location = new System.Drawing.Point(41, 374);
             this.btnAgregarDom.Name = "btnAgregarDom";
-            this.btnAgregarDom.Size = new System.Drawing.Size(152, 30);
+            this.btnAgregarDom.Size = new System.Drawing.Size(152, 35);
             this.btnAgregarDom.TabIndex = 12;
             this.btnAgregarDom.Text = "Agregar domicilio";
             this.btnAgregarDom.Click += new System.EventHandler(this.btnAgregarDom_Click);
@@ -376,7 +376,7 @@ namespace pryZarateERP
             this.txtGeo.FocusedState.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(167)))), ((int)(((byte)(139)))), ((int)(((byte)(250)))));
             this.txtGeo.Font = new System.Drawing.Font("Segoe UI", 9.5F);
             this.txtGeo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(241)))), ((int)(((byte)(245)))), ((int)(((byte)(249)))));
-            this.txtGeo.Location = new System.Drawing.Point(257, 328);
+            this.txtGeo.Location = new System.Drawing.Point(242, 328);
             this.txtGeo.MaxLength = 30;
             this.txtGeo.Name = "txtGeo";
             this.txtGeo.PlaceholderText = "";
@@ -389,7 +389,7 @@ namespace pryZarateERP
             this.lblGeo.AutoSize = true;
             this.lblGeo.Font = new System.Drawing.Font("Segoe UI Semibold", 9F, System.Drawing.FontStyle.Bold);
             this.lblGeo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(148)))), ((int)(((byte)(163)))), ((int)(((byte)(184)))));
-            this.lblGeo.Location = new System.Drawing.Point(257, 310);
+            this.lblGeo.Location = new System.Drawing.Point(242, 310);
             this.lblGeo.Name = "lblGeo";
             this.lblGeo.Size = new System.Drawing.Size(107, 15);
             this.lblGeo.TabIndex = 0;
@@ -434,14 +434,16 @@ namespace pryZarateERP
             this.cmbLocalidad.DisabledState.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.cmbLocalidad.DisabledState.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.cmbLocalidad.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
+            this.cmbLocalidad.DropDownHeight = 182;
             this.cmbLocalidad.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbLocalidad.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(30)))), ((int)(((byte)(41)))), ((int)(((byte)(59)))));
             this.cmbLocalidad.FocusedColor = System.Drawing.Color.FromArgb(((int)(((byte)(167)))), ((int)(((byte)(139)))), ((int)(((byte)(250)))));
             this.cmbLocalidad.FocusedState.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(167)))), ((int)(((byte)(139)))), ((int)(((byte)(250)))));
             this.cmbLocalidad.Font = new System.Drawing.Font("Segoe UI", 9.5F);
             this.cmbLocalidad.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(241)))), ((int)(((byte)(245)))), ((int)(((byte)(249)))));
+            this.cmbLocalidad.IntegralHeight = false;
             this.cmbLocalidad.ItemHeight = 30;
-            this.cmbLocalidad.Location = new System.Drawing.Point(257, 263);
+            this.cmbLocalidad.Location = new System.Drawing.Point(242, 263);
             this.cmbLocalidad.MaxDropDownItems = 5;
             this.cmbLocalidad.Name = "cmbLocalidad";
             this.cmbLocalidad.Size = new System.Drawing.Size(179, 36);
@@ -452,7 +454,7 @@ namespace pryZarateERP
             this.lblLoc.AutoSize = true;
             this.lblLoc.Font = new System.Drawing.Font("Segoe UI Semibold", 9F, System.Drawing.FontStyle.Bold);
             this.lblLoc.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(148)))), ((int)(((byte)(163)))), ((int)(((byte)(184)))));
-            this.lblLoc.Location = new System.Drawing.Point(254, 245);
+            this.lblLoc.Location = new System.Drawing.Point(239, 245);
             this.lblLoc.Name = "lblLoc";
             this.lblLoc.Size = new System.Drawing.Size(58, 15);
             this.lblLoc.TabIndex = 0;
@@ -466,12 +468,14 @@ namespace pryZarateERP
             this.cmbProvincia.DisabledState.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.cmbProvincia.DisabledState.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.cmbProvincia.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
+            this.cmbProvincia.DropDownHeight = 182;
             this.cmbProvincia.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbProvincia.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(30)))), ((int)(((byte)(41)))), ((int)(((byte)(59)))));
             this.cmbProvincia.FocusedColor = System.Drawing.Color.FromArgb(((int)(((byte)(167)))), ((int)(((byte)(139)))), ((int)(((byte)(250)))));
             this.cmbProvincia.FocusedState.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(167)))), ((int)(((byte)(139)))), ((int)(((byte)(250)))));
             this.cmbProvincia.Font = new System.Drawing.Font("Segoe UI", 9.5F);
             this.cmbProvincia.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(241)))), ((int)(((byte)(245)))), ((int)(((byte)(249)))));
+            this.cmbProvincia.IntegralHeight = false;
             this.cmbProvincia.ItemHeight = 30;
             this.cmbProvincia.Location = new System.Drawing.Point(41, 263);
             this.cmbProvincia.MaxDropDownItems = 5;
@@ -532,9 +536,9 @@ namespace pryZarateERP
             this.btnGuardar.Font = new System.Drawing.Font("Segoe UI Semibold", 9.5F, System.Drawing.FontStyle.Bold);
             this.btnGuardar.ForeColor = System.Drawing.Color.White;
             this.btnGuardar.HoverState.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(167)))), ((int)(((byte)(139)))), ((int)(((byte)(250)))));
-            this.btnGuardar.Location = new System.Drawing.Point(448, 139);
+            this.btnGuardar.Location = new System.Drawing.Point(462, 139);
             this.btnGuardar.Name = "btnGuardar";
-            this.btnGuardar.Size = new System.Drawing.Size(102, 36);
+            this.btnGuardar.Size = new System.Drawing.Size(102, 33);
             this.btnGuardar.TabIndex = 4;
             this.btnGuardar.Text = "Guardar";
             this.btnGuardar.Click += new System.EventHandler(this.btnGuardar_Click);
@@ -549,7 +553,7 @@ namespace pryZarateERP
             this.txtApellido.FocusedState.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(167)))), ((int)(((byte)(139)))), ((int)(((byte)(250)))));
             this.txtApellido.Font = new System.Drawing.Font("Segoe UI", 9.5F);
             this.txtApellido.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(241)))), ((int)(((byte)(245)))), ((int)(((byte)(249)))));
-            this.txtApellido.Location = new System.Drawing.Point(404, 91);
+            this.txtApellido.Location = new System.Drawing.Point(414, 91);
             this.txtApellido.MaxLength = 30;
             this.txtApellido.Name = "txtApellido";
             this.txtApellido.PlaceholderText = "";
@@ -562,7 +566,7 @@ namespace pryZarateERP
             this.lblApellido.AutoSize = true;
             this.lblApellido.Font = new System.Drawing.Font("Segoe UI Semibold", 9F, System.Drawing.FontStyle.Bold);
             this.lblApellido.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(148)))), ((int)(((byte)(163)))), ((int)(((byte)(184)))));
-            this.lblApellido.Location = new System.Drawing.Point(404, 73);
+            this.lblApellido.Location = new System.Drawing.Point(414, 73);
             this.lblApellido.Name = "lblApellido";
             this.lblApellido.Size = new System.Drawing.Size(51, 15);
             this.lblApellido.TabIndex = 0;
@@ -578,7 +582,7 @@ namespace pryZarateERP
             this.txtNombre.FocusedState.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(167)))), ((int)(((byte)(139)))), ((int)(((byte)(250)))));
             this.txtNombre.Font = new System.Drawing.Font("Segoe UI", 9.5F);
             this.txtNombre.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(241)))), ((int)(((byte)(245)))), ((int)(((byte)(249)))));
-            this.txtNombre.Location = new System.Drawing.Point(204, 91);
+            this.txtNombre.Location = new System.Drawing.Point(208, 91);
             this.txtNombre.MaxLength = 30;
             this.txtNombre.Name = "txtNombre";
             this.txtNombre.PlaceholderText = "";
@@ -591,7 +595,7 @@ namespace pryZarateERP
             this.lblNombre.AutoSize = true;
             this.lblNombre.Font = new System.Drawing.Font("Segoe UI Semibold", 9F, System.Drawing.FontStyle.Bold);
             this.lblNombre.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(148)))), ((int)(((byte)(163)))), ((int)(((byte)(184)))));
-            this.lblNombre.Location = new System.Drawing.Point(204, 73);
+            this.lblNombre.Location = new System.Drawing.Point(208, 73);
             this.lblNombre.Name = "lblNombre";
             this.lblNombre.Size = new System.Drawing.Size(105, 15);
             this.lblNombre.TabIndex = 0;
@@ -625,9 +629,9 @@ namespace pryZarateERP
             this.btnNueva.Font = new System.Drawing.Font("Segoe UI Semibold", 9.5F, System.Drawing.FontStyle.Bold);
             this.btnNueva.ForeColor = System.Drawing.Color.White;
             this.btnNueva.HoverState.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(167)))), ((int)(((byte)(139)))), ((int)(((byte)(250)))));
-            this.btnNueva.Location = new System.Drawing.Point(388, 27);
+            this.btnNueva.Location = new System.Drawing.Point(370, 27);
             this.btnNueva.Name = "btnNueva";
-            this.btnNueva.Size = new System.Drawing.Size(290, 36);
+            this.btnNueva.Size = new System.Drawing.Size(194, 36);
             this.btnNueva.TabIndex = 2;
             this.btnNueva.Text = "+ Agregar persona";
             this.btnNueva.Click += new System.EventHandler(this.btnNueva_Click);
@@ -655,7 +659,7 @@ namespace pryZarateERP
             this.btnDesactivar.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(148)))), ((int)(((byte)(163)))), ((int)(((byte)(184)))));
             this.btnDesactivar.HoverState.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(51)))), ((int)(((byte)(65)))), ((int)(((byte)(85)))));
             this.btnDesactivar.HoverState.ForeColor = System.Drawing.Color.White;
-            this.btnDesactivar.Location = new System.Drawing.Point(316, 139);
+            this.btnDesactivar.Location = new System.Drawing.Point(330, 139);
             this.btnDesactivar.Name = "btnDesactivar";
             this.btnDesactivar.Size = new System.Drawing.Size(126, 34);
             this.btnDesactivar.TabIndex = 7;
@@ -711,7 +715,7 @@ namespace pryZarateERP
             this.pnlDetalle.Controls.Add(this.btnAgregarCont);
             this.pnlDetalle.Controls.Add(this.lstCont);
             this.pnlDetalle.Controls.Add(this.btnQuitarCont);
-            this.pnlDetalle.Location = new System.Drawing.Point(434, 0);
+            this.pnlDetalle.Location = new System.Drawing.Point(287, 0);
             this.pnlDetalle.Name = "pnlDetalle";
             this.pnlDetalle.Size = new System.Drawing.Size(721, 890);
             this.pnlDetalle.TabIndex = 1;

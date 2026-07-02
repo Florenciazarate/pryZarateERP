@@ -55,7 +55,7 @@ namespace pryZarateERP
             this.btnCerrarSesion.Font = new System.Drawing.Font("Segoe UI Semibold", 9F, System.Drawing.FontStyle.Bold);
             this.btnCerrarSesion.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(226)))), ((int)(((byte)(232)))), ((int)(((byte)(240)))));
             this.btnCerrarSesion.HoverState.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(51)))), ((int)(((byte)(65)))), ((int)(((byte)(85)))));
-            this.btnCerrarSesion.Location = new System.Drawing.Point(1024, 24);
+            this.btnCerrarSesion.Location = new System.Drawing.Point(1769, 24);
             this.btnCerrarSesion.Name = "btnCerrarSesion";
             this.btnCerrarSesion.Size = new System.Drawing.Size(123, 36);
             this.btnCerrarSesion.TabIndex = 2;
@@ -152,7 +152,7 @@ namespace pryZarateERP
             this.tabPersonal.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(15)))), ((int)(((byte)(23)))), ((int)(((byte)(42)))));
             this.tabPersonal.Location = new System.Drawing.Point(4, 40);
             this.tabPersonal.Name = "tabPersonal";
-            this.tabPersonal.Size = new System.Drawing.Size(892, 760);
+            this.tabPersonal.Size = new System.Drawing.Size(1896, 861);
             this.tabPersonal.TabIndex = 0;
             this.tabPersonal.Text = "Personal";
             // 
@@ -161,7 +161,7 @@ namespace pryZarateERP
             this.tabAuditoria.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(15)))), ((int)(((byte)(23)))), ((int)(((byte)(42)))));
             this.tabAuditoria.Location = new System.Drawing.Point(4, 40);
             this.tabAuditoria.Name = "tabAuditoria";
-            this.tabAuditoria.Size = new System.Drawing.Size(892, 760);
+            this.tabAuditoria.Size = new System.Drawing.Size(1896, 861);
             this.tabAuditoria.TabIndex = 1;
             this.tabAuditoria.Text = "Auditoría";
             // 
