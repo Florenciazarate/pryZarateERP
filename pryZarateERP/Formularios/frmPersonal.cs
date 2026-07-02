@@ -14,7 +14,7 @@ namespace pryZarateERP
 
         // Clases auxiliares para guardar el ID junto al texto que muestra el ListBox
         private class PersonaItem { public int Id; public string Texto; public override string ToString() => Texto; } //molde para mostrar el nombre de la persona en el ListBox y tener a la vez su ID guardado para usarlo luego
-        private class DomItem { public int Id; public string T; public override string ToString() => T; }
+        private class DomItem { public int Id; public string T; public override string ToString() => T; } //molde para mostrar el domicilio en el ListBox y tener a la vez su ID guardado para usarlo luego
         private class ContItem { public int Id; public string T; public override string ToString() => T; }
 
         public frmPersonal()
@@ -83,24 +83,24 @@ namespace pryZarateERP
             lstPersonas.Items.Clear();
             if (_tabla == null) return;
 
-            string f = txtBuscar.Text.Trim().ToUpperInvariant();
+            string f = txtBuscar.Text.Trim().ToUpperInvariant(); // filtro en mayúsculas para que no importe si el usuario escribió minúsculas o mayúsculas
 
-            foreach (DataRow row in _tabla.Rows)
+            foreach (DataRow row in _tabla.Rows) // recorro todos los registros de Personal traídos de la BD
             {
-                string dni = row["DNI"].ToString();
+                string dni = row["DNI"].ToString(); // el DNI lo dejo tal cual está en la BD (sin pasar a mayúsculas, porque es solo números)
                 string nom = row["Nombre"].ToString();
                 string ape = row["Apellido"].ToString();
-                bool act = Convert.ToBoolean(row["Activo"]);
+                bool act = Convert.ToBoolean(row["Activo"]); // el estado activo/inactivo real de la persona (no deducido del texto del botón)
 
-                if (f.Length > 0 &&
-                    !ape.ToUpperInvariant().Contains(f) &&
+                if (f.Length > 0 && // si hay texto en el buscador, filtro por coincidencia en DNI, nombre o apellido
+                    !ape.ToUpperInvariant().Contains(f) && // paso a mayúsculas para que no importe si el usuario escribió minúsculas o mayúsculas
                     !nom.ToUpperInvariant().Contains(f) &&
                     !dni.Contains(f)) continue;
 
-                lstPersonas.Items.Add(new PersonaItem
+                lstPersonas.Items.Add(new PersonaItem // agrego a la lista un objeto PersonaItem que contiene el ID y el texto a mostrar
                 {
-                    Id = Convert.ToInt32(row["IdPersonal"]),
-                    Texto = act ? $"{ape}, {nom}" : $"[inact.]  {ape}, {nom}"
+                    Id = Convert.ToInt32(row["IdPersonal"]), // el ID de la persona lo tengo guardado en el ListBox gracias a la clase PersonaItem
+                    Texto = act ? $"{ape}, {nom}" : $"[inact.]  {ape}, {nom}" // el texto que se muestra en la lista indica si la persona está inactiva
                 });
             }
         }
@@ -114,11 +114,11 @@ namespace pryZarateERP
         {
             if (lstPersonas.SelectedItem == null) return;
 
-            int id = ((PersonaItem)lstPersonas.SelectedItem).Id;
+            int id = ((PersonaItem)lstPersonas.SelectedItem).Id; // obtengo el ID de la persona seleccionada del ListBox gracias a la clase PersonaItem
 
-            foreach (DataRow row in _tabla.Rows)
+            foreach (DataRow row in _tabla.Rows) // recorro todos los registros de Personal traídos de la BD hasta encontrar el que coincide con el ID seleccionado
             {
-                if (Convert.ToInt32(row["IdPersonal"]) != id) continue;
+                if (Convert.ToInt32(row["IdPersonal"]) != id) continue; // si no coincide, sigo buscando
 
                 idSeleccionado = id;
                 txtDni.Text = row["DNI"].ToString();
@@ -130,10 +130,10 @@ namespace pryZarateERP
                 lblTitDatos.Text = $"{row["Apellido"]}, {row["Nombre"]}  ·  {(act ? "Activo" : "Inactivo")}";
                 btnDesactivar.Text = act ? "Desactivar" : "Reactivar";
 
-                SetModo(true);
+                SetModo(true); // habilito los campos de domicilios y contactos
                 CargarDomicilios();
                 CargarContactos();
-                break;
+                break; // una vez que encontré la persona seleccionada, no necesito seguir recorriendo la tabla
             }
         }
 
@@ -158,30 +158,30 @@ namespace pryZarateERP
 
             // SelectedValue todavía no es un ID cuando el combo está en medio del binding
             if (cmbProvincia.SelectedIndex < 0 || !(cmbProvincia.SelectedValue is int idProvincia))
-            { cmbLocalidad.Enabled = false; return; }
+            { cmbLocalidad.Enabled = false; return; } // si no hay provincia seleccionada, deshabilito el combo de localidades
 
-            try
+            try // si hay provincia seleccionada, cargo las localidades correspondientes
             {
                 cmbLocalidad.DataSource = clsBaseDatos.ObtenerLocalidades(idProvincia);
                 cmbLocalidad.DisplayMember = "Localidad";
                 cmbLocalidad.ValueMember = "ID_Localidades";
                 cmbLocalidad.Enabled = true;
-                cmbLocalidad.SelectedIndex = -1;
+                cmbLocalidad.SelectedIndex = -1; 
             }
-            catch (Exception ex) { Err(ex); }
+            catch (Exception ex) { Err(ex); } // si falla la carga de localidades, muestro el error y dejo el combo deshabilitado
         }
 
         // habilita cmbRed solo cuando el tipo elegido es "Red social"
         private void cmbTipo_SelectedIndexChanged(object sender, EventArgs e)
         {
-            bool esRed = cmbTipo.SelectedIndex >= 0 && cmbTipo.Text == "Red social";
-            cmbRed.Enabled = esRed;
-            if (!esRed) cmbRed.SelectedIndex = -1;
-            txtValor.MaxLength = cmbTipo.Text == "Email" ? 20 : 10;
+            bool esRed = cmbTipo.SelectedIndex >= 0 && cmbTipo.Text == "Red social"; // si el tipo elegido es "Red social", habilito el combo de redes; si no, lo deshabilito y lo limpio
+            cmbRed.Enabled = esRed; // si el tipo elegido es "Red social", habilito el combo de redes; si no, lo deshabilito y lo limpio
+            if (!esRed) cmbRed.SelectedIndex = -1;  // si no es red social, limpio la selección de red
+            txtValor.MaxLength = cmbTipo.Text == "Email" ? 20 : 10; // si es email, el dato puede tener hasta 20 caracteres; si es teléfono o red social, hasta 10
             txtValor.Text = "";
         }
 
-        private void btnNueva_Click(object sender, EventArgs e)
+        private void btnNueva_Click(object sender, EventArgs e) // limpia el formulario para dar de alta una nueva persona
         {
             lstPersonas.ClearSelected();
             LimpiarFormulario();
@@ -249,32 +249,32 @@ namespace pryZarateERP
 
             try
             {
-                bool nuevoEstado = !desactivar;
-                clsBaseDatos.ActualizarPersonal(idSeleccionado,
-                    txtDni.Text.Trim(), txtNombre.Text.Trim(), txtApellido.Text.Trim(), nuevoEstado);
+                bool nuevoEstado = !desactivar; // si estaba activa, la paso a inactiva; si estaba inactiva, la paso a activa
+                clsBaseDatos.ActualizarPersonal(idSeleccionado, // el ID de la persona ya lo tengo guardado en idSeleccionado
+                    txtDni.Text.Trim(), txtNombre.Text.Trim(), txtApellido.Text.Trim(), nuevoEstado); // actualizo el estado en la BD
                 _activoSeleccionado = nuevoEstado; // mantengo sincronizado el estado real
 
-                clsBaseDatos.RegistrarAuditoria(SessionInfo.Usuario, "Personal",
-                    desactivar ? "Desactivar" : "Reactivar",
+                clsBaseDatos.RegistrarAuditoria(SessionInfo.Usuario, "Personal", // acción de desactivar o reactivar
+                    desactivar ? "Desactivar" : "Reactivar", // detalle: nombre y apellido de la persona
                     $"{txtApellido.Text.Trim()}, {txtNombre.Text.Trim()}", true);
-                CargarLista();
-                lblTitDatos.Text = $"{txtApellido.Text.Trim()}, {txtNombre.Text.Trim()}  ·  {(nuevoEstado ? "Activo" : "Inactivo")}";
-                btnDesactivar.Text = nuevoEstado ? "Desactivar" : "Reactivar";
-                btnGuardar.Enabled = nuevoEstado;
+                CargarLista(); // recargo la lista para que se vea el cambio de estado (inactivo aparece con "[inact.]" delante)
+                lblTitDatos.Text = $"{txtApellido.Text.Trim()}, {txtNombre.Text.Trim()}  ·  {(nuevoEstado ? "Activo" : "Inactivo")}"; // actualizo el título con el nuevo estado
+                btnDesactivar.Text = nuevoEstado ? "Desactivar" : "Reactivar"; // actualizo el texto del botón según el nuevo estado
+                btnGuardar.Enabled = nuevoEstado; // si la persona quedó inactiva, deshabilito el botón Guardar (no se puede editar una persona inactiva)
             }
             catch (Exception ex) { Err(ex); }
         }
 
-        private void LimpiarFormulario()
+        private void LimpiarFormulario() // limpia todos los campos del formulario para dar de alta una nueva persona
         {
-            idSeleccionado = -1;
-            _activoSeleccionado = false;
+            idSeleccionado = -1; // modo alta
+            _activoSeleccionado = false; // no hay persona seleccionada, así que no tiene estado activo/inactivo
             txtDni.Clear(); txtNombre.Clear(); txtApellido.Clear();
             txtDireccion.Clear(); txtGeo.Clear();
             cmbProvincia.SelectedIndex = -1;
             cmbLocalidad.DataSource = null; cmbLocalidad.Items.Clear(); cmbLocalidad.Enabled = false;
             cmbTipo.SelectedIndex = -1;
-            cmbRed.SelectedIndex = -1; cmbRed.Enabled = false;
+            cmbRed.SelectedIndex = -1; cmbRed.Enabled = false; // cmbRed solo se habilita si se elige "Red social"
             txtValor.Clear();
             lstDom.Items.Clear(); lstCont.Items.Clear();
         }
@@ -297,13 +297,13 @@ namespace pryZarateERP
             catch (Exception ex) { Err(ex); }
         }
 
-        private void btnAgregarDom_Click(object sender, EventArgs e)
+        private void btnAgregarDom_Click(object sender, EventArgs e) // agrega un domicilio a la persona seleccionada
         {
-            if (idSeleccionado == -1) return;
-            if (string.IsNullOrWhiteSpace(txtDireccion.Text)) { Aviso("Completá la dirección."); return; }
+            if (idSeleccionado == -1) return; // si no hay persona seleccionada, no hago nada
+            if (string.IsNullOrWhiteSpace(txtDireccion.Text)) { Aviso("Completá la dirección."); return; } // si no hay dirección, no hago nada
 
-            string prov = cmbProvincia.SelectedIndex >= 0 ? cmbProvincia.Text : "";
-            string loc = (cmbLocalidad.DataSource != null && cmbLocalidad.SelectedIndex >= 0) ? cmbLocalidad.Text : "";
+            string prov = cmbProvincia.SelectedIndex >= 0 ? cmbProvincia.Text : ""; // si no hay provincia seleccionada, guardo cadena vacía
+            string loc = (cmbLocalidad.DataSource != null && cmbLocalidad.SelectedIndex >= 0) ? cmbLocalidad.Text : ""; // si no hay localidad seleccionada, guardo cadena vacía
 
             try
             {
@@ -316,7 +316,7 @@ namespace pryZarateERP
             catch (Exception ex) { Err(ex); }
         }
 
-        private void btnQuitarDom_Click(object sender, EventArgs e)
+        private void btnQuitarDom_Click(object sender, EventArgs e) // quita el domicilio seleccionado de la persona seleccionada
         {
             if (lstDom.SelectedItem == null) { Aviso("Seleccioná un domicilio para quitarlo."); return; }
             try { clsBaseDatos.EliminarDomicilio(((DomItem)lstDom.SelectedItem).Id); CargarDomicilios(); } // que el ID del domicilio a eliminar lo tengo guardado en el ListBox gracias a la clase DomItem
@@ -413,21 +413,21 @@ namespace pryZarateERP
         // (si cree que no hay lugar abajo, la abre hacia arriba). Estas funciones de Windows
         // permiten ubicar la ventana de la lista a mano, debajo del combo.
 
-        [StructLayout(LayoutKind.Sequential)]
-        private struct RECT { public int Left, Top, Right, Bottom; }
+        [StructLayout(LayoutKind.Sequential)] // para poder usar GetWindowRect y MoveWindow, necesito definir la estructura RECT que representa un rectángulo (coordenadas de la esquina superior izquierda y la inferior derecha)
+        private struct RECT { public int Left, Top, Right, Bottom; } // estructura que representa un rectángulo (coordenadas de la esquina superior izquierda y la inferior derecha)
 
-        [StructLayout(LayoutKind.Sequential)]
-        private struct COMBOBOXINFO
+        [StructLayout(LayoutKind.Sequential)] // para poder usar GetComboBoxInfo, necesito definir la estructura COMBOBOXINFO que representa la información de un ComboBox (tamaño, rectángulos de los elementos y botones, estados y handles de las ventanas)
+        private struct COMBOBOXINFO // estructura que representa la información de un ComboBox (tamaño, rectángulos de los elementos y botones, estados y handles de las ventanas)
         {
-            public int cbSize;
-            public RECT rcItem, rcButton;
-            public int stateButton;
-            public IntPtr hwndCombo, hwndItem, hwndList;
+            public int cbSize; // tamaño de la estructura (en bytes)
+            public RECT rcItem, rcButton; // rectángulos de los elementos y botones del ComboBox
+            public int stateButton; // estado del botón del ComboBox (presionado, deshabilitado, etc.)
+            public IntPtr hwndCombo, hwndItem, hwndList; // handles de las ventanas del ComboBox (ventana principal, ventana de los elementos y ventana de la lista desplegable)
         }
 
-        [DllImport("user32.dll")] private static extern bool GetComboBoxInfo(IntPtr hwnd, ref COMBOBOXINFO info);
-        [DllImport("user32.dll")] private static extern bool GetWindowRect(IntPtr hwnd, out RECT rect);
-        [DllImport("user32.dll")] private static extern bool MoveWindow(IntPtr hwnd, int x, int y, int ancho, int alto, bool repintar);
+        [DllImport("user32.dll")] private static extern bool GetComboBoxInfo(IntPtr hwnd, ref COMBOBOXINFO info); // obtiene información de un ComboBox (tamaño, rectángulos de los elementos y botones, estados y handles de las ventanas)
+        [DllImport("user32.dll")] private static extern bool GetWindowRect(IntPtr hwnd, out RECT rect); // obtiene el rectángulo de una ventana (coordenadas de la esquina superior izquierda y la inferior derecha)
+        [DllImport("user32.dll")] private static extern bool MoveWindow(IntPtr hwnd, int x, int y, int ancho, int alto, bool repintar); // mueve y redimensiona una ventana (coordenadas de la esquina superior izquierda, ancho, alto y si se debe repintar)
 
         // Conectado al evento DropDown de los combos: mueve la lista debajo del combo.
         // Si la lista es más alta que el lugar libre, la achica a filas enteras (queda con scroll).
@@ -438,13 +438,13 @@ namespace pryZarateERP
             // BeginInvoke: corre justo después de que Windows ya mostró y ubicó la lista
             BeginInvoke(new Action(() =>
             {
-                var info = new COMBOBOXINFO();
-                info.cbSize = Marshal.SizeOf(info);
-                if (!GetComboBoxInfo(cmb.Handle, ref info)) return;
-                if (!GetWindowRect(info.hwndList, out RECT lista)) return;
+                var info = new COMBOBOXINFO(); // estructura que contiene información del ComboBox (tamaño, rectángulos de los elementos y botones, estados y handles de las ventanas)
+                info.cbSize = Marshal.SizeOf(info); // tamaño de la estructura COMBOBOXINFO (en bytes)
+                if (!GetComboBoxInfo(cmb.Handle, ref info)) return; // si falla, no hago nada (Windows decide dónde ubicar la lista)
+                if (!GetWindowRect(info.hwndList, out RECT lista)) return; // si falla, no hago nada (Windows decide dónde ubicar la lista)
 
-                var destino = cmb.PointToScreen(new System.Drawing.Point(0, cmb.Height));
-                int alto  = lista.Bottom - lista.Top;
+                var destino = cmb.PointToScreen(new System.Drawing.Point(0, cmb.Height)); // coordenadas de la esquina inferior izquierda del combo (donde quiero ubicar la lista)
+                int alto  = lista.Bottom - lista.Top; // altura actual de la lista (la que Windows decidió)
                 int ancho = lista.Right  - lista.Left;
                 int lugar = Screen.FromControl(cmb).WorkingArea.Bottom - destino.Y; // espacio libre hasta abajo de la pantalla
 
